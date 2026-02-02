@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.DS_Store
+.vscode/
+
+# outputs / data
+runs/
+output/
+*.csv
+
+# model caches
+model_cache/
+.cache/
+hf_cache/
+
+# logs
+*.log
