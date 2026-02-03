@@ -1,0 +1,20 @@
+FROM ubuntu:24.04
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    curl \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+RUN git clone https://github.com/ggml-org/llama.cpp.git
+
+WORKDIR /opt/llama.cpp
+RUN cmake -B build -DLLAMA_BUILD_SERVER=ON \
+ && cmake --build build -j
+
+WORKDIR /models
+EXPOSE 8000
+
+CMD ["/opt/llama.cpp/build/bin/llama-server", "--host", "0.0.0.0", "--port", "8000", "--model", "/models/model.gguf"]
