@@ -17,4 +17,8 @@ RUN cmake -B build -DLLAMA_BUILD_SERVER=ON \
 WORKDIR /models
 EXPOSE 8000
 
-CMD ["/opt/llama.cpp/build/bin/llama-server", "--host", "0.0.0.0", "--port", "8000", "--model", "/models/model.gguf"]
+# Default model path (override at runtime with -e MODEL_PATH=...)
+ENV MODEL_PATH=/models/model.gguf
+
+# Shell form so $MODEL_PATH expands at container runtime
+CMD /opt/llama.cpp/build/bin/llama-server --host 0.0.0.0 --port 8000 --model $MODEL_PATH
