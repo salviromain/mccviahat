@@ -22,6 +22,8 @@ fi
 echo "Starting llama server container: $NAME"
 docker run -d \
   --name "$NAME" \
+  --cpuset-cpus "0-15" \
+
   -p "${PORT}:8000" \
   -v "${MODEL_DIR}:/models" \
   -e "MODEL_PATH=${MODEL_PATH}" \
