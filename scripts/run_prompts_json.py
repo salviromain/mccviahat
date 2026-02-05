@@ -105,7 +105,6 @@ def run():
     if remaining_ns > 0:
         time.sleep(remaining_ns / 1e9)
 
-    sampler.wait(timeout=10)
 
     meta = {
         "run_id": run_id,
