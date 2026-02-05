@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "title": "Tightening a Loose Door Hinge",
+    "instructions": "Begin by opening the door halfway so the hinges are visible and accessible. Place a doorstop or heavy object underneath the door to prevent it from shifting while you work. Using a screwdriver that fits the hinge screws correctly, turn each screw counterclockwise to remove it, one at a time, starting with the top hinge. Inspect the screws for stripped threads or bent shafts and replace any that appear damaged. Align the hinge leaf flush against the door frame and reinsert the screws by hand to avoid cross-threading. Tighten them clockwise until snug, but do not overtighten, as this can strip the wood or warp the hinge. Repeat the process for the remaining hinges. After all screws are secured, remove the doorstop and slowly open and close the door several times to check for smooth movement and proper alignment. If the door still sags, slightly loosen the screws, reposition the hinge so it sits squarely in its recess, and retighten. Wipe away any dust or debris with a dry cloth and store your tools before finishing."
+  },
+  {
+    "id": 2,
+    "title": "Replacing a Shower Curtain Rod",
+    "instructions": "Clear the area around the bathtub or shower so you have room to work and can reach both walls easily. If the existing rod is tension-mounted, twist it gently in one direction to release pressure, then pull it down and set it aside. Clean the wall surfaces where the rod rested to remove soap residue or moisture. Measure the width of the shower opening using a tape measure and adjust the new rod to match this distance, following the manufacturer’s markings. Hold the rod horizontally between the walls and expand it until both ends make firm contact with the surfaces. Apply steady pressure while twisting to lock it into place. Step back and visually check that the rod is level and centered. Hang the shower curtain and liner evenly across the rod, spacing the hooks consistently. Tug lightly on the curtain to confirm the rod is secure. Make small adjustments if it shifts, and wipe away fingerprints from the wall before disposing of packaging materials."
+  },
+  {
+    "id": 3,
+    "title": "Assembling a Simple Wall Shelf",
+    "instructions": "Lay all shelf components on a flat surface and compare them with the parts list in the instruction sheet to ensure nothing is missing. Gather a drill, screwdriver, level, measuring tape, pencil, and wall anchors appropriate for your wall type. Decide where the shelf will be installed and measure the height from the floor, marking the position lightly with pencil. Hold the mounting bracket against the wall and use a level to make sure it is straight before marking the screw holes. Drill pilot holes at the marks, insert wall anchors if needed, and secure the bracket with screws until it sits flush. Repeat for additional brackets, checking alignment between them. Place the shelf board onto the brackets and fasten it according to the hardware design, usually with small screws underneath. Set the level on top of the shelf and adjust slightly if necessary. Tighten all hardware fully, then remove pencil marks and clean dust from the surface."
+  },
+  {
+    "id": 4,
+    "title": "Fixing a Wobbly Table Leg",
+    "instructions": "Turn the table upside down on a padded surface such as a rug or blanket to avoid scratching the finish. Locate the loose leg and inspect where it connects to the table frame. Use a wrench or screwdriver to tighten any visible bolts or screws, turning them clockwise until they are secure. If the joint still moves, remove the fasteners completely and apply a small amount of wood glue into the joint or dowel holes. Reinsert the leg, align it squarely with the frame, and reinstall the hardware, tightening evenly. Wipe away excess glue with a damp cloth before it dries. Allow the glue to cure for the amount of time specified on the bottle, keeping the table upside down and undisturbed. Once dry, turn the table upright and press gently on each corner to test stability. Add adhesive felt pads to the feet if the floor is uneven, and store tools when finished."
+  },
+  {
+    "id": 5,
+    "title": "Installing a Basic Smoke Detector",
+    "instructions": "Select a location on the ceiling or high on a wall, away from vents or cooking appliances, following local safety recommendations. Use a pencil to mark the screw holes by holding the detector’s mounting plate in place. Drill small pilot holes at the marks and insert wall anchors if the surface is drywall. Secure the mounting plate with screws until it is firmly attached. Open the smoke detector housing and install the batteries, matching the positive and negative terminals correctly. Close the cover and twist or snap the detector onto the mounting plate according to the design. Press the test button and listen for the alarm to confirm it is functioning properly. If no sound occurs, recheck the batteries and connections. Write the installation date on the inside cover for future reference. Clean up debris from drilling, discard packaging, and set a reminder to test the unit monthly."
+  }
+]
