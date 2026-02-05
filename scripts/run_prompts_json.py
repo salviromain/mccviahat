@@ -47,13 +47,17 @@ def run():
     t_end_target_ns = t0_ns + int(total_s * 1e9)
 
     # Start proc sampler for the full fixed window
-    sampler = subprocess.Popen([
-        "python3", "collectors/proc_sampler.py",
-        "--pid", str(pid),
-        "--out", str(csv_path),
-        "--interval", str(args.interval_s),
-        "--duration", str(total_s),
+    # replace the proc_sampler Popen with:
+    subprocess.Popen([
+    "python3", "collectors/substrate_collector.py",
+    "--out_dir", str(out_dir),
+    "--pid", str(pid),
+    "--duration_s", str(total_s),
+    "--perf_interval_ms", "1",
+    "--proc_interval_s", str(args.interval_s),
+    "--collect_kernel_log",
     ])
+
 
     # Baseline
     time.sleep(args.baseline_s)
