@@ -382,13 +382,13 @@ def main() -> int:
     sample_disk = read_proc_diskstats()
     sample_freq = read_cpu_frequencies()
 
-    # Build system CSV header dynamically
+    # Build system CSV header dynamically (prefix PSI keys to avoid duplicate column names)
     sys_header = ["timestamp_ns"]
     sys_header += sorted(sample_interrupts.keys())
     sys_header += sorted(sample_softirqs.keys())
-    sys_header += sorted(sample_pressure_cpu.keys())
-    sys_header += sorted(sample_pressure_mem.keys())
-    sys_header += sorted(sample_pressure_io.keys())
+    sys_header += [f"psi_cpu_{k}" for k in sorted(sample_pressure_cpu.keys())]
+    sys_header += [f"psi_mem_{k}" for k in sorted(sample_pressure_mem.keys())]
+    sys_header += [f"psi_io_{k}" for k in sorted(sample_pressure_io.keys())]
     sys_header += sorted(sample_net.keys())
     sys_header += sorted(sample_disk.keys())
     sys_header += sorted(sample_freq.keys())
@@ -427,12 +427,20 @@ def main() -> int:
             freq = read_cpu_frequencies()
 
             # Build row matching header order
+            # Merge all dicts into one with proper prefixed PSI keys
+            all_metrics = {}
+            all_metrics.update(interrupts)
+            all_metrics.update(softirqs)
+            all_metrics.update({f"psi_cpu_{k}": v for k, v in pressure_cpu.items()})
+            all_metrics.update({f"psi_mem_{k}": v for k, v in pressure_mem.items()})
+            all_metrics.update({f"psi_io_{k}": v for k, v in pressure_io.items()})
+            all_metrics.update(net)
+            all_metrics.update(disk)
+            all_metrics.update(freq)
+
             sys_row = [ts]
             for key in sys_header[1:]:  # skip timestamp_ns
-                val = (interrupts.get(key) or softirqs.get(key) or 
-                       pressure_cpu.get(key) or pressure_mem.get(key) or 
-                       pressure_io.get(key) or net.get(key) or 
-                       disk.get(key) or freq.get(key))
+                val = all_metrics.get(key)
                 sys_row.append(val if val is not None else "")
             
             w_sys.writerow(sys_row)
