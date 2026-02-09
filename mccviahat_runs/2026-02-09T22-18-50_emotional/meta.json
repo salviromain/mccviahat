@@ -1,0 +1,15 @@
+{
+  "run_id": "2026-02-09T22-18-50_emotional",
+  "label": "emotional",
+  "container": "mccviahat-llama",
+  "pid": 15807,
+  "n_predict": 40,
+  "baseline_s": 2.0,
+  "budget_s": 40.0,
+  "tail_s": 2.0,
+  "interval_s": 0.2,
+  "total_s": 44.0,
+  "t0_ns": 1770675530583179495,
+  "t_end_target_ns": 1770675574583179495,
+  "json_source": "/users/rsalvi/mccviahat/prompts/emotional.json"
+}
