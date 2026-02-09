@@ -5,21 +5,36 @@ collectors/substrate_collector.py
 Goal: one "collector" process you can start before prompt execution and stop after,
 compatible with your fixed-window runner (run_prompts_json).
 
-This collector captures (Option 1: use sudo for kernel tracepoints):
+This collector captures:
 - 1ms-bucket perf stats for system-wide kernel tracepoints and PMU/power signals
   (irq/softirq activity, tlb_flush tracepoint, thermal/power/throttle PMU events)
+  Plus low-overhead software counters (context-switches, cpu-migrations, page-faults)
 - a low-overhead /proc time series for the target host PID (utime/stime/rss) + /proc/stat CPU totals
 - kernel log slice for the collection window (for rare events like MCE), saved as text
+- Additional /proc and /sys metrics sampled at proc_interval_s:
+  * /proc/interrupts, /proc/softirqs (interrupt counts per CPU)
+  * /proc/pressure/{cpu,memory,io} (PSI metrics)
+  * /proc/net/dev (network I/O counters)
+  * /proc/diskstats (disk I/O counters)
+  * CPU frequency from /sys/.../scaling_cur_freq
 
 Outputs into a run directory:
 - perf_stat.txt
-- proc_sample.csv
+- proc_sample.csv (process + system CPU)
+- proc_system_sample.csv (interrupts, pressure, network, disk, freq)
 - kernel_log.txt
 - collector_meta.json
 
 Notes:
 - Tracefs is root-only on your nodes; perf tracepoints require sudo.
 - `sudo -n` is used so it fails fast if passwordless sudo is not available.
+- Most new metrics (/proc, /sys) require no special permissions.
+
+Practical note on CloudLab / bare metal nodes:
+Most of the "cheap" adds are /proc and /sys reads (no root needed), plus some extra
+tracepoints/software perf events (root often needed for tracepoints; PMU access depends
+on perf_event_paranoid and kernel config). In other words: you can add a lot without
+making the collector fragile.
 """
 
 import argparse
@@ -74,6 +89,135 @@ def read_proc_pid_stat(pid: int) -> Tuple[int, int, int]:
 
 def pid_exists(pid: int) -> bool:
     return os.path.exists(f"/proc/{pid}")
+
+
+# -----------------------------
+# Additional /proc and /sys sampling
+# -----------------------------
+
+def read_proc_interrupts() -> dict:
+    """Parse /proc/interrupts and return total counts per interrupt type."""
+    try:
+        with open("/proc/interrupts", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        
+        # First line is CPU header, skip it
+        data = {}
+        for line in lines[1:]:
+            parts = line.split()
+            if not parts:
+                continue
+            irq_name = parts[0].rstrip(":")
+            # Sum counts across all CPUs (numeric fields after IRQ name)
+            counts = [int(x) for x in parts[1:] if x.isdigit()]
+            data[irq_name] = sum(counts)
+        return data
+    except Exception:
+        return {}
+
+
+def read_proc_softirqs() -> dict:
+    """Parse /proc/softirqs and return total counts per softirq type."""
+    try:
+        with open("/proc/softirqs", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        
+        # First line is CPU header, skip it
+        data = {}
+        for line in lines[1:]:
+            parts = line.split()
+            if not parts:
+                continue
+            sirq_name = parts[0].rstrip(":")
+            # Sum counts across all CPUs
+            counts = [int(x) for x in parts[1:] if x.isdigit()]
+            data[sirq_name] = sum(counts)
+        return data
+    except Exception:
+        return {}
+
+
+def read_proc_pressure(resource: str) -> dict:
+    """Read /proc/pressure/{cpu,memory,io} and return avg10, avg60, avg300, total."""
+    try:
+        with open(f"/proc/pressure/{resource}", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        
+        result = {}
+        for line in lines:
+            if line.startswith("some") or line.startswith("full"):
+                prefix = line.split()[0]
+                parts = line.split()
+                for part in parts[1:]:
+                    if "=" in part:
+                        k, v = part.split("=")
+                        result[f"{prefix}_{k}"] = float(v)
+        return result
+    except Exception:
+        return {}
+
+
+def read_proc_net_dev() -> dict:
+    """Parse /proc/net/dev and return rx/tx bytes and packets for all interfaces."""
+    try:
+        with open("/proc/net/dev", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        
+        data = {}
+        for line in lines[2:]:  # Skip two header lines
+            if ":" not in line:
+                continue
+            iface, stats = line.split(":", 1)
+            iface = iface.strip()
+            parts = stats.split()
+            if len(parts) >= 16:
+                data[f"{iface}_rx_bytes"] = int(parts[0])
+                data[f"{iface}_rx_packets"] = int(parts[1])
+                data[f"{iface}_tx_bytes"] = int(parts[8])
+                data[f"{iface}_tx_packets"] = int(parts[9])
+        return data
+    except Exception:
+        return {}
+
+
+def read_proc_diskstats() -> dict:
+    """Parse /proc/diskstats and return read/write counts for major block devices."""
+    try:
+        with open("/proc/diskstats", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        
+        data = {}
+        for line in lines:
+            parts = line.split()
+            if len(parts) < 14:
+                continue
+            dev_name = parts[2]
+            # Skip loop, ram, and partition devices; focus on whole disks
+            if dev_name.startswith("loop") or dev_name.startswith("ram") or any(c.isdigit() for c in dev_name[-1:]):
+                continue
+            data[f"{dev_name}_reads_completed"] = int(parts[3])
+            data[f"{dev_name}_sectors_read"] = int(parts[5])
+            data[f"{dev_name}_writes_completed"] = int(parts[7])
+            data[f"{dev_name}_sectors_written"] = int(parts[9])
+        return data
+    except Exception:
+        return {}
+
+
+def read_cpu_frequencies() -> dict:
+    """Read current CPU frequencies from /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq."""
+    try:
+        import glob
+        data = {}
+        freq_files = glob.glob("/sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq")
+        for fpath in sorted(freq_files):
+            cpu_num = fpath.split("/cpu")[1].split("/")[0]
+            with open(fpath, "r", encoding="utf-8") as f:
+                freq_khz = int(f.read().strip())
+                data[f"cpu{cpu_num}_freq_khz"] = freq_khz
+        return data
+    except Exception:
+        return {}
 
 
 # -----------------------------
@@ -164,6 +308,7 @@ def main() -> int:
     # - irq tracepoints (interrupts/softirqs/tasklets)
     # - tlb:tlb_flush (proxy for shootdown/flush activity)
     # - thermal/power/throttle PMU signals (as available on your system)
+    # - software counters (context-switches, cpu-migrations, page-faults, cpu-clock)
     default_events = [
         "irq:irq_handler_entry",
         "irq:irq_handler_exit",
@@ -173,6 +318,10 @@ def main() -> int:
         "irq:tasklet_entry",
         "irq:tasklet_exit",
         "tlb:tlb_flush",
+        "context-switches",
+        "cpu-migrations",
+        "page-faults",
+        "cpu-clock",
         "core_power.throttle",
         "msr/cpu_thermal_margin/",
         "power/energy-pkg/",
@@ -184,6 +333,7 @@ def main() -> int:
 
     perf_out = os.path.join(args.out_dir, "perf_stat.txt")
     proc_out = os.path.join(args.out_dir, "proc_sample.csv")
+    proc_sys_out = os.path.join(args.out_dir, "proc_system_sample.csv")
     klog_out = os.path.join(args.out_dir, "kernel_log.txt")
     meta_out = os.path.join(args.out_dir, "collector_meta.json")
 
@@ -209,7 +359,7 @@ def main() -> int:
     perf_proc = subprocess.Popen(perf_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # /proc sampler loop for the same duration window
-    header = [
+    proc_header = [
         "timestamp_ns",
         "cpu_total_jiffies",
         "cpu_idle_jiffies",
@@ -219,22 +369,72 @@ def main() -> int:
         "proc_rss_pages",
     ]
 
+    # Collect initial system metrics to determine CSV columns
+    sample_interrupts = read_proc_interrupts()
+    sample_softirqs = read_proc_softirqs()
+    sample_pressure_cpu = read_proc_pressure("cpu")
+    sample_pressure_mem = read_proc_pressure("memory")
+    sample_pressure_io = read_proc_pressure("io")
+    sample_net = read_proc_net_dev()
+    sample_disk = read_proc_diskstats()
+    sample_freq = read_cpu_frequencies()
+
+    # Build system CSV header dynamically
+    sys_header = ["timestamp_ns"]
+    sys_header += sorted(sample_interrupts.keys())
+    sys_header += sorted(sample_softirqs.keys())
+    sys_header += sorted(sample_pressure_cpu.keys())
+    sys_header += sorted(sample_pressure_mem.keys())
+    sys_header += sorted(sample_pressure_io.keys())
+    sys_header += sorted(sample_net.keys())
+    sys_header += sorted(sample_disk.keys())
+    sys_header += sorted(sample_freq.keys())
+
     t_end = time.time() + args.duration_s
-    with open(proc_out, "w", newline="", encoding="utf-8") as f:
-        w = csv.writer(f)
-        w.writerow(header)
+    
+    with open(proc_out, "w", newline="", encoding="utf-8") as f_proc, \
+         open(proc_sys_out, "w", newline="", encoding="utf-8") as f_sys:
+        
+        w_proc = csv.writer(f_proc)
+        w_proc.writerow(proc_header)
+        
+        w_sys = csv.writer(f_sys)
+        w_sys.writerow(sys_header)
 
         while time.time() < t_end:
             if not pid_exists(pid):
                 break
 
             ts = time.time_ns()
+            
+            # Process and system CPU metrics
             cpu_total, cpu_idle = read_proc_stat_cpu()
             utime, stime, rss_pages = read_proc_pid_stat(pid)
-            w.writerow([ts, cpu_total, cpu_idle, pid, utime, stime, rss_pages])
+            w_proc.writerow([ts, cpu_total, cpu_idle, pid, utime, stime, rss_pages])
+            f_proc.flush()
 
-            # keep it simple: flush each row so partial runs are still usable
-            f.flush()
+            # Additional system metrics
+            interrupts = read_proc_interrupts()
+            softirqs = read_proc_softirqs()
+            pressure_cpu = read_proc_pressure("cpu")
+            pressure_mem = read_proc_pressure("memory")
+            pressure_io = read_proc_pressure("io")
+            net = read_proc_net_dev()
+            disk = read_proc_diskstats()
+            freq = read_cpu_frequencies()
+
+            # Build row matching header order
+            sys_row = [ts]
+            for key in sys_header[1:]:  # skip timestamp_ns
+                val = (interrupts.get(key) or softirqs.get(key) or 
+                       pressure_cpu.get(key) or pressure_mem.get(key) or 
+                       pressure_io.get(key) or net.get(key) or 
+                       disk.get(key) or freq.get(key))
+                sys_row.append(val if val is not None else "")
+            
+            w_sys.writerow(sys_row)
+            f_sys.flush()
+
             time.sleep(args.proc_interval_s)
 
     # Wait for perf to finish (it should, because it runs "sleep duration")
@@ -259,6 +459,7 @@ def main() -> int:
     print(f"Wrote: {args.out_dir}/")
     print(f"  perf: {perf_out}")
     print(f"  proc: {proc_out}")
+    print(f"  proc_system: {proc_sys_out}")
     if args.collect_kernel_log:
         print(f"  klog: {klog_out}")
     print(f"  meta: {meta_out}")
