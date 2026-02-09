@@ -232,7 +232,7 @@ class PerfPlan:
     def command(self, duration_s: float, out_path: str) -> List[str]:
         # System-wide (-a) is what you want for irq/tlb tracepoints and energy/throttle events.
         # Use `-- sleep <duration>` as a stable wall-clock window.
-        # Output is text; we keep it as-is.
+        # Note: perf stat outputs to stderr by default; -o redirects it to a file.
         return [
             "sudo", "-n", "perf", "stat",
             "-a",
@@ -356,7 +356,10 @@ def main() -> int:
 
     # Start perf stat in the background (system-wide; fixed window via sleep)
     perf_cmd = plan.command(args.duration_s, perf_out)
-    perf_proc = subprocess.Popen(perf_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    # Redirect any remaining stderr (warnings, etc.) to a log file to keep terminal clean
+    perf_log = os.path.join(args.out_dir, "perf_stderr.log")
+    with open(perf_log, "w") as perf_log_f:
+        perf_proc = subprocess.Popen(perf_cmd, stdout=subprocess.DEVNULL, stderr=perf_log_f)
 
     # /proc sampler loop for the same duration window
     proc_header = [
