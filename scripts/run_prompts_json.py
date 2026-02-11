@@ -13,12 +13,12 @@ def run():
     ap.add_argument("--json", required=True, help="Path to prompts JSON (list of objects with 'instructions').")
     ap.add_argument("--label", required=True, help="Run label, e.g. neutral or emotional.")
     ap.add_argument("--container", default="mccviahat-llama", help="Docker container name.")
-    ap.add_argument("--n_predict", type=int, default=40)
+    ap.add_argument("--n_predict", type=int, default=50)
     ap.add_argument("--baseline_s", type=float, default=2.0)
     ap.add_argument("--tail_s", type=float, default=2.0)
-    ap.add_argument("--budget_s", type=float, default=60.0, help="Fixed time budget for sending all prompts.")
+    ap.add_argument("--budget_s", type=float, default=75.0, help="Fixed time budget for sending all prompts.")
     ap.add_argument("--interval_s", type=float, default=0.2, help="Sampling interval for proc sampler.")
-    ap.add_argument("--per_request_timeout_s", type=float, default=12.0, help="Hard timeout per request.")
+    ap.add_argument("--per_request_timeout_s", type=float, default=20.0, help="Hard timeout per request.")
     args = ap.parse_args()
 
     prompts = json.load(open(args.json, "r", encoding="utf-8"))
@@ -78,7 +78,7 @@ def run():
             if now_ns() >= (t0_ns + int((args.baseline_s + args.budget_s) * 1e9)):
                 break
 
-            payload = json.dumps({"prompt": instr, "n_predict": args.n_predict})
+            payload = json.dumps({"prompt": instr, "n_predict": args.n_predict, "ignore_eos": True})
             t_req_start = now_ns()
             try:
                 out = subprocess.check_output(
