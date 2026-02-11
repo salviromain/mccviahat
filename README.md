@@ -19,8 +19,15 @@ bash scripts/llama_up.sh
 
 ## Run an experiment
 
+Reset the server between conditions to clear the KV cache (prevents cache-hit confounds):
+
 ```bash
+bash scripts/reset_server.sh
+
 python3 scripts/run_prompts_json.py --json prompts/neutral.json   --label neutral
+
+bash scripts/reset_server.sh
+
 python3 scripts/run_prompts_json.py --json prompts/emotional.json --label emotional
 ```
 
@@ -34,6 +41,8 @@ Each run creates a directory under `runs/<timestamp>_<label>/` containing:
 | `responses.jsonl` | Per-prompt request timing and LLM response |
 | `kernel_log.txt` | Kernel log slice (MCE, hardware errors) |
 | `collector_meta.json` | Collector config and timestamps |
+| `collector_stdout.log` | Collector console output (redirected to avoid terminal interleaving) |
+| `perf_stderr.log` | perf stderr (warnings, multiplexing notices) |
 | `meta.json` | Run config (label, PID, timing budget) |
 
 ## Analyze
@@ -46,10 +55,11 @@ Copy `runs/` to your local machine, then open `analysis/hat_substrate_compare.ip
 prompts/              # Prompt stimuli (5 emotional, 5 neutral)
 collectors/           # substrate_collector.py — perf + /proc + /sys sampler
 scripts/              # Node bootstrap, Docker lifecycle, experiment runner
+  reset_server.sh     # Restart llama.cpp container (clears KV cache)
 docker/llama_server/  # Dockerfile for llama.cpp CPU server
-analysis/             # Jupyter notebook for data exploration
+analysis/             # Jupyter notebook for data exploration & feature engineering
 ```
 
 ## Timing model
 
-Each run uses a **fixed 44 s window** (2 s baseline → 40 s prompt budget → 2 s tail) so that emotional and neutral runs are directly comparable regardless of how many prompts complete.
+Each run uses a **fixed 64 s window** (2 s baseline → 60 s prompt budget → 2 s tail) so that emotional and neutral runs are directly comparable regardless of how many prompts complete.

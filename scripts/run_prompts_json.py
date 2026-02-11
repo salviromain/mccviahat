@@ -46,17 +46,22 @@ def run():
     t0_ns = now_ns()
     t_end_target_ns = t0_ns + int(total_s * 1e9)
 
-    # Start proc sampler for the full fixed window
-    # replace the proc_sampler Popen with:
-    subprocess.Popen([
-    "python3", "collectors/substrate_collector.py",
-    "--out_dir", str(out_dir),
-    "--pid", str(pid),
-    "--duration_s", str(total_s),
-    "--perf_interval_ms", "1",
-    "--proc_interval_s", str(args.interval_s),
-    "--collect_kernel_log",
-    ])
+    # Start substrate collector for the full fixed window.
+    # Redirect its stdout/stderr to a log file so it doesn't
+    # interleave with our own output or the shell prompt.
+    collector_log_path = out_dir / "collector_stdout.log"
+    collector_log = open(collector_log_path, "w", encoding="utf-8")
+    collector_proc = subprocess.Popen(
+        ["python3", "collectors/substrate_collector.py",
+         "--out_dir", str(out_dir),
+         "--pid", str(pid),
+         "--duration_s", str(total_s),
+         "--perf_interval_ms", "1",
+         "--proc_interval_s", str(args.interval_s),
+         "--collect_kernel_log"],
+        stdout=collector_log,
+        stderr=subprocess.STDOUT,
+    )
 
 
     # Baseline
@@ -122,6 +127,16 @@ def run():
         "json_source": os.path.abspath(args.json),
     }
     meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
+
+    # Wait for the substrate collector to finish before printing anything.
+    print("Waiting for substrate collector to finish ...", flush=True)
+    collector_proc.wait()
+    collector_log.close()
+
+    # Print collector log so the user sees what it wrote.
+    print("\n--- substrate_collector output ---")
+    print(collector_log_path.read_text(encoding="utf-8").rstrip())
+    print("--- end ---\n")
 
     print(f"Wrote: {out_dir}/")
     print(f"  {csv_path}")
