@@ -19,7 +19,7 @@ def run():
     ap.add_argument("--budget_s", type=float, default=None,
                     help="Fixed time budget (s). Default: auto = n_prompts × per_request_timeout_s.")
     ap.add_argument("--interval_s", type=float, default=0.01, help="Sampling interval for proc sampler.")
-    ap.add_argument("--per_request_timeout_s", type=float, default=15.0, help="Hard timeout per request.")
+    ap.add_argument("--per_request_timeout_s", type=float, default=25.0, help="Hard timeout per request.")
     args = ap.parse_args()
 
     prompts = json.load(open(args.json, "r", encoding="utf-8"))
