@@ -14,20 +14,24 @@ def run():
     ap.add_argument("--label", required=True, help="Run label, e.g. neutral or emotional.")
     ap.add_argument("--container", default="mccviahat-llama", help="Docker container name.")
     ap.add_argument("--n_predict", type=int, default=50)
-    ap.add_argument("--baseline_s", type=float, default=2.0)
-    ap.add_argument("--tail_s", type=float, default=2.0)
-    ap.add_argument("--budget_s", type=float, default=75.0, help="Fixed time budget for sending all prompts.")
-    ap.add_argument("--interval_s", type=float, default=0.2, help="Sampling interval for proc sampler.")
-    ap.add_argument("--per_request_timeout_s", type=float, default=20.0, help="Hard timeout per request.")
+    ap.add_argument("--baseline_s", type=float, default=3.0)
+    ap.add_argument("--tail_s", type=float, default=3.0)
+    ap.add_argument("--budget_s", type=float, default=None,
+                    help="Fixed time budget (s). Default: auto = n_prompts × per_request_timeout_s.")
+    ap.add_argument("--interval_s", type=float, default=0.01, help="Sampling interval for proc sampler.")
+    ap.add_argument("--per_request_timeout_s", type=float, default=15.0, help="Hard timeout per request.")
     args = ap.parse_args()
 
     prompts = json.load(open(args.json, "r", encoding="utf-8"))
-    if not isinstance(prompts, list):
-        raise SystemExit("JSON must be a list.")
-    # keep it strict: first 5 only
-    prompts = prompts[:5]
-    if len(prompts) != 5:
-        raise SystemExit(f"Need 5 prompts, got {len(prompts)}")
+    if not isinstance(prompts, list) or len(prompts) == 0:
+        raise SystemExit("JSON must be a non-empty list.")
+
+    # Auto-compute budget: n_prompts × per_request_timeout_s (worst-case estimate).
+    # --budget_s overrides if given explicitly.
+    if args.budget_s is None:
+        args.budget_s = len(prompts) * args.per_request_timeout_s
+    print(f"Prompts: {len(prompts)},  budget: {args.budget_s:.0f}s "
+          f"({args.budget_s/60:.1f} min),  per-request timeout: {args.per_request_timeout_s}s")
 
     # Resolve container PID on host
     pid = sh(["docker", "inspect", "-f", "{{.State.Pid}}", args.container])
@@ -116,6 +120,7 @@ def run():
         "label": args.label,
         "container": args.container,
         "pid": int(pid),
+        "n_prompts": len(prompts),
         "n_predict": args.n_predict,
         "baseline_s": args.baseline_s,
         "budget_s": args.budget_s,
