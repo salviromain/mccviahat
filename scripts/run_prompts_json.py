@@ -25,6 +25,9 @@ def run():
     prompts = json.load(open(args.json, "r", encoding="utf-8"))
     if not isinstance(prompts, list) or len(prompts) == 0:
         raise SystemExit("JSON must be a non-empty list.")
+    if len(prompts) > 20:
+        print(f"Capping prompts from {len(prompts)} → 20")
+        prompts = prompts[:20]
 
     # Auto-compute budget: n_prompts × per_request_timeout_s (worst-case estimate).
     # --budget_s overrides if given explicitly.
