@@ -8,7 +8,7 @@
 
 ## 1  Executive Summary
 
-We ran Llama-2-7B (CPU-only, llama.cpp) on a CloudLab bare-metal node under two
+Iran Llama-2-7B (CPU-only, llama.cpp) on a CloudLab bare-metal node under two
 prompt conditions — 20 neutral (WikiHow) and 20 emotional (Creepypasta) — while
 recording 16 hardware/software events at 1 ms resolution.
 
@@ -46,7 +46,7 @@ issues in either run.
 ## 3  Feature Engineering
 
 Each prompt becomes one observation (n = 40 total). From the 1 ms perf time series
-in each request window, we extract **160 features** across five categories:
+in each request window, Iextract **160 features** across five categories:
 
 | Category | Count | What it captures |
 |---|---|---|
@@ -74,7 +74,7 @@ which is exactly why request duration is a confounder.
 
 ## 4  Confounders
 
-We identified five confounders — variables that mechanically drive feature differences
+Iidentified five confounders — variables that mechanically drive feature differences
 independently of emotional content:
 
 | Confounder | Balanced? | Why it matters |
@@ -114,8 +114,7 @@ confounders explain most of the apparent condition difference.
 
 PERMANOVA assumes groups have equal spread. Both raw and residualised data violate
 this (p = 0.0004 and p = 0.04) — the emotional condition produces more *variable*
-hardware signatures, likely because Creepypasta prompts are more heterogeneous in
-style than WikiHow.
+hardware signatures.
 
 ---
 
@@ -133,14 +132,14 @@ style than WikiHow.
 ### The Challenge
 
 The hardware differences are largely attributable to *how long and how hard* the model
-works on each prompt type, not the emotional content itself. We want to isolate the
+works on each prompt type, not the emotional content itself. Iwant to isolate the
 effect of prompt content on the substrate, but it's entangled with different inference
 dynamics (speed, CPU load, thermal state).
 
 ### The Key Question
 
 **Is there a substrate signature of emotional processing *beyond* the mechanical
-effects of different computational loads?** The pilot can't answer this yet — we need
+effects of different computational loads?** The pilot can't answer this yet — Ineed
 replications, better prompt matching, and a fixed per-process CPU tracker.
 
 ---
@@ -165,7 +164,7 @@ run** (use `docker top` or `pgrep` to find the real PID).
 
 ## 8  What to Tell Your Professor
 
-> "The pipeline is working — we collected 16 perf events at 1 ms resolution for
+> "The pipeline is working — Icollected 16 perf events at 1 ms resolution for
 > 20 prompts per condition over 8-minute runs with no data quality issues. Raw
 > multivariate analysis shows highly significant separation between conditions
 > (PERMANOVA F = 7.0, p = 0.0001), confirming that different prompt types produce
