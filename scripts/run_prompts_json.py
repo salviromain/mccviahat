@@ -80,7 +80,12 @@ def run():
             if not isinstance(instr, str) or not instr.strip():
                 raise SystemExit("Each prompt must have a non-empty 'instructions' string.")
 
-            payload = json.dumps({"prompt": instr, "n_predict": args.n_predict, "ignore_eos": True})
+            payload = json.dumps({
+                "prompt": instr,
+                "n_predict": args.n_predict,
+                "ignore_eos": True,
+                "logit_bias": [[2, -100.0]],  # EOS token=2 for Llama-2; -100 prevents selection
+            })
             t_req_start = now_ns()
             try:
                 out = subprocess.check_output(
