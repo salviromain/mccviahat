@@ -6,9 +6,14 @@ Goal: one "collector" process you can start before prompt execution and stop aft
 compatible with your fixed-window runner (run_prompts_json).
 
 This collector captures:
-- 1ms-bucket perf stats for system-wide kernel tracepoints and PMU/power signals
-  (irq/softirq activity, tlb_flush tracepoint, thermal/power/throttle PMU events)
-  Plus low-overhead software counters (context-switches, cpu-migrations, page-faults)
+- 1ms-bucket perf stats for system-wide events (26 events, 4 categories):
+  * Kernel tracepoints: irq/softirq/tasklet activity, tlb_flush
+  * Software counters: context-switches, cpu-migrations, page-faults, cpu-clock
+  * PMU hardware counters: cache-misses, cache-references, LLC-load-misses,
+    branch-misses, branch-instructions, instructions, cycles,
+    stalled-cycles-frontend, stalled-cycles-backend, dTLB-load-misses
+  * Power/thermal: core_power.throttle, msr/cpu_thermal_margin,
+    power/energy-pkg, power/energy-ram
 - a low-overhead /proc time series for the target host PID (utime/stime/rss) + /proc/stat CPU totals
 - kernel log slice for the collection window (for rare events like MCE), saved as text
 - Additional /proc and /sys metrics sampled at proc_interval_s:
@@ -369,12 +374,21 @@ def main() -> int:
     # Fail fast if sudo is not usable non-interactively
     fail_fast_sudo()
 
-    # Default event set aligned to your stated needs and what your node listed:
-    # - irq tracepoints (interrupts/softirqs/tasklets)
-    # - tlb:tlb_flush (proxy for shootdown/flush activity)
-    # - thermal/power/throttle PMU signals (as available on your system)
-    # - software counters (context-switches, cpu-migrations, page-faults, cpu-clock)
+    # Default event set:
+    #
+    # 1. Kernel tracepoints — irq/softirq/tasklet activity, TLB flushes
+    # 2. Software counters  — context-switches, cpu-migrations, page-faults, cpu-clock
+    # 3. PMU hardware counters — cache hierarchy, branch prediction, pipeline stalls,
+    #    instruction mix, TLB (hardware-level). These capture how the silicon itself
+    #    responds to different data flowing through the same code paths. The LLM cannot
+    #    control cache replacement policy, branch predictor state, or pipeline stalls.
+    # 4. Power/thermal — DVFS, throttle, energy, thermal margin
+    #
+    # Note: With >8 events perf will multiplex PMU counters (time-share the hardware
+    # registers and extrapolate). This is standard and accurate at 1ms aggregation.
+    # The pct_running column in the raw output indicates multiplexing fraction.
     default_events = [
+        # ── kernel tracepoints ──
         "irq:irq_handler_entry",
         "irq:irq_handler_exit",
         "irq:softirq_entry",
@@ -383,10 +397,23 @@ def main() -> int:
         "irq:tasklet_entry",
         "irq:tasklet_exit",
         "tlb:tlb_flush",
+        # ── software counters ──
         "context-switches",
         "cpu-migrations",
         "page-faults",
         "cpu-clock",
+        # ── PMU hardware counters (microarchitecture) ──
+        "cache-misses",
+        "cache-references",
+        "LLC-load-misses",
+        "branch-misses",
+        "branch-instructions",
+        "instructions",
+        "cycles",
+        "stalled-cycles-frontend",
+        "stalled-cycles-backend",
+        "dTLB-load-misses",
+        # ── power / thermal ──
         "core_power.throttle",
         "msr/cpu_thermal_margin/",
         "power/energy-pkg/",
