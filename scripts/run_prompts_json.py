@@ -25,9 +25,9 @@ def run():
     prompts = json.load(open(args.json, "r", encoding="utf-8"))
     if not isinstance(prompts, list) or len(prompts) == 0:
         raise SystemExit("JSON must be a non-empty list.")
-    if len(prompts) > 20:
+    if len(prompts) > 5:
         print(f"Capping prompts from {len(prompts)} → 20")
-        prompts = prompts[:20]
+        prompts = prompts[:5]
 
     # Auto-compute budget: n_prompts × per_request_timeout_s (worst-case estimate).
     # --budget_s overrides if given explicitly.
@@ -114,7 +114,7 @@ def run():
 
     # Fixed 10-second tail after last prompt completes
     t_last_prompt_ns = now_ns()
-    tail_s = 10.0
+    tail_s =3.0
     print(f"All prompts done. Sleeping {tail_s:.0f}s tail …", flush=True)
     time.sleep(tail_s)
     t_actual_end_ns = now_ns()
