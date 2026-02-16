@@ -230,12 +230,14 @@ class PerfPlan:
     events: List[str]
 
     def command(self, duration_s: float, out_path: str) -> List[str]:
-        # System-wide (-a) is what you want for irq/tlb tracepoints and energy/throttle events.
-        # Use `-- sleep <duration>` as a stable wall-clock window.
-        # Note: perf stat outputs to stderr by default; -o redirects it to a file.
+        # System-wide (-a) with CSV output (-x ',').
+        # -x replaces the human-readable format with machine-parseable CSV.
+        # Fields: timestamp, counter-value, unit, event-name, ...
+        # -o writes to file (perf stat outputs to stderr by default).
         return [
             "sudo", "-n", "perf", "stat",
             "-a",
+            "-x", ",",
             "-I", str(self.interval_ms),
             "-e", ",".join(self.events),
             "-o", out_path,
@@ -275,6 +277,68 @@ def fail_fast_sudo() -> None:
             "sudo is required for perf tracepoints (tracefs is root-only). "
             "Configure passwordless sudo for this node/user, or run collector as root."
         )
+
+
+def _postprocess_perf_csv(raw_path: str, out_path: str) -> None:
+    """Convert perf stat -x ',' raw output into a clean wide-format CSV.
+    
+    perf stat -x ',' -I <ms> produces lines like:
+        <timestamp>,<value>,<unit>,<event>,<runtime>,<pct_running>,...
+    or (no unit):
+        <timestamp>,<value>,,<event>,<runtime>,<pct_running>,...
+    
+    We pivot this into one row per timestamp, one column per event.
+    Output: t_s, event_1, event_2, ...
+    """
+    from collections import OrderedDict
+
+    rows_by_ts: dict = OrderedDict()
+    events_seen: list = []
+
+    with open(raw_path, "r", encoding="utf-8", errors="replace") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split(",")
+            if len(parts) < 4:
+                continue
+            ts_str = parts[0].strip()
+            val_str = parts[1].strip()
+            # parts[2] is unit (may be empty)
+            event = parts[3].strip()
+            if not event:
+                continue
+            try:
+                ts = float(ts_str)
+            except ValueError:
+                continue
+            if val_str.startswith("<") or val_str == "":
+                val = float("nan")
+            else:
+                try:
+                    val = float(val_str)
+                except ValueError:
+                    val = float("nan")
+
+            if event not in events_seen:
+                events_seen.append(event)
+            if ts not in rows_by_ts:
+                rows_by_ts[ts] = {}
+            rows_by_ts[ts][event] = val
+
+    # Write wide-format CSV
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        header = ["t_s"] + events_seen
+        w.writerow(header)
+        for ts in rows_by_ts:
+            row = [ts]
+            for evt in events_seen:
+                row.append(rows_by_ts[ts].get(evt, ""))
+            w.writerow(row)
+
+    print(f"  perf_stat.csv: {len(rows_by_ts)} rows × {len(events_seen)} events")
 
 
 def main() -> int:
@@ -456,6 +520,12 @@ def main() -> int:
         perf_proc.kill()
         perf_proc.wait(timeout=5.0)
 
+    # Post-process perf -x CSV into a clean wide-format CSV.
+    # Raw -x output has fields: timestamp,value,unit,event,...
+    # We pivot to: t_s, event1, event2, ...
+    perf_csv_out = os.path.join(args.out_dir, "perf_stat.csv")
+    _postprocess_perf_csv(perf_out, perf_csv_out)
+
     # Kernel log slice (optional, done after to capture full window)
     t1_epoch = time.time()
     if args.collect_kernel_log:
@@ -468,9 +538,10 @@ def main() -> int:
         json.dump(meta, f, indent=2)
 
     print(f"Wrote: {args.out_dir}/")
-    print(f"  perf: {perf_out}")
-    print(f"  proc: {proc_out}")
-    print(f"  proc_system: {proc_sys_out}")
+    print(f"  perf raw:  {perf_out}")
+    print(f"  perf csv:  {perf_csv_out}")
+    print(f"  proc:      {proc_out}")
+    print(f"  proc_sys:  {proc_sys_out}")
     if args.collect_kernel_log:
         print(f"  klog: {klog_out}")
     print(f"  meta: {meta_out}")
