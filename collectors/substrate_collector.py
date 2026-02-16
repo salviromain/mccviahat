@@ -41,6 +41,7 @@ import argparse
 import csv
 import json
 import os
+import signal
 import subprocess
 import time
 from dataclasses import dataclass
@@ -458,7 +459,17 @@ def main() -> int:
     sys_header += sorted(sample_freq.keys())
 
     t_end = time.time() + args.duration_s
-    
+
+    # Handle SIGTERM gracefully so post-processing runs when the runner
+    # kills the collector after the 10-second tail.
+    _stop_requested = False
+
+    def _handle_sigterm(signum, frame):
+        nonlocal _stop_requested
+        _stop_requested = True
+
+    signal.signal(signal.SIGTERM, _handle_sigterm)
+
     with open(proc_out, "w", newline="", encoding="utf-8") as f_proc, \
          open(proc_sys_out, "w", newline="", encoding="utf-8") as f_sys:
         
@@ -468,7 +479,7 @@ def main() -> int:
         w_sys = csv.writer(f_sys)
         w_sys.writerow(sys_header)
 
-        while time.time() < t_end:
+        while time.time() < t_end and not _stop_requested:
             if not pid_exists(pid):
                 break
 
@@ -512,7 +523,10 @@ def main() -> int:
 
             time.sleep(args.proc_interval_s)
 
-    # Wait for perf to finish (it should, because it runs "sleep duration")
+    # Wait for perf to finish (it should, because it runs "sleep duration").
+    # If we were stopped early via SIGTERM, kill perf so we don't block.
+    if _stop_requested:
+        perf_proc.terminate()
     try:
         perf_proc.wait(timeout=max(5.0, args.duration_s + 5.0))
     except subprocess.TimeoutExpired:
