@@ -25,8 +25,12 @@ docker run -d \
   --cpuset-cpus "0-15" \
   -p "${PORT}:8000" \
   -v "${MODEL_DIR}:/models" \
-  -e "MODEL_PATH=${MODEL_PATH}" \
-  "$IMAGE" >/dev/null
+  "$IMAGE" \
+  /opt/llama.cpp/build/bin/llama-server \
+    --host 0.0.0.0 --port 8000 \
+    --model "$MODEL_PATH" \
+    --override-kv tokenizer.ggml.eos_token_id=int:-1 \
+  >/dev/null
 
 echo "Started."
 docker ps --filter "name=$NAME"
