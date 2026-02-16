@@ -49,20 +49,19 @@ def run():
     resp_path = out_dir / "responses.jsonl"
     csv_path  = out_dir / "proc_sample.csv"
 
-    total_s = args.baseline_s + args.budget_s + args.tail_s
+    # Upper-bound duration for the collector (generous; we terminate it early).
+    max_duration_s = args.baseline_s + args.budget_s + 30.0
     t0_ns = now_ns()
-    t_end_target_ns = t0_ns + int(total_s * 1e9)
 
-    # Start substrate collector for the full fixed window.
-    # Redirect its stdout/stderr to a log file so it doesn't
-    # interleave with our own output or the shell prompt.
+    # Start substrate collector.
+    # It will be terminated after the 10-second tail.
     collector_log_path = out_dir / "collector_stdout.log"
     collector_log = open(collector_log_path, "w", encoding="utf-8")
     collector_proc = subprocess.Popen(
         ["python3", "collectors/substrate_collector.py",
          "--out_dir", str(out_dir),
          "--pid", str(pid),
-         "--duration_s", str(total_s),
+         "--duration_s", str(max_duration_s),
          "--perf_interval_ms", "1",
          "--proc_interval_s", str(args.interval_s),
          "--collect_kernel_log"],
@@ -80,10 +79,6 @@ def run():
             instr = p.get("instructions", "")
             if not isinstance(instr, str) or not instr.strip():
                 raise SystemExit("Each prompt must have a non-empty 'instructions' string.")
-
-            # Stop early if we’ve hit the fixed budget window (strict equality)
-            if now_ns() >= (t0_ns + int((args.baseline_s + args.budget_s) * 1e9)):
-                break
 
             payload = json.dumps({"prompt": instr, "n_predict": args.n_predict, "ignore_eos": True})
             t_req_start = now_ns()
@@ -112,11 +107,13 @@ def run():
             rf.write(json.dumps(rec) + "\n")
             req_events.append(rec)
 
-    # Tail / pad until fixed end time (so total ms is identical)
-    remaining_ns = t_end_target_ns - now_ns()
-    if remaining_ns > 0:
-        time.sleep(remaining_ns / 1e9)
-
+    # Fixed 10-second tail after last prompt completes
+    t_last_prompt_ns = now_ns()
+    tail_s = 10.0
+    print(f"All prompts done. Sleeping {tail_s:.0f}s tail …", flush=True)
+    time.sleep(tail_s)
+    t_actual_end_ns = now_ns()
+    actual_total_s = (t_actual_end_ns - t0_ns) / 1e9
 
     meta = {
         "run_id": run_id,
@@ -124,21 +121,28 @@ def run():
         "container": args.container,
         "pid": int(pid),
         "n_prompts": len(prompts),
+        "n_completed": len(req_events),
         "n_predict": args.n_predict,
         "baseline_s": args.baseline_s,
-        "budget_s": args.budget_s,
-        "tail_s": args.tail_s,
+        "tail_s": tail_s,
         "interval_s": args.interval_s,
-        "total_s": total_s,
+        "total_s": actual_total_s,
         "t0_ns": t0_ns,
-        "t_end_target_ns": t_end_target_ns,
+        "t_last_prompt_ns": t_last_prompt_ns,
+        "t_actual_end_ns": t_actual_end_ns,
         "json_source": os.path.abspath(args.json),
     }
     meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
-    # Wait for the substrate collector to finish before printing anything.
-    print("Waiting for substrate collector to finish ...", flush=True)
-    collector_proc.wait()
+    # Terminate the collector (it was launched with a generous upper-bound
+    # duration; we stop it now that the 10-second tail is done).
+    print("Stopping substrate collector …", flush=True)
+    collector_proc.terminate()
+    try:
+        collector_proc.wait(timeout=15)
+    except subprocess.TimeoutExpired:
+        collector_proc.kill()
+        collector_proc.wait()
     collector_log.close()
 
     # Print collector log so the user sees what it wrote.
