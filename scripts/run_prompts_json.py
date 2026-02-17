@@ -63,8 +63,7 @@ def run():
          "--pid", str(pid),
          "--duration_s", str(max_duration_s),
          "--perf_interval_ms", "1",
-         "--proc_interval_s", str(args.interval_s),
-         "--collect_kernel_log"],
+         "--proc_interval_s", str(args.interval_s)],
         stdout=collector_log,
         stderr=subprocess.STDOUT,
     )
