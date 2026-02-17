@@ -1,0 +1,17 @@
+{
+  "run_id": "2026-02-16T22-15-34_emotional_short",
+  "label": "emotional_short",
+  "container": "mccviahat-llama",
+  "pid": 22771,
+  "n_prompts": 5,
+  "n_completed": 5,
+  "n_predict": 50,
+  "baseline_s": 3.0,
+  "tail_s": 3.0,
+  "interval_s": 0.01,
+  "total_s": 76.492353476,
+  "t0_ns": 1771280134756556777,
+  "t_last_prompt_ns": 1771280208248825458,
+  "t_actual_end_ns": 1771280211248910253,
+  "json_source": "/users/rsalvi/mccviahat/prompts/emotional_short.json"
+}
