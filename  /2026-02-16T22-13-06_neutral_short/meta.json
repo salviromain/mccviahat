@@ -1,0 +1,17 @@
+{
+  "run_id": "2026-02-16T22-13-06_neutral_short",
+  "label": "neutral_short",
+  "container": "mccviahat-llama",
+  "pid": 22267,
+  "n_prompts": 5,
+  "n_completed": 5,
+  "n_predict": 50,
+  "baseline_s": 3.0,
+  "tail_s": 3.0,
+  "interval_s": 0.01,
+  "total_s": 77.559741099,
+  "t0_ns": 1771279986333788469,
+  "t_last_prompt_ns": 1771280060893443767,
+  "t_actual_end_ns": 1771280063893529568,
+  "json_source": "/users/rsalvi/mccviahat/prompts/neutral_wikihow_short.json"
+}
