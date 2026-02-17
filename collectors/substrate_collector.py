@@ -2,57 +2,52 @@
 """
 collectors/substrate_collector.py
 
-Goal: one "collector" process you can start before prompt execution and stop after,
-compatible with your fixed-window runner (run_prompts_json).
+HAT-focused collector: captures the Hardware Anomaly Trace (HAT) and supporting
+substrate metrics for an LLM inference server.
 
-This collector captures:
-- 1ms-bucket perf stats for system-wide events (26 default + optional presets):
-  * Kernel tracepoints: irq/softirq/tasklet activity, tlb_flush
-  * Software counters: context-switches, cpu-migrations, page-faults, cpu-clock
-  * PMU hardware counters: cache-misses, cache-references, LLC-load-misses,
-    branch-misses, branch-instructions, instructions, cycles,
-    stalled-cycles-frontend, stalled-cycles-backend, dTLB-load-misses
-  * Power/thermal: core_power.throttle, msr/cpu_thermal_margin,
-    power/energy-pkg, power/energy-ram
+The HAT (§4.2.2 of the thesis) comprises two layers:
 
-  Optional presets (--presets sched,memory,blockio):
-  * sched: sched:sched_switch, sched:sched_wakeup, sched:sched_wakeup_new,
-           sched:sched_migrate_task
-  * memory: kmem:mm_page_alloc, kmem:mm_page_free,
-            vmscan:mm_vmscan_direct_reclaim_begin,
-            vmscan:mm_vmscan_direct_reclaim_end
-  * blockio: block:block_rq_issue, block:block_rq_complete,
-             power:cpu_frequency, power:cpu_idle
+  Layer 1 — Hardware Anomaly Interrupts:
+    Spurious interrupts, Machine Check Exceptions (MCE), Performance Counter
+    Overflow (NMI/PMI), Thermal/Power anomalies, TLB Shootdowns.
 
-  Each preset event is probed at startup; unavailable tracepoints are silently
-  skipped so the collector never fails due to missing kernel config.
+  Layer 2 — Continuous performance metrics that indicate hardware anomalies:
+    Cache hit rates, power consumption variations, thermal sensor readings,
+    memory access pattern entropy, clock cycle variations.
 
-- a low-overhead /proc time series for the target host PID (utime/stime/rss) + /proc/stat CPU totals
-- kernel log slice for the collection window (for rare events like MCE), saved as text
-- Additional /proc and /sys metrics sampled at proc_interval_s:
-  * /proc/interrupts, /proc/softirqs (interrupt counts per CPU)
-  * /proc/pressure/{cpu,memory,io} (PSI metrics)
-  * /proc/net/dev (network I/O counters)
-  * /proc/diskstats (disk I/O counters)
-  * CPU frequency from /sys/.../scaling_cur_freq
+This collector captures both layers via three mechanisms:
 
-Outputs into a run directory:
-- perf_stat.txt
-- proc_sample.csv (process + system CPU)
-- proc_system_sample.csv (interrupts, pressure, network, disk, freq)
-- kernel_log.txt
-- collector_meta.json
+  1. `perf stat -I 1` (1ms buckets, system-wide):
+     - HAT Layer 1 tracepoints: IRQ handlers (including spurious), softirq,
+       TLB flushes, thermal throttle
+     - HAT Layer 2 PMU counters: cache misses/references, LLC misses, branch
+       mispredictions, instructions, cycles, pipeline stalls, dTLB misses
+     - HAT Layer 2 power/energy: RAPL energy (pkg + ram), thermal margin
+     - Supporting events: context-switches, cpu-migrations, page-faults, cpu-clock
 
-Notes:
-- Tracefs is root-only on your nodes; perf tracepoints require sudo.
-- `sudo -n` is used so it fails fast if passwordless sudo is not available.
-- Most new metrics (/proc, /sys) require no special permissions.
+  2. `/proc` + `/sys` polling (200ms):
+     - /proc/interrupts: SPU (spurious), NMI/PMI (perf counter overflow),
+       MCE (machine check), TLB (shootdown), LOC, RES, CAL — all named HAT events
+     - /proc/softirqs: deferred interrupt processing by type
+     - /sys/.../scaling_cur_freq: CPU frequency per core (DVFS confounder)
+     - /proc/stat + /proc/<pid>/stat: CPU utilisation (confounder)
 
-Practical note on CloudLab / bare metal nodes:
-Most of the "cheap" adds are /proc and /sys reads (no root needed), plus some extra
-tracepoints/software perf events (root often needed for tracepoints; PMU access depends
-on perf_event_paranoid and kernel config). In other words: you can add a lot without
-making the collector fragile.
+  3. Kernel log slice (always collected):
+     - journalctl -k: captures MCE records, thermal events, hardware errors
+
+Removed (not HAT-relevant):
+  - /proc/net/dev — no network in inference hot path
+  - /proc/diskstats — model is mmap'd and cached
+  - /proc/pressure/* — OS scheduler accounting, not hardware anomalies
+  - irq:tasklet_entry/exit — near-zero on modern kernels, not a named HAT type
+
+Outputs:
+  perf_stat.txt       — raw perf stat output
+  perf_stat.csv       — wide-format (1 row/ms, 1 col/event)
+  proc_sample.csv     — per-process CPU + RSS (200ms)
+  hat_interrupts.csv  — /proc/interrupts + /proc/softirqs + CPU freq (200ms)
+  kernel_log.txt      — dmesg slice (MCE, thermal, hardware errors)
+  collector_meta.json — configuration + timestamps
 """
 
 import argparse
@@ -66,11 +61,12 @@ from dataclasses import dataclass
 from typing import Tuple, List, Optional
 
 
-# -----------------------------
-# /proc sampling (same logic as your existing proc_sampler.py)
-# -----------------------------
+# ─────────────────────────────────────────────────────────
+# /proc sampling
+# ─────────────────────────────────────────────────────────
 
 def read_proc_stat_cpu() -> Tuple[int, int]:
+    """Return (total_jiffies, idle_jiffies) from /proc/stat."""
     with open("/proc/stat", "r", encoding="utf-8") as f:
         first = f.readline().strip()
 
@@ -89,6 +85,7 @@ def read_proc_stat_cpu() -> Tuple[int, int]:
 
 
 def read_proc_pid_stat(pid: int) -> Tuple[int, int, int]:
+    """Return (utime, stime, rss_pages) for a given PID."""
     path = f"/proc/{pid}/stat"
     with open(path, "r", encoding="utf-8") as f:
         s = f.read().strip()
@@ -96,7 +93,7 @@ def read_proc_pid_stat(pid: int) -> Tuple[int, int, int]:
     rparen = s.rfind(")")
     if rparen == -1:
         raise RuntimeError(f"Unexpected format in {path}: missing ')'")
-    after = s[rparen + 2 :]  # skip ") "
+    after = s[rparen + 2:]  # skip ") "
     fields = after.split()
 
     utime = int(fields[11])
@@ -110,24 +107,27 @@ def pid_exists(pid: int) -> bool:
     return os.path.exists(f"/proc/{pid}")
 
 
-# -----------------------------
-# Additional /proc and /sys sampling
-# -----------------------------
+# ─────────────────────────────────────────────────────────
+# HAT-relevant /proc and /sys reads
+# ─────────────────────────────────────────────────────────
 
 def read_proc_interrupts() -> dict:
-    """Parse /proc/interrupts and return total counts per interrupt type."""
+    """Parse /proc/interrupts -> {irq_name: total_count_across_cpus}.
+
+    Key HAT rows: SPU (spurious), NMI, PMI (perf counter overflow),
+    MCE (machine check), TLB (shootdown), LOC (local APIC timer),
+    RES (rescheduling IPI), CAL (function call IPI).
+    """
     try:
         with open("/proc/interrupts", "r", encoding="utf-8") as f:
             lines = f.readlines()
-        
-        # First line is CPU header, skip it
+
         data = {}
         for line in lines[1:]:
             parts = line.split()
             if not parts:
                 continue
             irq_name = parts[0].rstrip(":")
-            # Sum counts across all CPUs (numeric fields after IRQ name)
             counts = [int(x) for x in parts[1:] if x.isdigit()]
             data[irq_name] = sum(counts)
         return data
@@ -136,19 +136,20 @@ def read_proc_interrupts() -> dict:
 
 
 def read_proc_softirqs() -> dict:
-    """Parse /proc/softirqs and return total counts per softirq type."""
+    """Parse /proc/softirqs -> {type: total_count_across_cpus}.
+
+    Types: HI, TIMER, NET_TX, NET_RX, BLOCK, TASKLET, SCHED, HRTIMER, RCU.
+    """
     try:
         with open("/proc/softirqs", "r", encoding="utf-8") as f:
             lines = f.readlines()
-        
-        # First line is CPU header, skip it
+
         data = {}
         for line in lines[1:]:
             parts = line.split()
             if not parts:
                 continue
             sirq_name = parts[0].rstrip(":")
-            # Sum counts across all CPUs
             counts = [int(x) for x in parts[1:] if x.isdigit()]
             data[sirq_name] = sum(counts)
         return data
@@ -156,75 +157,8 @@ def read_proc_softirqs() -> dict:
         return {}
 
 
-def read_proc_pressure(resource: str) -> dict:
-    """Read /proc/pressure/{cpu,memory,io} and return avg10, avg60, avg300, total."""
-    try:
-        with open(f"/proc/pressure/{resource}", "r", encoding="utf-8") as f:
-            lines = f.readlines()
-        
-        result = {}
-        for line in lines:
-            if line.startswith("some") or line.startswith("full"):
-                prefix = line.split()[0]
-                parts = line.split()
-                for part in parts[1:]:
-                    if "=" in part:
-                        k, v = part.split("=")
-                        result[f"{prefix}_{k}"] = float(v)
-        return result
-    except Exception:
-        return {}
-
-
-def read_proc_net_dev() -> dict:
-    """Parse /proc/net/dev and return rx/tx bytes and packets for all interfaces."""
-    try:
-        with open("/proc/net/dev", "r", encoding="utf-8") as f:
-            lines = f.readlines()
-        
-        data = {}
-        for line in lines[2:]:  # Skip two header lines
-            if ":" not in line:
-                continue
-            iface, stats = line.split(":", 1)
-            iface = iface.strip()
-            parts = stats.split()
-            if len(parts) >= 16:
-                data[f"{iface}_rx_bytes"] = int(parts[0])
-                data[f"{iface}_rx_packets"] = int(parts[1])
-                data[f"{iface}_tx_bytes"] = int(parts[8])
-                data[f"{iface}_tx_packets"] = int(parts[9])
-        return data
-    except Exception:
-        return {}
-
-
-def read_proc_diskstats() -> dict:
-    """Parse /proc/diskstats and return read/write counts for major block devices."""
-    try:
-        with open("/proc/diskstats", "r", encoding="utf-8") as f:
-            lines = f.readlines()
-        
-        data = {}
-        for line in lines:
-            parts = line.split()
-            if len(parts) < 14:
-                continue
-            dev_name = parts[2]
-            # Skip loop, ram, and partition devices; focus on whole disks
-            if dev_name.startswith("loop") or dev_name.startswith("ram") or any(c.isdigit() for c in dev_name[-1:]):
-                continue
-            data[f"{dev_name}_reads_completed"] = int(parts[3])
-            data[f"{dev_name}_sectors_read"] = int(parts[5])
-            data[f"{dev_name}_writes_completed"] = int(parts[7])
-            data[f"{dev_name}_sectors_written"] = int(parts[9])
-        return data
-    except Exception:
-        return {}
-
-
 def read_cpu_frequencies() -> dict:
-    """Read current CPU frequencies from /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq."""
+    """Read per-core CPU frequency from sysfs (kHz)."""
     try:
         import glob
         data = {}
@@ -239,9 +173,9 @@ def read_cpu_frequencies() -> dict:
         return {}
 
 
-# -----------------------------
-# perf + kernel log orchestration
-# -----------------------------
+# ─────────────────────────────────────────────────────────
+# perf + kernel log
+# ─────────────────────────────────────────────────────────
 
 @dataclass
 class PerfPlan:
@@ -249,10 +183,6 @@ class PerfPlan:
     events: List[str]
 
     def command(self, duration_s: float, out_path: str) -> List[str]:
-        # System-wide (-a) with CSV output (-x ',').
-        # -x replaces the human-readable format with machine-parseable CSV.
-        # Fields: timestamp, counter-value, unit, event-name, ...
-        # -o writes to file (perf stat outputs to stderr by default).
         return [
             "sudo", "-n", "perf", "stat",
             "-a",
@@ -266,16 +196,20 @@ class PerfPlan:
 
 
 def write_kernel_log_slice(out_path: str, t_start_epoch: float, t_end_epoch: float) -> None:
-    # Use kernel log slice for rare events like MCE.
-    # journalctl generally requires root for full kernel logs on many systems.
-    # We use `--since @<epoch>` / `--until @<epoch>`.
+    """Dump kernel log (dmesg) for the collection window.
+
+    Captures MCE records, thermal events, and other hardware errors --
+    these are HAT Layer 1 anomalies that don't always generate perf events.
+    """
     since_arg = f"@{t_start_epoch:.3f}"
     until_arg = f"@{t_end_epoch:.3f}"
-    cmd = ["sudo", "-n", "journalctl", "-k", "--since", since_arg, "--until", until_arg, "--no-pager"]
+    cmd = ["sudo", "-n", "journalctl", "-k", "--since", since_arg,
+           "--until", until_arg, "--no-pager"]
     try:
         out = subprocess.check_output(cmd, text=True, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        out = f"[kernel_log_error]\ncommand: {' '.join(cmd)}\nexit_code: {e.returncode}\noutput:\n{e.output}\n"
+        out = (f"[kernel_log_error]\ncommand: {' '.join(cmd)}\n"
+               f"exit_code: {e.returncode}\noutput:\n{e.output}\n")
 
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(out)
@@ -286,8 +220,6 @@ def ensure_dir(path: str) -> None:
 
 
 def fail_fast_sudo() -> None:
-    # Ensure we don't hang waiting for a password prompt.
-    # If this fails, user must configure sudo or run collector as root.
     cmd = ["sudo", "-n", "true"]
     try:
         subprocess.check_call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -298,15 +230,22 @@ def fail_fast_sudo() -> None:
         )
 
 
+def _probe_event(event: str) -> bool:
+    """Return True if perf can open this event on the running kernel."""
+    try:
+        subprocess.check_call(
+            ["sudo", "-n", "perf", "stat", "-e", event, "--", "true"],
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        )
+        return True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return False
+
+
 def _postprocess_perf_csv(raw_path: str, out_path: str) -> None:
     """Convert perf stat -x ',' raw output into a clean wide-format CSV.
-    
-    perf stat -x ',' -I <ms> produces lines like:
-        <timestamp>,<value>,<unit>,<event>,<runtime>,<pct_running>,...
-    or (no unit):
-        <timestamp>,<value>,,<event>,<runtime>,<pct_running>,...
-    
-    We pivot this into one row per timestamp, one column per event.
+
+    Input:  timestamp,value,unit,event,runtime,pct_running,...
     Output: t_s, event_1, event_2, ...
     """
     from collections import OrderedDict
@@ -324,7 +263,6 @@ def _postprocess_perf_csv(raw_path: str, out_path: str) -> None:
                 continue
             ts_str = parts[0].strip()
             val_str = parts[1].strip()
-            # parts[2] is unit (may be empty)
             event = parts[3].strip()
             if not event:
                 continue
@@ -346,7 +284,6 @@ def _postprocess_perf_csv(raw_path: str, out_path: str) -> None:
                 rows_by_ts[ts] = {}
             rows_by_ts[ts][event] = val
 
-    # Write wide-format CSV
     with open(out_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         header = ["t_s"] + events_seen
@@ -357,20 +294,25 @@ def _postprocess_perf_csv(raw_path: str, out_path: str) -> None:
                 row.append(rows_by_ts[ts].get(evt, ""))
             w.writerow(row)
 
-    print(f"  perf_stat.csv: {len(rows_by_ts)} rows × {len(events_seen)} events")
+    print(f"  perf_stat.csv: {len(rows_by_ts)} rows x {len(events_seen)} events")
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--out_dir", required=True, help="Run output directory (e.g., runs/<run_id>).")
-    ap.add_argument("--pid", type=int, required=True, help="Target host PID (e.g., docker inspect .State.Pid).")
-    ap.add_argument("--duration_s", type=float, required=True, help="Total wall-clock duration to collect.")
-    ap.add_argument("--perf_interval_ms", type=int, default=1, help="perf stat bucket interval in ms (default: 1).")
-    ap.add_argument("--proc_interval_s", type=float, default=0.2, help="/proc sampling interval seconds (default: 0.2).")
-    ap.add_argument("--collect_kernel_log", action="store_true", help="Also dump kernel log slice for window.")
-    ap.add_argument("--events", type=str, default="", help="Comma-separated perf events override (optional).")
-    ap.add_argument("--presets", type=str, default="",
-                    help="Comma-separated optional preset groups to add: sched,memory,blockio (or 'all').")
+    ap = argparse.ArgumentParser(
+        description="HAT-focused substrate collector for LLM inference experiments."
+    )
+    ap.add_argument("--out_dir", required=True,
+                    help="Run output directory (e.g., runs/<run_id>).")
+    ap.add_argument("--pid", type=int, required=True,
+                    help="Target host PID (e.g., docker inspect .State.Pid).")
+    ap.add_argument("--duration_s", type=float, required=True,
+                    help="Total wall-clock duration to collect.")
+    ap.add_argument("--perf_interval_ms", type=int, default=1,
+                    help="perf stat bucket interval in ms (default: 1).")
+    ap.add_argument("--proc_interval_s", type=float, default=0.2,
+                    help="/proc sampling interval seconds (default: 0.2).")
+    ap.add_argument("--events", type=str, default="",
+                    help="Comma-separated perf events override (optional).")
     args = ap.parse_args()
 
     if args.duration_s <= 0:
@@ -385,39 +327,46 @@ def main() -> int:
         raise SystemExit(f"PID {pid} does not exist on this host. Did you pass the host PID?")
 
     ensure_dir(args.out_dir)
-
-    # Fail fast if sudo is not usable non-interactively
     fail_fast_sudo()
 
-    # Default event set:
+    # ================================================================
+    # HAT event set
+    # ================================================================
     #
-    # 1. Kernel tracepoints — irq/softirq/tasklet activity, TLB flushes
-    # 2. Software counters  — context-switches, cpu-migrations, page-faults, cpu-clock
-    # 3. PMU hardware counters — cache hierarchy, branch prediction, pipeline stalls,
-    #    instruction mix, TLB (hardware-level). These capture how the silicon itself
-    #    responds to different data flowing through the same code paths. The LLM cannot
-    #    control cache replacement policy, branch predictor state, or pipeline stalls.
-    # 4. Power/thermal — DVFS, throttle, energy, thermal margin
+    # HAT Layer 1 -- Hardware Anomaly Interrupts (tracepoints):
+    #   irq:irq_handler_entry/exit -- ALL hardware IRQs (includes spurious)
+    #   irq:softirq_entry/exit/raise -- deferred interrupt processing
+    #   tlb:tlb_flush -- TLB Shootdown (named HAT anomaly)
+    #   core_power.throttle -- Thermal/Power anomaly (named HAT anomaly)
+    #   mce:mce_record -- Machine Check Exception (named HAT anomaly, probed)
     #
-    # Note: With >8 events perf will multiplex PMU counters (time-share the hardware
-    # registers and extrapolate). This is standard and accurate at 1ms aggregation.
-    # The pct_running column in the raw output indicates multiplexing fraction.
-    default_events = [
-        # ── kernel tracepoints ──
+    # HAT Layer 2 -- Continuous performance metrics (PMU counters):
+    #   cache-misses, cache-references -- cache hit rate per time unit
+    #   LLC-load-misses -- last-level cache pressure
+    #   branch-misses, branch-instructions -- branch prediction accuracy
+    #   instructions, cycles -- IPC / clock cycle variations
+    #   stalled-cycles-frontend, stalled-cycles-backend -- pipeline stalls
+    #   dTLB-load-misses -- memory access pattern indicator
+    #
+    # HAT Layer 2 -- Power/thermal:
+    #   power/energy-pkg/, power/energy-ram/ -- power consumption variation
+    #   msr/cpu_thermal_margin/ -- thermal sensor reading
+    #
+    # Supporting (confounders/context, not HAT itself):
+    #   context-switches, cpu-migrations -- scheduling context
+    #   page-faults -- memory management context
+    #   cpu-clock -- CPU time normaliser
+
+    hat_events = [
+        # -- HAT Layer 1: hardware anomaly tracepoints --
         "irq:irq_handler_entry",
         "irq:irq_handler_exit",
         "irq:softirq_entry",
         "irq:softirq_exit",
         "irq:softirq_raise",
-        "irq:tasklet_entry",
-        "irq:tasklet_exit",
-        "tlb:tlb_flush",
-        # ── software counters ──
-        "context-switches",
-        "cpu-migrations",
-        "page-faults",
-        "cpu-clock",
-        # ── PMU hardware counters (microarchitecture) ──
+        "tlb:tlb_flush",                # TLB Shootdown
+        "core_power.throttle",          # Thermal/Power Anomaly
+        # -- HAT Layer 2: PMU hardware counters --
         "cache-misses",
         "cache-references",
         "LLC-load-misses",
@@ -428,77 +377,42 @@ def main() -> int:
         "stalled-cycles-frontend",
         "stalled-cycles-backend",
         "dTLB-load-misses",
-        # ── power / thermal ──
-        "core_power.throttle",
+        # -- HAT Layer 2: power / thermal --
         "msr/cpu_thermal_margin/",
         "power/energy-pkg/",
         "power/energy-ram/",
+        # -- Supporting (confounders) --
+        "context-switches",
+        "cpu-migrations",
+        "page-faults",
+        "cpu-clock",
     ]
 
-    # ── Optional preset groups ──
-    # Each preset adds tracepoints that may or may not exist on the running
-    # kernel.  We probe each event with `perf stat -e <event> -- true` before
-    # adding it so the collector never fails due to missing kernel config.
-    PRESETS = {
-        "sched": [
-            "sched:sched_switch",
-            "sched:sched_wakeup",
-            "sched:sched_wakeup_new",
-            "sched:sched_migrate_task",
-        ],
-        "memory": [
-            "kmem:mm_page_alloc",
-            "kmem:mm_page_free",
-            "vmscan:mm_vmscan_direct_reclaim_begin",
-            "vmscan:mm_vmscan_direct_reclaim_end",
-        ],
-        "blockio": [
-            "block:block_rq_issue",
-            "block:block_rq_complete",
-            "power:cpu_frequency",
-            "power:cpu_idle",
-        ],
-    }
+    # Probe optional HAT Layer 1 events that depend on kernel config
+    probed_events: List[str] = []
+    optional_hat_events = [
+        "mce:mce_record",               # Machine Check Exception
+    ]
+    for evt in optional_hat_events:
+        if _probe_event(evt):
+            probed_events.append(evt)
+            print(f"  + {evt}")
+        else:
+            print(f"  x {evt} (not available on this kernel -- skipped)")
 
-    def _probe_event(event: str) -> bool:
-        """Return True if perf can open this event on the running kernel."""
-        try:
-            subprocess.check_call(
-                ["sudo", "-n", "perf", "stat", "-e", event, "--", "true"],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            )
-            return True
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return False
-
-    # Resolve requested presets
-    preset_events: List[str] = []
-    if args.presets:
-        requested = [p.strip().lower() for p in args.presets.split(",") if p.strip()]
-        if "all" in requested:
-            requested = list(PRESETS.keys())
-        for name in requested:
-            if name not in PRESETS:
-                print(f"WARNING: unknown preset '{name}' — valid: {', '.join(PRESETS)}")
-                continue
-            for evt in PRESETS[name]:
-                if _probe_event(evt):
-                    preset_events.append(evt)
-                    print(f"  ✓ {evt}")
-                else:
-                    print(f"  ✗ {evt} (not available on this kernel — skipped)")
-
-    events = [e.strip() for e in args.events.split(",") if e.strip()] if args.events else default_events
-    events = events + preset_events  # append probed presets
+    events = ([e.strip() for e in args.events.split(",") if e.strip()]
+              if args.events else hat_events)
+    events = events + probed_events
     plan = PerfPlan(interval_ms=args.perf_interval_ms, events=events)
 
+    # Output paths
     perf_out = os.path.join(args.out_dir, "perf_stat.txt")
     proc_out = os.path.join(args.out_dir, "proc_sample.csv")
-    proc_sys_out = os.path.join(args.out_dir, "proc_system_sample.csv")
+    hat_irq_out = os.path.join(args.out_dir, "hat_interrupts.csv")
     klog_out = os.path.join(args.out_dir, "kernel_log.txt")
     meta_out = os.path.join(args.out_dir, "collector_meta.json")
 
-    # Write meta now (so you can see configuration even if interrupted)
+    # Write meta now (visible even if interrupted)
     t0_epoch = time.time()
     t0_ns = time.time_ns()
     meta = {
@@ -509,22 +423,20 @@ def main() -> int:
         "proc_interval_s": args.proc_interval_s,
         "pid": pid,
         "perf_events": events,
-        "preset_events": preset_events,
-        "presets_requested": args.presets,
+        "probed_events": probed_events,
         "perf_command": plan.command(args.duration_s, perf_out),
-        "collect_kernel_log": bool(args.collect_kernel_log),
     }
     with open(meta_out, "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)
 
-    # Start perf stat in the background (system-wide; fixed window via sleep)
+    # Start perf stat in background
     perf_cmd = plan.command(args.duration_s, perf_out)
-    # Redirect any remaining stderr (warnings, etc.) to a log file to keep terminal clean
     perf_log = os.path.join(args.out_dir, "perf_stderr.log")
     with open(perf_log, "w") as perf_log_f:
-        perf_proc = subprocess.Popen(perf_cmd, stdout=subprocess.DEVNULL, stderr=perf_log_f)
+        perf_proc = subprocess.Popen(perf_cmd, stdout=subprocess.DEVNULL,
+                                     stderr=perf_log_f)
 
-    # /proc sampler loop for the same duration window
+    # -- CSV headers --
     proc_header = [
         "timestamp_ns",
         "cpu_total_jiffies",
@@ -535,31 +447,19 @@ def main() -> int:
         "proc_rss_pages",
     ]
 
-    # Collect initial system metrics to determine CSV columns
+    # Build HAT interrupt CSV header from initial samples
     sample_interrupts = read_proc_interrupts()
     sample_softirqs = read_proc_softirqs()
-    sample_pressure_cpu = read_proc_pressure("cpu")
-    sample_pressure_mem = read_proc_pressure("memory")
-    sample_pressure_io = read_proc_pressure("io")
-    sample_net = read_proc_net_dev()
-    sample_disk = read_proc_diskstats()
     sample_freq = read_cpu_frequencies()
 
-    # Build system CSV header dynamically (prefix PSI keys to avoid duplicate column names)
-    sys_header = ["timestamp_ns"]
-    sys_header += sorted(sample_interrupts.keys())
-    sys_header += sorted(sample_softirqs.keys())
-    sys_header += [f"psi_cpu_{k}" for k in sorted(sample_pressure_cpu.keys())]
-    sys_header += [f"psi_mem_{k}" for k in sorted(sample_pressure_mem.keys())]
-    sys_header += [f"psi_io_{k}" for k in sorted(sample_pressure_io.keys())]
-    sys_header += sorted(sample_net.keys())
-    sys_header += sorted(sample_disk.keys())
-    sys_header += sorted(sample_freq.keys())
+    hat_header = ["timestamp_ns"]
+    hat_header += sorted(sample_interrupts.keys())
+    hat_header += sorted(sample_softirqs.keys())
+    hat_header += sorted(sample_freq.keys())
 
     t_end = time.time() + args.duration_s
 
-    # Handle SIGTERM gracefully so post-processing runs when the runner
-    # kills the collector after the 10-second tail.
+    # SIGTERM handler for graceful shutdown
     _stop_requested = False
 
     def _handle_sigterm(signum, frame):
@@ -568,80 +468,64 @@ def main() -> int:
 
     signal.signal(signal.SIGTERM, _handle_sigterm)
 
+    # -- Sampling loop --
     with open(proc_out, "w", newline="", encoding="utf-8") as f_proc, \
-         open(proc_sys_out, "w", newline="", encoding="utf-8") as f_sys:
-        
+         open(hat_irq_out, "w", newline="", encoding="utf-8") as f_hat:
+
         w_proc = csv.writer(f_proc)
         w_proc.writerow(proc_header)
-        
-        w_sys = csv.writer(f_sys)
-        w_sys.writerow(sys_header)
+
+        w_hat = csv.writer(f_hat)
+        w_hat.writerow(hat_header)
 
         while time.time() < t_end and not _stop_requested:
             if not pid_exists(pid):
                 break
 
             ts = time.time_ns()
-            
-            # Process and system CPU metrics
+
+            # Process + system CPU
             cpu_total, cpu_idle = read_proc_stat_cpu()
             utime, stime, rss_pages = read_proc_pid_stat(pid)
             w_proc.writerow([ts, cpu_total, cpu_idle, pid, utime, stime, rss_pages])
             f_proc.flush()
 
-            # Additional system metrics
+            # HAT interrupt counts + softirqs + CPU frequency
             interrupts = read_proc_interrupts()
             softirqs = read_proc_softirqs()
-            pressure_cpu = read_proc_pressure("cpu")
-            pressure_mem = read_proc_pressure("memory")
-            pressure_io = read_proc_pressure("io")
-            net = read_proc_net_dev()
-            disk = read_proc_diskstats()
             freq = read_cpu_frequencies()
 
-            # Build row matching header order
-            # Merge all dicts into one with proper prefixed PSI keys
             all_metrics = {}
             all_metrics.update(interrupts)
             all_metrics.update(softirqs)
-            all_metrics.update({f"psi_cpu_{k}": v for k, v in pressure_cpu.items()})
-            all_metrics.update({f"psi_mem_{k}": v for k, v in pressure_mem.items()})
-            all_metrics.update({f"psi_io_{k}": v for k, v in pressure_io.items()})
-            all_metrics.update(net)
-            all_metrics.update(disk)
             all_metrics.update(freq)
 
-            sys_row = [ts]
-            for key in sys_header[1:]:  # skip timestamp_ns
+            hat_row = [ts]
+            for key in hat_header[1:]:
                 val = all_metrics.get(key)
-                sys_row.append(val if val is not None else "")
-            
-            w_sys.writerow(sys_row)
-            f_sys.flush()
+                hat_row.append(val if val is not None else "")
+
+            w_hat.writerow(hat_row)
+            f_hat.flush()
 
             time.sleep(args.proc_interval_s)
 
-    # Wait for perf to finish (it should, because it runs "sleep duration").
-    # If we were stopped early via SIGTERM, kill perf so we don't block.
+    # Wait for perf to finish
     if _stop_requested:
         perf_proc.terminate()
     try:
         perf_proc.wait(timeout=max(5.0, args.duration_s + 5.0))
     except subprocess.TimeoutExpired:
-        # If something went wrong, kill it so you don't leave perf running
         perf_proc.kill()
         perf_proc.wait(timeout=5.0)
 
-    # Post-process perf -x CSV into a clean wide-format CSV.
-    # Raw -x output has fields: timestamp,value,unit,event,...
-    # We pivot to: t_s, event1, event2, ...
+    # Post-process perf CSV
     perf_csv_out = os.path.join(args.out_dir, "perf_stat.csv")
     _postprocess_perf_csv(perf_out, perf_csv_out)
 
-    # Kernel log slice (optional, done after to capture full window)
+    # Kernel log slice -- always collected (MCE, thermal, hardware errors)
     t1_epoch = time.time()
-    if args.collect_kernel_log:
-        write_kernel_log_slice(klog_out, t0_epoch, t1_epoch)
+    write_kernel_log_slice(klog_out, t0_epoch, t1_epoch)
 
     # Update meta with end times
     meta["t1_epoch"] = t1_epoch
@@ -650,13 +534,12 @@ def main() -> int:
         json.dump(meta, f, indent=2)
 
     print(f"Wrote: {args.out_dir}/")
-    print(f"  perf raw:  {perf_out}")
-    print(f"  perf csv:  {perf_csv_out}")
-    print(f"  proc:      {proc_out}")
-    print(f"  proc_sys:  {proc_sys_out}")
-    if args.collect_kernel_log:
-        print(f"  klog: {klog_out}")
-    print(f"  meta: {meta_out}")
+    print(f"  perf raw:       {perf_out}")
+    print(f"  perf csv:       {perf_csv_out}")
+    print(f"  proc:           {proc_out}")
+    print(f"  hat_interrupts: {hat_irq_out}")
+    print(f"  kernel log:     {klog_out}")
+    print(f"  meta:           {meta_out}")
 
     return 0
 
