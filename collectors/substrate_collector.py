@@ -365,7 +365,6 @@ def main() -> int:
         "irq:softirq_exit",
         "irq:softirq_raise",
         "tlb:tlb_flush",                # TLB Shootdown
-        "core_power.throttle",          # Thermal/Power Anomaly
         # -- HAT Layer 2: PMU hardware counters --
         "cache-misses",
         "cache-references",
@@ -392,6 +391,7 @@ def main() -> int:
     probed_events: List[str] = []
     optional_hat_events = [
         "mce:mce_record",               # Machine Check Exception
+        "core_power.throttle",          # Thermal/Power Anomaly (not on all CPUs)
     ]
     for evt in optional_hat_events:
         if _probe_event(evt):
