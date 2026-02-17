@@ -429,12 +429,16 @@ def main() -> int:
     with open(meta_out, "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)
 
-    # Start perf stat in background
+    # Start perf stat in background.
+    # start_new_session=True puts perf in its own process group so that
+    # SIGTERM sent to the collector by run_prompts_json.py doesn't kill
+    # perf before it can flush its -o output file.
     perf_cmd = plan.command(args.duration_s, perf_out)
     perf_log = os.path.join(args.out_dir, "perf_stderr.log")
     with open(perf_log, "w") as perf_log_f:
         perf_proc = subprocess.Popen(perf_cmd, stdout=subprocess.DEVNULL,
-                                     stderr=perf_log_f)
+                                     stderr=perf_log_f,
+                                     start_new_session=True)
 
     # -- CSV headers --
     proc_header = [
@@ -510,18 +514,37 @@ def main() -> int:
 
             time.sleep(args.proc_interval_s)
 
-    # Wait for perf to finish
+    # Stop perf gracefully.  SIGINT makes perf flush its -o output;
+    # SIGTERM may cause it to exit without writing the file.
     if _stop_requested:
-        perf_proc.terminate()
+        try:
+            os.killpg(perf_proc.pid, signal.SIGINT)
+        except (ProcessLookupError, PermissionError):
+            perf_proc.terminate()
     try:
-        perf_proc.wait(timeout=max(5.0, args.duration_s + 5.0))
+        perf_proc.wait(timeout=max(10.0, args.duration_s + 5.0))
     except subprocess.TimeoutExpired:
-        perf_proc.kill()
+        try:
+            os.killpg(perf_proc.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            perf_proc.kill()
         perf_proc.wait(timeout=5.0)
 
-    # Post-process perf CSV
+    # Post-process perf CSV (only if perf actually produced output)
     perf_csv_out = os.path.join(args.out_dir, "perf_stat.csv")
-    _postprocess_perf_csv(perf_out, perf_csv_out)
+    if perf_proc.returncode != 0:
+        print(f"  ⚠ perf stat exited with code {perf_proc.returncode}")
+        if os.path.isfile(perf_log):
+            err_text = open(perf_log, "r", encoding="utf-8",
+                            errors="replace").read().strip()
+            if err_text:
+                for ln in err_text.splitlines()[:20]:
+                    print(f"    {ln}")
+    if os.path.isfile(perf_out) and os.path.getsize(perf_out) > 0:
+        _postprocess_perf_csv(perf_out, perf_csv_out)
+    else:
+        print(f"  ⚠ {perf_out} not found or empty — perf stat may have failed.")
+        print(f"    Check {perf_log} for details.")
 
     # Kernel log slice -- always collected (MCE, thermal, hardware errors)
     t1_epoch = time.time()
