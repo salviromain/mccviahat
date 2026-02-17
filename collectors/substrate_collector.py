@@ -6,7 +6,7 @@ Goal: one "collector" process you can start before prompt execution and stop aft
 compatible with your fixed-window runner (run_prompts_json).
 
 This collector captures:
-- 1ms-bucket perf stats for system-wide events (26 events, 4 categories):
+- 1ms-bucket perf stats for system-wide events (26 default + optional presets):
   * Kernel tracepoints: irq/softirq/tasklet activity, tlb_flush
   * Software counters: context-switches, cpu-migrations, page-faults, cpu-clock
   * PMU hardware counters: cache-misses, cache-references, LLC-load-misses,
@@ -14,6 +14,19 @@ This collector captures:
     stalled-cycles-frontend, stalled-cycles-backend, dTLB-load-misses
   * Power/thermal: core_power.throttle, msr/cpu_thermal_margin,
     power/energy-pkg, power/energy-ram
+
+  Optional presets (--presets sched,memory,blockio):
+  * sched: sched:sched_switch, sched:sched_wakeup, sched:sched_wakeup_new,
+           sched:sched_migrate_task
+  * memory: kmem:mm_page_alloc, kmem:mm_page_free,
+            vmscan:mm_vmscan_direct_reclaim_begin,
+            vmscan:mm_vmscan_direct_reclaim_end
+  * blockio: block:block_rq_issue, block:block_rq_complete,
+             power:cpu_frequency, power:cpu_idle
+
+  Each preset event is probed at startup; unavailable tracepoints are silently
+  skipped so the collector never fails due to missing kernel config.
+
 - a low-overhead /proc time series for the target host PID (utime/stime/rss) + /proc/stat CPU totals
 - kernel log slice for the collection window (for rare events like MCE), saved as text
 - Additional /proc and /sys metrics sampled at proc_interval_s:
@@ -356,6 +369,8 @@ def main() -> int:
     ap.add_argument("--proc_interval_s", type=float, default=0.2, help="/proc sampling interval seconds (default: 0.2).")
     ap.add_argument("--collect_kernel_log", action="store_true", help="Also dump kernel log slice for window.")
     ap.add_argument("--events", type=str, default="", help="Comma-separated perf events override (optional).")
+    ap.add_argument("--presets", type=str, default="",
+                    help="Comma-separated optional preset groups to add: sched,memory,blockio (or 'all').")
     args = ap.parse_args()
 
     if args.duration_s <= 0:
@@ -420,7 +435,61 @@ def main() -> int:
         "power/energy-ram/",
     ]
 
+    # ── Optional preset groups ──
+    # Each preset adds tracepoints that may or may not exist on the running
+    # kernel.  We probe each event with `perf stat -e <event> -- true` before
+    # adding it so the collector never fails due to missing kernel config.
+    PRESETS = {
+        "sched": [
+            "sched:sched_switch",
+            "sched:sched_wakeup",
+            "sched:sched_wakeup_new",
+            "sched:sched_migrate_task",
+        ],
+        "memory": [
+            "kmem:mm_page_alloc",
+            "kmem:mm_page_free",
+            "vmscan:mm_vmscan_direct_reclaim_begin",
+            "vmscan:mm_vmscan_direct_reclaim_end",
+        ],
+        "blockio": [
+            "block:block_rq_issue",
+            "block:block_rq_complete",
+            "power:cpu_frequency",
+            "power:cpu_idle",
+        ],
+    }
+
+    def _probe_event(event: str) -> bool:
+        """Return True if perf can open this event on the running kernel."""
+        try:
+            subprocess.check_call(
+                ["sudo", "-n", "perf", "stat", "-e", event, "--", "true"],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+            return True
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            return False
+
+    # Resolve requested presets
+    preset_events: List[str] = []
+    if args.presets:
+        requested = [p.strip().lower() for p in args.presets.split(",") if p.strip()]
+        if "all" in requested:
+            requested = list(PRESETS.keys())
+        for name in requested:
+            if name not in PRESETS:
+                print(f"WARNING: unknown preset '{name}' — valid: {', '.join(PRESETS)}")
+                continue
+            for evt in PRESETS[name]:
+                if _probe_event(evt):
+                    preset_events.append(evt)
+                    print(f"  ✓ {evt}")
+                else:
+                    print(f"  ✗ {evt} (not available on this kernel — skipped)")
+
     events = [e.strip() for e in args.events.split(",") if e.strip()] if args.events else default_events
+    events = events + preset_events  # append probed presets
     plan = PerfPlan(interval_ms=args.perf_interval_ms, events=events)
 
     perf_out = os.path.join(args.out_dir, "perf_stat.txt")
@@ -440,6 +509,8 @@ def main() -> int:
         "proc_interval_s": args.proc_interval_s,
         "pid": pid,
         "perf_events": events,
+        "preset_events": preset_events,
+        "presets_requested": args.presets,
         "perf_command": plan.command(args.duration_s, perf_out),
         "collect_kernel_log": bool(args.collect_kernel_log),
     }
