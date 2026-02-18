@@ -27,7 +27,7 @@ def run():
         raise SystemExit("JSON must be a non-empty list.")
     if len(prompts) > 20:
         print(f"Capping prompts from {len(prompts)} → 20")
-        prompts = prompts[21:31]
+        prompts = prompts[:20]
 
     # Auto-compute budget: n_prompts × per_request_timeout_s (worst-case estimate).
     # --budget_s overrides if given explicitly.
