@@ -25,7 +25,7 @@ This collector captures both layers via three mechanisms:
      - HAT Layer 2 power/energy: RAPL energy (pkg + ram), thermal margin
      - Supporting events: context-switches, cpu-migrations, page-faults, cpu-clock
 
-  2. `/proc` + `/sys` polling (200ms):
+  2. `/proc` + `/sys` polling (100ms):
      - /proc/interrupts: SPU (spurious), NMI/PMI (perf counter overflow),
        MCE (machine check), TLB (shootdown), LOC, RES, CAL — all named HAT events
      - /proc/softirqs: deferred interrupt processing by type
@@ -44,8 +44,8 @@ Removed (not HAT-relevant):
 Outputs:
   perf_stat.txt       — raw perf stat output
   perf_stat.csv       — wide-format (1 row/ms, 1 col/event)
-  proc_sample.csv     — per-process CPU + RSS (200ms)
-  hat_interrupts.csv  — /proc/interrupts + /proc/softirqs + CPU freq (200ms)
+  proc_sample.csv     — per-process CPU + RSS (100ms)
+  hat_interrupts.csv  — /proc/interrupts + /proc/softirqs + CPU freq (100ms)
   kernel_log.txt      — dmesg slice (MCE, thermal, hardware errors)
   collector_meta.json — configuration + timestamps
 """
@@ -182,8 +182,12 @@ class PerfPlan:
     interval_ms: int
     events: List[str]
 
-    def command(self, duration_s: float, out_path: str) -> List[str]:
-        return [
+    def command(self, duration_s: float, out_path: str, cpu: str = "") -> List[str]:
+        # If a CPU is specified, pin perf to that core via taskset.
+        # perf -a still counts system-wide; taskset only pins the perf
+        # *process itself* (its own scheduling + cache footprint).
+        prefix = ["taskset", "-c", cpu] if cpu else []
+        return prefix + [
             "sudo", "-n", "perf", "stat",
             "-a",
             "-x", ",",
@@ -309,10 +313,17 @@ def main() -> int:
                     help="Total wall-clock duration to collect.")
     ap.add_argument("--perf_interval_ms", type=int, default=1,
                     help="perf stat bucket interval in ms (default: 1).")
-    ap.add_argument("--proc_interval_s", type=float, default=0.2,
-                    help="/proc sampling interval seconds (default: 0.2).")
+    ap.add_argument("--proc_interval_s", type=float, default=0.1,
+                    help="/proc sampling interval seconds (default: 0.1).")
     ap.add_argument("--events", type=str, default="",
                     help="Comma-separated perf events override (optional).")
+    ap.add_argument("--llm_cpus", type=str, default="",
+                    help="CPU cores reserved for the LLM, e.g. '0-11'. "
+                         "If set, perf is pinned to --perf_cpu and the LLM "
+                         "container is re-pinned via taskset.")
+    ap.add_argument("--perf_cpu", type=str, default="",
+                    help="CPU core(s) for perf stat itself, e.g. '12'. "
+                         "Only used when --llm_cpus is set.")
     args = ap.parse_args()
 
     if args.duration_s <= 0:
@@ -328,6 +339,27 @@ def main() -> int:
 
     ensure_dir(args.out_dir)
     fail_fast_sudo()
+
+    # ── CPU pinning (taskset isolation) ──────────────────────────────────────
+    # If --llm_cpus is given, we:
+    #   (a) re-pin the LLM container process to those cores via taskset
+    #   (b) pin the perf stat process to --perf_cpu (a separate core)
+    # This keeps perf's cache footprint off the LLM's cores.
+    llm_cpus  = args.llm_cpus.strip()
+    perf_cpu  = args.perf_cpu.strip()
+    use_taskset = bool(llm_cpus and perf_cpu)
+
+    if use_taskset:
+        print(f"  taskset: LLM pid {pid} → cpus [{llm_cpus}],  perf → cpu [{perf_cpu}]")
+        try:
+            subprocess.check_call(
+                ["sudo", "-n", "taskset", "-acp", llm_cpus, str(pid)],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+        except subprocess.CalledProcessError as e:
+            raise SystemExit(f"taskset for LLM PID {pid} failed: {e}")
+    elif llm_cpus or perf_cpu:
+        print("  ⚠  Both --llm_cpus and --perf_cpu must be set to enable taskset. Skipping.")
 
     # ================================================================
     # HAT event set
@@ -422,9 +454,12 @@ def main() -> int:
         "perf_interval_ms": args.perf_interval_ms,
         "proc_interval_s": args.proc_interval_s,
         "pid": pid,
+        "llm_cpus": llm_cpus,
+        "perf_cpu": perf_cpu,
+        "taskset_enabled": use_taskset,
         "perf_events": events,
         "probed_events": probed_events,
-        "perf_command": plan.command(args.duration_s, perf_out),
+        "perf_command": plan.command(args.duration_s, perf_out, cpu=perf_cpu if use_taskset else ""),
     }
     with open(meta_out, "w", encoding="utf-8") as f:
         json.dump(meta, f, indent=2)
@@ -433,7 +468,7 @@ def main() -> int:
     # start_new_session=True puts perf in its own process group so that
     # SIGTERM sent to the collector by run_prompts_json.py doesn't kill
     # perf before it can flush its -o output file.
-    perf_cmd = plan.command(args.duration_s, perf_out)
+    perf_cmd = plan.command(args.duration_s, perf_out, cpu=perf_cpu if use_taskset else "")
     perf_log = os.path.join(args.out_dir, "perf_stderr.log")
     with open(perf_log, "w") as perf_log_f:
         perf_proc = subprocess.Popen(perf_cmd, stdout=subprocess.DEVNULL,
