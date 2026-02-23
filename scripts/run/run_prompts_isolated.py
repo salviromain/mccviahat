@@ -162,7 +162,7 @@ def run() -> None:
                     help="Condition label: 'emotional' or 'neutral'.")
     ap.add_argument("--container", default="mccviahat-llama",
                     help="Docker container name (for host PID resolution).")
-    ap.add_argument("--reset_script", default="scripts/reset_server.sh",
+    ap.add_argument("--reset_script", default="scripts/model/reset_server.sh",
                     help="Path to the server reset script.")
     ap.add_argument("--collector", default="collectors/substrate_collector.py",
                     help="Path to substrate_collector.py.")
