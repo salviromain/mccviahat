@@ -202,9 +202,6 @@ def run() -> None:
     run_root = Path("runs") / args.label
     run_root.mkdir(parents=True, exist_ok=True)
 
-    # ── Resolve container PID once (it stays stable across resets) ────────────
-    pid = get_container_pid(args.container)
-    print(f"Container '{args.container}' → host PID {pid}")
 
     # ── Per-prompt loop ───────────────────────────────────────────────────────
     for idx, prompt_obj in enumerate(prompts):
@@ -239,6 +236,10 @@ def run() -> None:
         # 3. Stabilisation baseline (let the server idle cleanly before we measure)
         print(f"  → baseline sleep {args.baseline_s}s …", flush=True)
         time.sleep(args.baseline_s)
+
+        # 3.5. Resolve container PID (after reset)
+        pid = get_container_pid(args.container)
+        print(f"  Container '{args.container}' → host PID {pid}")
 
         # 4. Start collector
         #    Ceiling duration: baseline already elapsed; give the full request
