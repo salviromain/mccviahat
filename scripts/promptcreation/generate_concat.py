@@ -6,8 +6,8 @@ from pathlib import Path
 
 # Input and output paths (robust, relative to project root)
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-INFILE = PROJECT_ROOT / 'prompts' / 'neutral_test.json'
-OUTFILE = Path(__file__).parent / 'Perm_test_n.json'
+INFILE = PROJECT_ROOT / 'prompts' / 'training_neutral.json'
+OUTFILE = Path(__file__).parent / 'Perm_training_n.json'
 
 # Load prompts
 with open(INFILE, 'r') as f:
