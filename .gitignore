@@ -18,3 +18,23 @@ hf_cache/
 
 # logs
 *.log
+
+# virtualenv
+.mccvenv/
+venv/
+.venv/
+
+# python
+__pycache__/
+*.pyc
+.DS_Store
+
+# virtualenv
+.mccvenv/
+venv/
+.venv/
+
+# python
+__pycache__/
+*.pyc
+.DS_Store
