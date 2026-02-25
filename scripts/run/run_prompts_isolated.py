@@ -182,6 +182,8 @@ def run() -> None:
                     help="Max time to wait for server reset script (s).")
     ap.add_argument("--start_index", type=int, default=0,
                     help="Resume from this prompt index (0-based, inclusive).")
+    ap.add_argument("--n_prompts", type=int, default=None,
+                    help="Number of prompts to process (from start_index). Default: all prompts.")
     ap.add_argument("--llm_cpus", type=str, default="",
                     help="CPU cores reserved for the LLM container, e.g. '0-11'. "
                          "Enables taskset isolation when combined with --perf_cpu.")
@@ -197,6 +199,14 @@ def run() -> None:
 
     n_total = len(prompts)
     print(f"Loaded {n_total} prompts from {args.json}  label={args.label}")
+    # Determine processing range based on start_index and n_prompts
+    if args.n_prompts is None:
+        end_index = n_total
+    else:
+        if args.n_prompts <= 0:
+            raise SystemExit("--n_prompts must be > 0")
+        end_index = min(n_total, args.start_index + args.n_prompts)
+    print(f"Processing prompts index range: [{args.start_index}, {end_index})")
 
     # ── Output root ───────────────────────────────────────────────────────────
     run_root = Path("runs") / args.label
@@ -207,6 +217,8 @@ def run() -> None:
     for idx, prompt_obj in enumerate(prompts):
         if idx < args.start_index:
             continue  # resume support
+        if idx >= end_index:
+            break
 
         instr = prompt_obj.get("instructions", "")
         if not isinstance(instr, str) or not instr.strip():
