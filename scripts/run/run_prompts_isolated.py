@@ -180,10 +180,8 @@ def run() -> None:
                     help="/proc sampling interval (s). Default: 0.1.")
     ap.add_argument("--reset_timeout_s", type=float, default=90.0,
                     help="Max time to wait for server reset script (s).")
-    ap.add_argument("--start_index", type=int, default=0,
-                    help="Resume from this prompt index (0-based, inclusive).")
-    ap.add_argument("--n_prompts", type=int, default=None,
-                    help="Number of prompts to process (from start_index). Default: all prompts.")
+    ap.add_argument("--from", dest="start_index", type=int, default=0,
+                    help="Prompt index to start from (0-based, inclusive). Default: 0.")
     ap.add_argument("--llm_cpus", type=str, default="",
                     help="CPU cores reserved for the LLM container, e.g. '0-11'. "
                          "Enables taskset isolation when combined with --perf_cpu.")
@@ -199,14 +197,12 @@ def run() -> None:
 
     n_total = len(prompts)
     print(f"Loaded {n_total} prompts from {args.json}  label={args.label}")
-    # Determine processing range based on start_index and n_prompts
-    if args.n_prompts is None:
-        end_index = n_total
-    else:
-        if args.n_prompts <= 0:
-            raise SystemExit("--n_prompts must be > 0")
-        end_index = min(n_total, args.start_index + args.n_prompts)
-    print(f"Processing prompts index range: [{args.start_index}, {end_index})")
+
+    if args.start_index < 0 or args.start_index >= n_total:
+        raise SystemExit(f"--from {args.start_index} is out of range (0–{n_total - 1})")
+
+    prompts = prompts[args.start_index:]
+    print(f"Starting from index {args.start_index} → {len(prompts)} prompt(s) to run")
 
     # ── Output root ───────────────────────────────────────────────────────────
     run_root = Path("runs") / args.label
@@ -214,11 +210,8 @@ def run() -> None:
 
 
     # ── Per-prompt loop ───────────────────────────────────────────────────────
-    for idx, prompt_obj in enumerate(prompts):
-        if idx < args.start_index:
-            continue  # resume support
-        if idx >= end_index:
-            break
+    for i, prompt_obj in enumerate(prompts):
+        idx = args.start_index + i
 
         instr = prompt_obj.get("instructions", "")
         if not isinstance(instr, str) or not instr.strip():
