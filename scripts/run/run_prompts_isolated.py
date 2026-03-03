@@ -182,6 +182,8 @@ def run() -> None:
                     help="Max time to wait for server reset script (s).")
     ap.add_argument("--from", dest="start_index", type=int, default=0,
                     help="Prompt index to start from (0-based, inclusive). Default: 0.")
+    ap.add_argument("--n_prompts", type=int, default=None,
+                    help="Number of prompts to run starting from --from. Default: run all remaining.")
     ap.add_argument("--llm_cpus", type=str, default="",
                     help="CPU cores reserved for the LLM container, e.g. '0-11'. "
                          "Enables taskset isolation when combined with --perf_cpu.")
@@ -202,6 +204,8 @@ def run() -> None:
         raise SystemExit(f"--from {args.start_index} is out of range (0–{n_total - 1})")
 
     prompts = prompts[args.start_index:]
+    if args.n_prompts is not None:
+        prompts = prompts[:args.n_prompts]
     print(f"Starting from index {args.start_index} → {len(prompts)} prompt(s) to run")
 
     # ── Output root ───────────────────────────────────────────────────────────
