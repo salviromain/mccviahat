@@ -42,9 +42,14 @@ RUN_SPLITS = {
     '30testE':    (REPO_ROOT / 'runs' / '30testE',      'emotional'),
     'training_r':    (REPO_ROOT / 'runs' / 'training_r',      'neutral'),
     'training_e':    (REPO_ROOT / 'runs' / 'training_e',      'emotional'),
-    'trainingR': (REPO_ROOT / 'runs' / 'trainingR',      'neutral')
+    'trainingR': (REPO_ROOT / 'runs' / 'trainingR',      'neutral'),
+    'newtrainingE': (REPO_ROOT / 'runs' / 'utahc6620'/ 'new_trainingE',      'emotional'),
+    'newtestE': (REPO_ROOT / 'runs' / 'utahc6620'/ 'newUTAHtestE',      'emotional'),
+    'newtestN': (REPO_ROOT / 'runs' / 'utahc6620'/ 'newUTAHtestN',      'neutral'),
 
-    ,
+
+
+    
 
 }
 
