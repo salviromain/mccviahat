@@ -40,6 +40,12 @@ RUN_SPLITS = {
     '10testE':    (REPO_ROOT / 'runs' / '10testE',      'emotional'),
     '30testN':    (REPO_ROOT / 'runs' / '30testN',      'neutral'),
     '30testE':    (REPO_ROOT / 'runs' / '30testE',      'emotional'),
+    'training_r':    (REPO_ROOT / 'runs' / 'training_r',      'neutral'),
+    'training_e':    (REPO_ROOT / 'runs' / 'training_e',      'emotional'),
+    'trainingR': (REPO_ROOT / 'runs' / 'trainingR',      'neutral')
+
+    ,
+
 }
 
 # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
