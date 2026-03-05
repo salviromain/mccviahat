@@ -46,7 +46,10 @@ RUN_SPLITS = {
     'newtrainingE': (REPO_ROOT / 'runs' / 'utahc6620'/ 'new_trainingE',      'emotional'),
     'newtestE': (REPO_ROOT / 'runs' / 'utahc6620'/ 'newUTAHtestE',      'emotional'),
     'newtestN': (REPO_ROOT / 'runs' / 'utahc6620'/ 'newUTAHtestN',      'neutral'),
-
+    'CLtrainE': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTRAINING20E',      'emotional'),
+    'CLtrainR': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTRAININGRELAX20',      'neutral'),
+    'CLtestN': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTEST5N',  'neutral'),
+    'CLtestE': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTEST5E',  'emotional'),
 
 
     
