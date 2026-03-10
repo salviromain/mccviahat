@@ -12,15 +12,27 @@ same stem but a _token_counts.csv suffix.  A combined CSV covering
 all input files is written to --output (default: token_counts.csv in
 the current directory).
 
+When multiple files are provided a combined CSV is also written to
+--combined (default: <first_file_dir>/combined_token_counts.csv).
+This combined file can be joined onto the feature CSV in the notebook
+on (condition, prompt_index) to use n_tokens as a confounder.
+
 Usage
 -----
     # Single file — produces prompts/20base/independentE_token_counts.csv
     python scripts/run/token_count_csv.py prompts/20base/independentE.json
 
-    # Both independent sets at once — also produces token_counts.csv
+    # Both independent sets — also produces combined_token_counts.csv
     python scripts/run/token_count_csv.py \\
         prompts/20base/independentE.json \\
         prompts/20base/independentN.json
+
+    # Custom output paths
+    python scripts/run/token_count_csv.py \\
+        prompts/20base/independentE.json \\
+        prompts/20base/independentN.json \\
+        --output token_counts.csv \\
+        --combined data/clemsonc6420/token_counts_combined.csv
 
     # Custom tokenizer
     python scripts/run/token_count_csv.py prompts/20base/*.json \\
@@ -85,6 +97,15 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("token_counts.csv"),
         help="Path for the combined CSV. Default: token_counts.csv",
+    )
+    p.add_argument(
+        "--combined", "-c",
+        type=Path,
+        default=None,
+        help="Path for the combined CSV written alongside the data CSVs "
+             "(joinable on condition+prompt_index). "
+             "Default: <first_file_parent>/combined_token_counts.csv "
+             "when more than one file is given.",
     )
     p.add_argument(
         "--no-per-file",
@@ -206,7 +227,17 @@ def main() -> None:
     if not all_rows:
         sys.exit("No data found.")
 
+    # Always write the flat combined output (--output)
     write_csv(args.output, all_rows)
+
+    # When multiple files are given, also write the data-dir combined CSV
+    # (joinable onto the feature CSVs on condition + prompt_index).
+    existing_files = [p for p in args.files if p.exists()]
+    if len(existing_files) > 1:
+        combined_path = args.combined or (
+            existing_files[0].parent / "combined_token_counts.csv"
+        )
+        write_csv(combined_path, all_rows)
 
     # Grand summary split by condition
     print("\n── Grand summary ──────────────────────────────────")
