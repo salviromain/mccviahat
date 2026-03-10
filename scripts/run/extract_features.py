@@ -51,9 +51,10 @@ RUN_SPLITS = {
     'CLtestN': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTEST5N',  'neutral'),
     'CLtestE': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTEST5E',  'emotional'),
 
-
-    
-
+    # Independent sets — run dirs are already split by condition by
+    # run_prompts_isolated.py (label comes from trial_meta.json)
+    'independentE': (REPO_ROOT / 'runs' / 'emotional',  'emotional'),
+    'independentN': (REPO_ROOT / 'runs' / 'neutral',    'neutral'),
 }
 
 # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
@@ -239,7 +240,12 @@ def compute_all_metrics(s, dur_s, indicator_type='event'):
 # ── Core extractor ────────────────────────────────────────────────────────────
 
 def extract_trial_features(trial_dir: Path, label: str) -> dict | None:
-    """Return a flat feature dict for one trial, or None on failure."""
+    """Return a flat feature dict for one trial, or None on failure.
+
+    The 'label' parameter is used as a fallback only.  If trial_meta.json
+    contains a 'label' field (written by run_prompts_isolated.py) that value
+    takes precedence, which is what makes mixed-condition run dirs work.
+    """
     meta = load_trial_meta(trial_dir)
     if not meta.get('ok', False):
         return None
@@ -248,9 +254,12 @@ def extract_trial_features(trial_dir: Path, label: str) -> dict | None:
     if perf is None or len(perf) < 10:
         return None
 
+    # Prefer the label stored in trial_meta.json (reliable for mixed runs)
+    resolved_label = meta.get('label') or label
+
     dur_s = meta.get('elapsed_ms', np.nan) / 1000.0
     row = {
-        'condition':    label,
+        'condition':    resolved_label,
         'prompt_index': meta.get('prompt_index', -1),
         'elapsed_ms':   meta.get('elapsed_ms', np.nan),
         'dur_s':        dur_s,
@@ -343,6 +352,21 @@ def main():
         existing = DATA_DIR / 'features.csv'
         if existing.exists():
             print(f'\n  [combined] features.csv unchanged ({existing})')
+
+    # Rebuild combined independent CSV if both independent splits were extracted
+    indep_splits = [s for s in ('independentE', 'independentN') if s in dfs and not dfs[s].empty]
+    if len(indep_splits) == 2:
+        indep_combined = pd.concat([dfs['independentE'], dfs['independentN']], ignore_index=True)
+        out = DATA_DIR / 'clemsonc6420' / 'independent.csv'
+        out.parent.mkdir(parents=True, exist_ok=True)
+        indep_combined.to_csv(out, index=False)
+        print(f'\n  [independent combined] {len(indep_combined)} rows → {out}')
+    elif len(indep_splits) == 1:
+        s = indep_splits[0]
+        out = DATA_DIR / 'clemsonc6420' / f'{s}.csv'
+        out.parent.mkdir(parents=True, exist_ok=True)
+        dfs[s].to_csv(out, index=False)
+        print(f'\n  [{s}] {len(dfs[s])} rows → {out}')
 
     print('\nDone.')
 

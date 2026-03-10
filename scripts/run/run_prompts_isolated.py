@@ -158,8 +158,10 @@ def run() -> None:
     )
     ap.add_argument("--json", required=True,
                     help="Path to prompts JSON (list of objects with 'instructions').")
-    ap.add_argument("--label", required=True,
-                    help="Condition label: 'emotional' or 'neutral'.")
+    ap.add_argument("--label", default=None,
+                    help="Condition label: 'emotional' or 'neutral'. "
+                         "If omitted, the per-prompt 'condition' field is used "
+                         "(required for mixed-condition files).")
     ap.add_argument("--container", default="mccviahat-llama",
                     help="Docker container name (for host PID resolution).")
     ap.add_argument("--reset_script", default="scripts/model/reset_server.sh",
@@ -198,7 +200,20 @@ def run() -> None:
         raise SystemExit("JSON must be a non-empty list of objects.")
 
     n_total = len(prompts)
-    print(f"Loaded {n_total} prompts from {args.json}  label={args.label}")
+
+    # Validate label resolution: either --label is given (uniform) or every
+    # prompt must carry a 'condition' field (mixed-condition files).
+    if args.label is None:
+        missing = [i for i, p in enumerate(prompts) if not p.get("condition")]
+        if missing:
+            raise SystemExit(
+                f"--label not provided and {len(missing)} prompt(s) lack a "
+                f"'condition' field (indices: {missing[:10]}{' …' if len(missing) > 10 else ''}). "
+                "Pass --label or use mix_prompts.py to tag prompts first."
+            )
+        print(f"Loaded {n_total} prompts from {args.json}  (mixed-condition, per-prompt labels)")
+    else:
+        print(f"Loaded {n_total} prompts from {args.json}  label={args.label}")
 
     if args.start_index < 0 or args.start_index >= n_total:
         raise SystemExit(f"--from {args.start_index} is out of range (0–{n_total - 1})")
@@ -208,23 +223,25 @@ def run() -> None:
         prompts = prompts[:args.n_prompts]
     print(f"Starting from index {args.start_index} → {len(prompts)} prompt(s) to run")
 
-    # ── Output root ───────────────────────────────────────────────────────────
-    run_root = Path("runs") / args.label
-    run_root.mkdir(parents=True, exist_ok=True)
-
-
     # ── Per-prompt loop ───────────────────────────────────────────────────────
     for i, prompt_obj in enumerate(prompts):
         idx = args.start_index + i
+
+        # Resolve label: CLI flag wins; fall back to per-prompt 'condition' field.
+        label = args.label if args.label is not None else prompt_obj["condition"]
+
+        # For mixed files, use 'mixed_index' if present so the directory name
+        # matches the field written by mix_prompts.py; otherwise fall back to idx.
+        file_idx = prompt_obj.get("mixed_index", idx)
 
         instr = prompt_obj.get("instructions", "")
         if not isinstance(instr, str) or not instr.strip():
             raise SystemExit(f"Prompt {idx}: missing or empty 'instructions' field.")
 
-        out_dir = run_root / f"p{idx:04d}"
+        out_dir = Path("runs") / label / f"p{file_idx:04d}"
         out_dir.mkdir(parents=True, exist_ok=True)
 
-        print(f"\n[{idx+1}/{n_total}] prompt={idx}  out={out_dir}", flush=True)
+        print(f"\n[{idx+1}/{n_total}] prompt={idx}  label={label}  out={out_dir}", flush=True)
 
         # 1. Reset server
         print("  → resetting server …", flush=True)
@@ -233,7 +250,7 @@ def run() -> None:
         except RuntimeError as e:
             print(f"  ✗ {e}")
             (out_dir / "trial_meta.json").write_text(
-                json.dumps({"prompt_index": idx, "label": args.label, "ok": False,
+                json.dumps({"prompt_index": idx, "label": label, "ok": False,
                             "error": "reset_failed"}, indent=2)
             )
             continue
@@ -286,7 +303,7 @@ def run() -> None:
         # 7. Write minimal trial metadata
         trial_meta = {
             "prompt_index": idx,
-            "label": args.label,
+            "label": label,
             "ok": ok,
             "t_request_start_ns": t_req_start,
             "t_request_end_ns": t_req_end,
@@ -300,7 +317,8 @@ def run() -> None:
         if not ok:
             (out_dir / "response_error.txt").write_text(response_raw, encoding="utf-8")
 
-    print(f"\n✓ All done. Results in runs/{args.label}/")
+    dest = args.label if args.label else "<per-prompt-condition>"
+    print(f"\n✓ All done. Results in runs/{dest}/")
 
 
 if __name__ == "__main__":
