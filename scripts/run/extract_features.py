@@ -34,27 +34,11 @@ DATA_DIR.mkdir(exist_ok=True)
 # ── All available splits ──────────────────────────────────────────────────────
 # key = output CSV stem,  value = (runs/<dir>, label)
 RUN_SPLITS = {
-    'trainingN':  (REPO_ROOT / 'runs' / 'relaxation',  'neutral'),
-    'trainingE':  (REPO_ROOT / 'runs' / 'trainingE',   'emotional'),
-    '10testN':    (REPO_ROOT / 'runs' / '10testN',      'neutral'),
-    '10testE':    (REPO_ROOT / 'runs' / '10testE',      'emotional'),
-    '30testN':    (REPO_ROOT / 'runs' / '30testN',      'neutral'),
-    '30testE':    (REPO_ROOT / 'runs' / '30testE',      'emotional'),
-    'training_r':    (REPO_ROOT / 'runs' / 'training_r',      'neutral'),
-    'training_e':    (REPO_ROOT / 'runs' / 'training_e',      'emotional'),
-    'trainingR': (REPO_ROOT / 'runs' / 'trainingR',      'neutral'),
-    'newtrainingE': (REPO_ROOT / 'runs' / 'utahc6620'/ 'new_trainingE',      'emotional'),
-    'newtestE': (REPO_ROOT / 'runs' / 'utahc6620'/ 'newUTAHtestE',      'emotional'),
-    'newtestN': (REPO_ROOT / 'runs' / 'utahc6620'/ 'newUTAHtestN',      'neutral'),
-    'CLtrainE': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTRAINING20E',      'emotional'),
-    'CLtrainR': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTRAININGRELAX20',      'neutral'),
-    'CLtestN': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTEST5N',  'neutral'),
-    'CLtestE': (REPO_ROOT / 'runs' / 'clemsonc6420'/ 'newTEST5E',  'emotional'),
-
+   
     # Independent sets — run dirs are already split by condition by
     # run_prompts_isolated.py (label comes from trial_meta.json)
-    'independentE': (REPO_ROOT / 'runs' / 'emotional',  'emotional'),
-    'independentN': (REPO_ROOT / 'runs' / 'neutral',    'neutral'),
+    'emotional': (REPO_ROOT / 'runs' / 'clemsonc6420' / 'emotionalF',  'emotional'),
+    'neutral': (REPO_ROOT / 'runs' / 'clemsonc6420' / 'neutralF',    'neutral'),
 }
 
 # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
