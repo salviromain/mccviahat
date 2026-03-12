@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Usage: bash scripts/model/llama_up.sh [7b|70b]
+MODEL_SIZE="${1:-70b}"
+
 IMAGE="mccviahat-llama:dev"
 NAME="mccviahat-llama"
 PORT="8000"
 MODEL_DIR="${HOME}/model_cache/llama"
-MODEL_PATH="/models/llama-2-7b.Q4_K_M.gguf"
+
+case "$MODEL_SIZE" in
+  7b)
+    MODEL_PATH="/models/llama-2-7b.Q4_K_M.gguf"
+    ;;
+  70b)
+    MODEL_PATH="/models/llama-3.1-70b.Q4_K_M.gguf"
+    ;;
+  *)
+    echo "Usage: $0 [7b|70b]"
+    exit 1
+    ;;
+esac
 
 # If already running, do nothing
 if docker ps --format '{{.Names}}' | grep -qx "$NAME"; then
