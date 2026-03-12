@@ -14,7 +14,7 @@ case "$MODEL_SIZE" in
     ;;
   70b)
     MODEL_FILE="${MODEL_DIR}/llama-3.1-70b.Q4_K_M.gguf"
-    URL="https://huggingface.co/bartowski/Llama-3.1-70B-Instruct-GGUF/resolve/main/Llama-3.1-70B-Instruct-Q4_K_M.gguf"
+    URL="https://huggingface.co/bartowski/Meta-Llama-3.1-70B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-70B-Instruct-Q4_K_M.gguf"
     ;;
   *)
     echo "Usage: $0 [7b|70b]"
