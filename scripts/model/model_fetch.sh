@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-wget --header="Authorization: Bearer $HF_TOKEN" -O "$MODEL_FILE" "$URL"
 # Usage: bash scripts/model/model_fetch.sh [7b|70b]
 MODEL_SIZE="${1:-70b}"
 
