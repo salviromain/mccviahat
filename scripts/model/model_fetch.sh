@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 # Usage: bash scripts/model/model_fetch.sh [7b|70b]
 MODEL_SIZE="${1:-70b}"
 
@@ -21,14 +22,29 @@ case "$MODEL_SIZE" in
     ;;
 esac
 
-if [ -f "$MODEL_FILE" ]; then
-  echo "Model exists: $MODEL_FILE"
+if [ -s "$MODEL_FILE" ]; then
+  echo "Model exists and is non-empty: $MODEL_FILE"
   ls -lh "$MODEL_FILE"
   exit 0
 fi
 
+if [ -z "${HF_TOKEN:-}" ]; then
+  echo "HF_TOKEN is not set"
+  echo "Set it with: export HF_TOKEN='your_token_here'"
+  exit 1
+fi
+
 echo "Downloading $MODEL_SIZE model to: $MODEL_FILE"
-wget -O "$MODEL_FILE" "$URL"
+
+TMP_FILE="${MODEL_FILE}.part"
+rm -f "$TMP_FILE"
+
+wget \
+  --header="Authorization: Bearer ${HF_TOKEN}" \
+  -O "$TMP_FILE" \
+  "$URL"
+
+mv "$TMP_FILE" "$MODEL_FILE"
 
 echo "Downloaded:"
 ls -lh "$MODEL_FILE"
