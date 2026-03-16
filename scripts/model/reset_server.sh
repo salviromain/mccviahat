@@ -5,7 +5,7 @@
 # Usage: bash scripts/model/reset_server.sh [7b|70b]
 
 set -euo pipefail
-MODEL_SIZE="${1:-70b}"
+MODEL_SIZE="${1:-7b}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo ">>> Stopping llama server ($MODEL_SIZE)..."
