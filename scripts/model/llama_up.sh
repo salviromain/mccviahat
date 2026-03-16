@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Usage: bash scripts/model/llama_up.sh [7b|70b]
-MODEL_SIZE="${1:-70b}"
+MODEL_SIZE="${1:-7b}"
 
 IMAGE="mccviahat-llama:dev"
 NAME="mccviahat-llama"
