@@ -12,9 +12,11 @@ MODEL_DIR="${HOME}/model_cache/llama"
 case "$MODEL_SIZE" in
   7b)
     MODEL_PATH="/models/llama-2-7b.Q4_K_M.gguf"
+    CTX_SIZE=2048
     ;;
   70b)
     MODEL_PATH="/models/llama-3.1-70b.Q4_K_M.gguf"
+    CTX_SIZE=2048
     ;;
   *)
     echo "Usage: $0 [7b|70b]"
@@ -34,7 +36,7 @@ if docker ps -a --format '{{.Names}}' | grep -qx "$NAME"; then
   docker rm "$NAME" >/dev/null
 fi
 
-echo "Starting llama server container: $NAME"
+echo "Starting llama server container: $NAME ($MODEL_SIZE, ctx=${CTX_SIZE})"
 docker run -d \
   --name "$NAME" \
   --cpuset-cpus "0-15" \
@@ -44,6 +46,8 @@ docker run -d \
   /opt/llama.cpp/build/bin/llama-server \
     --host 0.0.0.0 --port 8000 \
     --model "$MODEL_PATH" \
+    --ctx-size "${CTX_SIZE}" \
+    --n-parallel 1 \
     --override-kv tokenizer.ggml.eos_token_id=int:-1 \
   >/dev/null
 
