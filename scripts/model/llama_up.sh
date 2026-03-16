@@ -47,7 +47,7 @@ docker run -d \
     --host 0.0.0.0 --port 8000 \
     --model "$MODEL_PATH" \
     --ctx-size "${CTX_SIZE}" \
-    --n-parallel 1 \
+    --parallel 1 \
     --override-kv tokenizer.ggml.eos_token_id=int:-1 \
   >/dev/null
 
