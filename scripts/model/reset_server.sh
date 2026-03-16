@@ -23,5 +23,5 @@ for i in $(seq 1 30); do
   sleep 2
 done
 
-echo "ERROR: Server did not become healthy within 60 seconds"
+echo "ERROR: Server did not become healthy within x seconds"
 exit 1

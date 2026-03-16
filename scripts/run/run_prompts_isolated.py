@@ -49,7 +49,7 @@ def get_container_pid(container: str) -> int:
     return int(raw)
 
 
-def reset_server(reset_script: str, timeout: float = 200.0) -> None:
+def reset_server(reset_script: str, timeout: float = 300.0) -> None:
     """Call the server reset script and wait for it to finish."""
     result = subprocess.run(
         ["bash", reset_script],
@@ -174,7 +174,7 @@ def run() -> None:
                     help="Tokens to generate per prompt.")
     ap.add_argument("--baseline_s", type=float, default=2.0,
                     help="Stabilisation sleep after reset, before collector starts (s).")
-    ap.add_argument("--per_request_timeout_s", type=float, default=60.0,
+    ap.add_argument("--per_request_timeout_s", type=float, default=200.0,
                     help="Hard timeout for the curl request (s).")
     ap.add_argument("--perf_interval_ms", type=int, default=1,
                     help="perf stat bucket interval in ms.")
