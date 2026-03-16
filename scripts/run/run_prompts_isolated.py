@@ -49,7 +49,7 @@ def get_container_pid(container: str) -> int:
     return int(raw)
 
 
-def reset_server(reset_script: str, timeout: float = 60.0) -> None:
+def reset_server(reset_script: str, timeout: float = 200.0) -> None:
     """Call the server reset script and wait for it to finish."""
     result = subprocess.run(
         ["bash", reset_script],
