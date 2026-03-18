@@ -37,8 +37,8 @@ RUN_SPLITS = {
    
     # Independent sets — run dirs are already split by condition by
     # run_prompts_isolated.py (label comes from trial_meta.json)
-    'emotional': (REPO_ROOT / 'runs' / 'clemsonc6420' / 'emotional3',  'emotional'),
-    'neutral': (REPO_ROOT / 'runs' / 'clemsonc6420' / 'neutral3',    'neutral'),
+    'emotional': (REPO_ROOT / 'runs' / 'clemsonc6420' / 'emotional4',  'emotional'),
+    'neutral': (REPO_ROOT / 'runs' / 'clemsonc6420' / 'neutral4',    'neutral'),
 }
 
 # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
