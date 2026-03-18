@@ -43,12 +43,9 @@ RUN_SPLITS = {
 
 # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
 EVENT_INDICATORS = {
-    'irq:irq_handler_entry', 'irq:irq_handler_exit',
-    'irq:softirq_entry', 'irq:softirq_exit', 'irq:softirq_raise',
-    'tlb:tlb_flush', 'mce:mce_record',
+    'tlb:tlb_flush', 'mce:mce_record', 'core_power.throttle',
     'context-switches', 'cpu-migrations', 'page-faults',
 }
-
 
 # ── Loaders ───────────────────────────────────────────────────────────────────
 
@@ -256,6 +253,8 @@ def extract_trial_features(trial_dir: Path, label: str) -> dict | None:
 
     hat = load_hat_interrupts(trial_dir)
     if hat is not None:
+        SOFTIRQ_NAMES = {'BLOCK','NET_RX','NET_TX','SCHED','TIMER','HRTIMER','RCU','HI','TASKLET'}
+
         hat_irq = [
             c for c in hat.columns
             if c not in ('timestamp_ns', 't_s')
@@ -263,6 +262,7 @@ def extract_trial_features(trial_dir: Path, label: str) -> dict | None:
             and pd.api.types.is_numeric_dtype(hat[c])
             and not c.isdigit()
             and not (c.startswith('hat_') and c[4:].isdigit())
+            and c not in SOFTIRQ_NAMES          # exclude bare softirq names from old runs
         ]
         hat_freq = [c for c in hat.columns if c.endswith('_freq_khz')]
 
