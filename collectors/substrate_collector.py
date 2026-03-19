@@ -429,6 +429,7 @@ def main() -> int:
     # cpu-migrations    — task moved between CPUs by load balancer
     # page-faults       — minor (mmap remap) + major (page-in)
     # cpu-clock         — CPU time; duration normaliser
+    # sched:sched_stat_wait — per-task wait time in run queue (scheduler delay)
 
     hat_events = [
         # HAT Layer 1 — TLB Shootdown tracepoint
@@ -485,6 +486,11 @@ def main() -> int:
         # Source: Intel SDM Vol.3B §2.3 uncore IMC; UNC_M_ECC_CORRECTABLE_ERRORS
         ("uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/",
          "ECC correctable errors — silent single-bit DRAM errors"),
+
+        # Scheduler wait-time tracepoint (deadline/scheduling pressure confounder)
+        # Captures time tasks spend waiting in run queue before being scheduled.
+        ("sched:sched_stat_wait",
+         "Scheduler wait-time tracepoint — run-queue wait delay"),
     ]
 
     for evt, description in optional_hat_events:
