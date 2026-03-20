@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage: bash scripts/model/llama_up.sh
-#
-# All parameters are read from model_config.sh (written by model_fetch.sh).
-# To switch models: bash scripts/model/model_fetch.sh [7b|70b]
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_FILE="${SCRIPT_DIR}/model_config.sh"
-
-if [ ! -f "$CONFIG_FILE" ]; then
-  echo "ERROR: model_config.sh not found."
-  echo "Run first: bash scripts/model/model_fetch.sh [7b|70b]"
-  exit 1
-fi
-
-# shellcheck source=model_config.sh
-source "$CONFIG_FILE"
+# Usage: bash scripts/model/llama_up.sh [7b|70b]
+MODEL_SIZE="${1:-7b}"
 
 IMAGE="mccviahat-llama:dev"
 NAME="mccviahat-llama"
 PORT="8000"
+MODEL_DIR="${HOME}/model_cache/llama"
+
+case "$MODEL_SIZE" in
+  7b)
+    MODEL_PATH="/models/llama-2-7b.Q4_K_M.gguf"
+    CTX_SIZE=2048
+    ;;
+  70b)
+    MODEL_PATH="/models/llama-3.1-70b.Q4_K_M.gguf"
+    CTX_SIZE=2048
+    ;;
+  *)
+    echo "Usage: $0 [7b|70b]"
+    exit 1
+    ;;
+esac
 
 # If already running, do nothing
 if docker ps --format '{{.Names}}' | grep -qx "$NAME"; then
@@ -34,16 +36,16 @@ if docker ps -a --format '{{.Names}}' | grep -qx "$NAME"; then
   docker rm "$NAME" >/dev/null
 fi
 
-echo "Starting llama server: $NAME  model=${MODEL_SIZE}  ctx=${CTX_SIZE}  cpuset=${CPUSET}"
+echo "Starting llama server container: $NAME ($MODEL_SIZE, ctx=${CTX_SIZE})"
 docker run -d \
   --name "$NAME" \
-  --cpuset-cpus "${CPUSET}" \
+  --cpuset-cpus "0-15" \
   -p "${PORT}:8000" \
   -v "${MODEL_DIR}:/models" \
   "$IMAGE" \
   /opt/llama.cpp/build/bin/llama-server \
     --host 0.0.0.0 --port 8000 \
-    --model "${MODEL_PATH_IN_CONTAINER}" \
+    --model "$MODEL_PATH" \
     --ctx-size "${CTX_SIZE}" \
     --parallel 1 \
     --override-kv tokenizer.ggml.eos_token_id=int:-1 \
