@@ -187,9 +187,11 @@ def send_prompt(
 
 def run() -> None:
     # ── Load model config first so we can use it as argument defaults ─────────
-    # Locate model_config.sh relative to this script's location
-    _script_dir = Path(__file__).resolve().parent
-    _default_config = str(_script_dir / "model_config.sh")
+    # This script lives in scripts/run/
+    # model_config.sh and reset_server.sh live in scripts/model/
+    _script_dir  = Path(__file__).resolve().parent          # scripts/run/
+    _model_dir   = _script_dir.parent / "model"             # scripts/model/
+    _default_config = str(_model_dir / "model_config.sh")
 
     # Pre-parse just --model_config so we can load it before full argparse
     import sys
@@ -216,7 +218,7 @@ def run() -> None:
     ap.add_argument("--container", default="mccviahat-llama",
                     help="Docker container name.")
     ap.add_argument("--reset_script",
-                    default=str(_script_dir / "reset_server.sh"),
+                    default=str(_model_dir / "reset_server.sh"),
                     help="Path to reset_server.sh.")
     ap.add_argument("--collector",
                     default=str(
