@@ -8,16 +8,11 @@ Two quick visualisations:
                         emotional and one neutral trial directory and plots
                         the active Layer 1 indicators over time.
 
-  2. PCA SCATTER      — loads an engineered feature CSV (output of
-                        extract_features.py), drops NaN-heavy columns,
-                        runs PCA to 2 components, and plots emotional vs
-                        neutral trials in that space.
 
 Usage:
     python hat_viz.py \
         --emotional_trial runs/emotional/p0000 \
         --neutral_trial   runs/neutral/p0001 \
-        --features_csv    data/emotional7.csv data/neutral7.csv
 """
 
 import argparse
