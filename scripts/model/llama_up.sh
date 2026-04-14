@@ -21,6 +21,8 @@ source "$CONFIG_FILE"
 IMAGE="mccviahat-llama:dev"
 NAME="mccviahat-llama"
 PORT="8000"
+N_THREADS=$(nproc)
+
 
 # If already running, do nothing
 if docker ps --format '{{.Names}}' | grep -qx "$NAME"; then
@@ -45,6 +47,8 @@ docker run -d \
     --host 0.0.0.0 --port 8000 \
     --model "${MODEL_PATH_IN_CONTAINER}" \
     --ctx-size "${CTX_SIZE}" \
+    --threads "${N_THREADS}" \
+    --threads-batch "${N_THREADS}" \
     --parallel 1 \
     --override-kv tokenizer.ggml.eos_token_id=int:-1 \
   >/dev/null
