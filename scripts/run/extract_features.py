@@ -37,10 +37,19 @@ RUN_SPLITS = {
    
     # Independent sets — run dirs are already split by condition by
     # run_prompts_isolated.py (label comes from trial_meta.json)
-    'emotional7': (REPO_ROOT / 'runs' / '70b' / 'emotional7',  'emotional'),
-    'neutral7': (REPO_ROOT / 'runs' / '70b' / 'neutral7',    'neutral'),
-    'emotional8': (REPO_ROOT / 'runs' / '70b' / 'emotional8',  'emotional'),
-    'neutral8': (REPO_ROOT / 'runs' / '70b' / 'neutral8',    'neutral'),
+    'emotional219a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional219a',  'emotional'),
+    'neutral219a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral219a',    'neutral'),
+    'emotional219b': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional219b',  'emotional'),
+    'neutral219b': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral219b',    'neutral'),
+    'emotional219c': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional219c',  'emotional'),
+    'neutral219c': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral219c',    'neutral'),
+    'emotional220a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional220a',  'emotional'),
+    'neutral220a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral220a',    'neutral'),
+    'emotional233a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional233a',  'emotional'),
+    'neutral233a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral233a',    'neutral'),
+    'emotional233c': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional233c',  'emotional'),
+    'neutral233c': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral233c',    'neutral'),
+    
 }
 
 # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
