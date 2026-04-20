@@ -37,18 +37,22 @@ RUN_SPLITS = {
    
     # Independent sets — run dirs are already split by condition by
     # run_prompts_isolated.py (label comes from trial_meta.json)
-    'emotional219a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional219a',  'emotional'),
-    'neutral219a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral219a',    'neutral'),
-    'emotional219b': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional219b',  'emotional'),
-    'neutral219b': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral219b',    'neutral'),
-    'emotional219c': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional219c',  'emotional'),
-    'neutral219c': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral219c',    'neutral'),
-    'emotional220a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional220a',  'emotional'),
-    'neutral220a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral220a',    'neutral'),
-    'emotional233a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional233a',  'emotional'),
-    'neutral233a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral233a',    'neutral'),
-    'emotional233c': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional233c',  'emotional'),
-    'neutral233c': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral233c',    'neutral'),
+    'emotional187a': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional187a',  'emotional'),
+    'neutral187a': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral187a',    'neutral'),
+    'emotional187b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional187b',  'emotional'),
+    'neutral187b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral187b',    'neutral'),
+    'emotional194a': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional194a',  'emotional'),
+    'neutral194a': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral194a',    'neutral'),
+    'emotional194b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional194b',  'emotional'),
+    'neutral194b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral194b',    'neutral'),
+    'emotional200a': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional200a',  'emotional'),
+    'neutral200a': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral200a',    'neutral'),
+    'emotional200b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional200b',  'emotional'),
+    'neutral200b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral200b',    'neutral'),
+    'emotional204a': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional204a',  'emotional'),
+    'neutral204a': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral204a',    'neutral'),
+    'emotional204b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional204b',  'emotional'),
+    'neutral204b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral204b',    'neutral'),
     
 }
 
