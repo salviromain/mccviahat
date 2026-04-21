@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
 REPO_ROOT         = Path(__file__).resolve().parent.parent.parent
-DEFAULT_EMOTIONAL = REPO_ROOT / 'mccviahat'/'runs' / '70b' / 'emotional7' / 'p0000'
+DEFAULT_EMOTIONAL = REPO_ROOT / 'mccviahat'/'runs' / 'lo70b' / 'emotional7' / 'p0000'
 DEFAULT_NEUTRAL   = REPO_ROOT / 'mccviahat'/'runs' / '70b' / 'neutral7'   / 'p0005'
 
 
