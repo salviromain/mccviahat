@@ -19,8 +19,8 @@ import matplotlib.pyplot as plt
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
 REPO_ROOT         = Path(__file__).resolve().parent.parent.parent
-DEFAULT_EMOTIONAL = REPO_ROOT / 'mccviahat'/'runs' / 'lo70b' / 'emotional7' / 'p0000'
-DEFAULT_NEUTRAL   = REPO_ROOT / 'mccviahat'/'runs' / '70b' / 'neutral7'   / 'p0005'
+DEFAULT_EMOTIONAL = REPO_ROOT / 'mccviahat'/'runs' / 'shorter7b' / 'emotional187a' / 'p0006'
+DEFAULT_NEUTRAL   = REPO_ROOT / 'mccviahat'/'runs' / 'shorter7b' / 'neutral187a'   / 'p0008'
 
 
 def load_perf(trial_dir: Path) -> pd.DataFrame | None:
@@ -38,15 +38,15 @@ def plot_throttle(emotional_dir: Path, neutral_dir: Path) -> None:
                  fontsize=14)
 
     trials = [
-        (emotional_dir, "Emotional", "tab:red"),
-        (neutral_dir,   "Neutral",   "tab:blue"),
+        (emotional_dir, "Emotional", "#333333", "-"),
+        (neutral_dir,   "Neutral",   "#999999", "--"),
     ]
 
-    for ax, (trial_dir, label, color) in zip(axes, trials):
+    for ax, (trial_dir, label, color, ls) in zip(axes, trials):
         perf = load_perf(trial_dir)
         if perf is not None and INDICATOR in perf.columns:
             t = perf["t_s"] if "t_s" in perf.columns else np.arange(len(perf))
-            ax.plot(t, perf[INDICATOR].values, color=color, linewidth=0.7)
+            ax.plot(t, perf[INDICATOR].values, color=color, linewidth=0.7, linestyle=ls)
             ax.set_ylabel("Throttle events per 1 ms bucket", fontsize=13)
         else:
             ax.text(0.5, 0.5, f"not found in\n{trial_dir}", ha="center",
@@ -81,4 +81,8 @@ def main():
 
 
 if __name__ == "__main__":
+    import pandas as pd
+    df = pd.read_csv('runs/shorter7b/emotional187a/p0007/perf_stat.csv')
+    print(df['core_power.throttle'].head(20))
+    print(df['core_power.throttle'].diff().head(20))
     main()
