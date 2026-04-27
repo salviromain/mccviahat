@@ -3,49 +3,52 @@
 collectors/substrate_collector.py
 
 HAT-focused collector: captures the Hardware Anomaly Trace (HAT) and supporting
-substrate metrics for an LLM inference server.
+substrate metrics for an LLM inference server.  Tuned for Intel Xeon (c6420/c6620)
+bare-metal nodes on CloudLab.
 
 The HAT (§4.2.2 of the thesis) comprises two layers:
 
-  Layer 1 — Hardware Anomaly Interrupts:
-    Spurious interrupts, Machine Check Exceptions (MCE), Performance Counter
-    Overflow (NMI/PMI), Thermal/Power anomalies, TLB Shootdowns.
+  Layer 1 — Hardware Anomaly Interrupts (named types, priority order):
+    TLB Shootdown       → tlb:tlb_flush (perf, 1ms) + hat_TLB (/proc/interrupts)
+    Machine Check       → mce:mce_record (probed) + hat_MCE (/proc/interrupts)
+                          + full descriptor in kernel_log.txt
+    Thermal/Power       → core_power.throttle (probed) + msr/cpu_thermal_margin/
+    Spurious            → hat_SPU (/proc/interrupts)
+    ECC correctable     → uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/ (probed)
+                          (uncorrectable ECC → escalates to MCE, already covered)
 
-  Layer 2 — Continuous performance metrics that indicate hardware anomalies:
-    Cache hit rates, power consumption variations, thermal sensor readings,
-    memory access pattern entropy, clock cycle variations.
+  Layer 2 — Continuous performance metrics (priority order):
+    DRAM bandwidth      → uncore_imc/cas_count_read/ + cas_count_write/  ← NEW
+                          (direct memory controller transaction counts;
+                           64 bytes/CAS → multiply for bandwidth in bytes)
+    Memory pressure     → dTLB-load-misses, LLC-load-misses, cache-misses,
+                          cache-references  (CPU-side PMU proxies)
+    Power consumption   → power/energy-pkg/, power/energy-ram/ (RAPL)
+    Thermal readings    → msr/cpu_thermal_margin/ (continuous, °C below Tj_max)
+    Clock variations    → cycles, instructions, stalled-cycles-frontend/backend
+    Inference latency   → elapsed_ms in trial_meta.json (written by runner)
 
-This collector captures both layers via three mechanisms:
+  Demoted / removed vs previous version:
+    irq:irq_handler_entry/exit   — dropped: aggregate of all IRQ types, dominated
+                                   by timer tick, not inference-specific
+    irq:softirq_entry/exit/raise — dropped: OS scheduler noise, not HAT-relevant
+    /proc/softirqs polling       — dropped: SCHED/RCU/TIMER rows not used in
+                                   analysis; saves polling overhead
 
-  1. `perf stat -I 1` (1ms buckets, system-wide):
-     - HAT Layer 1 tracepoints: IRQ handlers (including spurious), softirq,
-       TLB flushes, thermal throttle
-     - HAT Layer 2 PMU counters: cache misses/references, LLC misses, branch
-       mispredictions, instructions, cycles, pipeline stalls, dTLB misses
-     - HAT Layer 2 power/energy: RAPL energy (pkg + ram), thermal margin
-     - Supporting events: context-switches, cpu-migrations, page-faults, cpu-clock
+  Still collected but excluded from analysis (kept for completeness):
+    hat_NMI, hat_PMI  — Performance Counter Overflow; counts perf's own activity
 
-  2. `/proc` + `/sys` polling (100ms):
-     - /proc/interrupts: SPU (spurious), NMI/PMI (perf counter overflow),
-       MCE (machine check), TLB (shootdown), LOC, RES, CAL — all named HAT events
-     - /proc/softirqs: deferred interrupt processing by type
-     - /sys/.../scaling_cur_freq: CPU frequency per core (DVFS confounder)
-     - /proc/stat + /proc/<pid>/stat: CPU utilisation (confounder)
-
-  3. Kernel log slice (always collected):
-     - journalctl -k: captures MCE records, thermal events, hardware errors
-
-Removed (not HAT-relevant):
-  - /proc/net/dev — no network in inference hot path
-  - /proc/diskstats — model is mmap'd and cached
-  - /proc/pressure/* — OS scheduler accounting, not hardware anomalies
-  - irq:tasklet_entry/exit — near-zero on modern kernels, not a named HAT type
+Three collection mechanisms:
+  1. perf stat -a -I 1ms  (system-wide, 1ms buckets)
+  2. /proc/interrupts + /sys/cpufreq polling (100ms) — HAT L1 named interrupts only
+  3. journalctl -k slice  (post-trial, full window)
 
 Outputs:
   perf_stat.txt       — raw perf stat output
   perf_stat.csv       — wide-format (1 row/ms, 1 col/event)
   proc_sample.csv     — per-process CPU + RSS (100ms)
-  hat_interrupts.csv  — /proc/interrupts + /proc/softirqs + CPU freq (100ms)
+  hat_interrupts.csv  — /proc/interrupts named rows + CPU freq (100ms)
+                        NOTE: /proc/softirqs no longer included
   kernel_log.txt      — dmesg slice (MCE, thermal, hardware errors)
   collector_meta.json — configuration + timestamps
 """
@@ -138,6 +141,9 @@ def read_proc_interrupts() -> dict:
 def read_proc_softirqs() -> dict:
     """Parse /proc/softirqs -> {type: total_count_across_cpus}.
 
+    NOT CALLED IN MAIN LOOP — retained for ad-hoc use only.
+    Softirq rows (SCHED, RCU, TIMER, NET_RX, BLOCK) are OS scheduling noise
+    that is not used in the HAT analysis and not worth the polling overhead.
     Types: HI, TIMER, NET_TX, NET_RX, BLOCK, TASKLET, SCHED, HRTIMER, RCU.
     """
     try:
@@ -362,75 +368,137 @@ def main() -> int:
         print("  ⚠  Both --llm_cpus and --perf_cpu must be set to enable taskset. Skipping.")
 
     # ================================================================
-    # HAT event set
+    # HAT event set — tuned for Intel Xeon c6420 (Broadwell-EP)
     # ================================================================
     #
-    # HAT Layer 1 -- Hardware Anomaly Interrupts (tracepoints):
-    #   irq:irq_handler_entry/exit -- ALL hardware IRQs (includes spurious)
-    #   irq:softirq_entry/exit/raise -- deferred interrupt processing
-    #   tlb:tlb_flush -- TLB Shootdown (named HAT anomaly)
-    #   core_power.throttle -- Thermal/Power anomaly (named HAT anomaly)
-    #   mce:mce_record -- Machine Check Exception (named HAT anomaly, probed)
+    # HAT Layer 1 — Hardware Anomaly Interrupts (tracepoints)
     #
-    # HAT Layer 2 -- Continuous performance metrics (PMU counters):
-    #   cache-misses, cache-references -- cache hit rate per time unit
-    #   LLC-load-misses -- last-level cache pressure
-    #   branch-misses, branch-instructions -- branch prediction accuracy
-    #   instructions, cycles -- IPC / clock cycle variations
-    #   stalled-cycles-frontend, stalled-cycles-backend -- pipeline stalls
-    #   dTLB-load-misses -- memory access pattern indicator
+    # tlb:tlb_flush
+    #   TLB Shootdown: fires on every TLB flush (local + cross-CPU shootdown IPI).
+    #   1ms resolution enables burst_clustering and lz_complexity on the time series.
+    #   Cross-CPU shootdowns also visible in hat_TLB (/proc/interrupts, 100ms).
+    #   Source: Linux include/trace/events/tlb.h; arch/x86/mm/tlb.c
     #
-    # HAT Layer 2 -- Power/thermal:
-    #   power/energy-pkg/, power/energy-ram/ -- power consumption variation
-    #   msr/cpu_thermal_margin/ -- thermal sensor reading
+    # HAT Layer 2 — PMU hardware counters
     #
-    # Supporting (confounders/context, not HAT itself):
-    #   context-switches, cpu-migrations -- scheduling context
-    #   page-faults -- memory management context
-    #   cpu-clock -- CPU time normaliser
+    # uncore_imc/cas_count_read/ + cas_count_write/
+    #   DRAM read/write transaction counts from the memory controller directly.
+    #   Each CAS = one 64-byte cache line transfer → multiply by 64 for bytes.
+    #   More direct than LLC-load-misses (CPU-side proxy) or energy-ram (power proxy).
+    #   Available on this node: confirmed via `perf list | grep uncore_imc`.
+    #   Source: Intel SDM Vol.3B §2.3 uncore IMC PMU; perf list uncore_imc
+    #
+    # cache-misses / cache-references / LLC-load-misses
+    #   CPU-side cache pressure: misses → DRAM fetches from weight tensor access.
+    #   Complement the IMC CAS counters (CPU view vs controller view).
+    #   Source: Intel SDM Vol.3B §18.3 LAST_LEVEL_CACHE_MISSES/REFERENCES
+    #
+    # dTLB-load-misses
+    #   Data TLB load misses → hardware page table walk.
+    #   Maps to DTLB_LOAD_MISSES.MISS_CAUSES_A_WALK.
+    #   Weight tensors (~4GB) far exceed TLB capacity; this is directly inference-driven.
+    #   Source: Intel SDM Vol.3B §18.3
+    #
+    # branch-misses / branch-instructions
+    #   Pipeline flush on misprediction (~15 cycle penalty).
+    #   Shaped by transformer control flow.
+    #   Source: Intel SDM Vol.3B §18.3 BR_MISP_RETIRED.ALL_BRANCHES
+    #
+    # instructions / cycles
+    #   IPC = instructions / cycles — direct computational throughput measure.
+    #   Source: Intel SDM Vol.3B §18.2
+    #
+    # stalled-cycles-frontend / stalled-cycles-backend
+    #   Frontend = I-cache/branch stalls; backend = memory latency stalls.
+    #   Source: Intel SDM Vol.3B §18.3 IDQ_UOPS_NOT_DELIVERED / CYCLE_ACTIVITY
+    #
+    # HAT Layer 2 — Power / thermal
+    #
+    # power/energy-pkg/ / power/energy-ram/
+    #   RAPL package and DRAM energy in Joules/interval.
+    #   Source: Intel SDM Vol.3B §14.9; Linux arch/x86/events/rapl.c
+    #
+    # msr/cpu_thermal_margin/
+    #   °C below Tj_max (throttle threshold) from IA32_THERM_STATUS MSR bits [22:16].
+    #   Slow-moving; used as confounder check rather than primary signal.
+    #   Source: Intel SDM Vol.3B §14.7.2
+    #
+    # Supporting (confounders — collected for normalisation, not primary signals)
+    #
+    # context-switches  — scheduling artefact
+    # cpu-migrations    — task moved between CPUs by load balancer
+    # page-faults       — minor (mmap remap) + major (page-in)
+    # cpu-clock         — CPU time; duration normaliser
+    # sched:sched_stat_wait — per-task wait time in run queue (scheduler delay)
 
     hat_events = [
-        # -- HAT Layer 1: hardware anomaly tracepoints --
-        "irq:irq_handler_entry",
-        "irq:irq_handler_exit",
-        "irq:softirq_entry",
-        "irq:softirq_exit",
-        "irq:softirq_raise",
-        "tlb:tlb_flush",                # TLB Shootdown
-        # -- HAT Layer 2: PMU hardware counters --
+        # HAT Layer 1 — TLB Shootdown tracepoint
+        "tlb:tlb_flush",
+
+        # HAT Layer 2 — DRAM bandwidth (memory controller, direct measurement)
+        "uncore_imc/cas_count_read/",
+        "uncore_imc/cas_count_write/",
+
+        # HAT Layer 2 — CPU-side memory pressure PMU counters
         "cache-misses",
         "cache-references",
         "LLC-load-misses",
+        "dTLB-load-misses",
+
+        # HAT Layer 2 — IPC / pipeline
         "branch-misses",
         "branch-instructions",
         "instructions",
         "cycles",
         "stalled-cycles-frontend",
         "stalled-cycles-backend",
-        "dTLB-load-misses",
-        # -- HAT Layer 2: power / thermal --
+
+        # HAT Layer 2 — power / thermal
         "msr/cpu_thermal_margin/",
         "power/energy-pkg/",
         "power/energy-ram/",
-        # -- Supporting (confounders) --
+
+        # Supporting / confounders
         "context-switches",
         "cpu-migrations",
         "page-faults",
         "cpu-clock",
     ]
 
-    # Probe optional HAT Layer 1 events that depend on kernel config
+    # Probe optional HAT Layer 1 events — depend on kernel config / CPU model
     probed_events: List[str] = []
     optional_hat_events = [
-        "mce:mce_record",               # Machine Check Exception
-        "core_power.throttle",          # Thermal/Power Anomaly (not on all CPUs)
+        # Machine Check Exception — named HAT Layer 1 anomaly
+        # Full MCE descriptor also in kernel_log.txt (bank, status, address, misc)
+        # Source: Linux arch/x86/kernel/cpu/mcheck/mce.c
+        ("mce:mce_record",
+         "Machine Check Exception — hardware fault record"),
+
+        # Thermal/Power Anomaly — named HAT Layer 1 anomaly
+        # Fires when PROCHOT or power limit forces frequency reduction
+        # Source: Intel SDM Vol.3B §14.7; Linux arch/x86/events/intel/core.c
+        ("core_power.throttle",
+         "Thermal/Power Anomaly — PROCHOT/power-limit throttle event"),
+
+        # ECC correctable errors — named HAT anomaly (single-bit DRAM bit-flips
+        # corrected silently by ECC hardware; never generate MCE)
+        # Available on this node via uncore IMC PMU (confirmed via perf list)
+        # Source: Intel SDM Vol.3B §2.3 uncore IMC; UNC_M_ECC_CORRECTABLE_ERRORS
+        ("uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/",
+         "ECC correctable errors — silent single-bit DRAM errors"),
+
+        # Scheduler wait-time tracepoint (deadline/scheduling pressure confounder)
+        # Captures time tasks spend waiting in run queue before being scheduled.
+        ("sched:sched_stat_wait",
+         "Scheduler wait-time tracepoint — run-queue wait delay"),
     ]
-    for evt in optional_hat_events:
+
+    for evt, description in optional_hat_events:
         if _probe_event(evt):
             probed_events.append(evt)
-            print(f"  + {evt}")
+            print(f"  + {evt}  ({description})")
         else:
-            print(f"  x {evt} (not available on this kernel -- skipped)")
+            print(f"  x {evt}  ({description}) — not available on this kernel, skipped")
 
     events = ([e.strip() for e in args.events.split(",") if e.strip()]
               if args.events else hat_events)
@@ -440,7 +508,7 @@ def main() -> int:
     # Output paths
     perf_out = os.path.join(args.out_dir, "perf_stat.txt")
     proc_out = os.path.join(args.out_dir, "proc_sample.csv")
-    hat_irq_out = os.path.join(args.out_dir, "hat_interrupts.csv")
+    hat_irq_out = os.path.join(args.out_dir, "hat_interrupts.csv")  # /proc/interrupts + CPU freq only
     klog_out = os.path.join(args.out_dir, "kernel_log.txt")
     meta_out = os.path.join(args.out_dir, "collector_meta.json")
 
@@ -487,13 +555,12 @@ def main() -> int:
     ]
 
     # Build HAT interrupt CSV header from initial samples
+    # /proc/softirqs intentionally excluded — OS scheduling noise, not HAT-relevant
     sample_interrupts = read_proc_interrupts()
-    sample_softirqs = read_proc_softirqs()
-    sample_freq = read_cpu_frequencies()
+    sample_freq       = read_cpu_frequencies()
 
     hat_header = ["timestamp_ns"]
     hat_header += sorted(sample_interrupts.keys())
-    hat_header += sorted(sample_softirqs.keys())
     hat_header += sorted(sample_freq.keys())
 
     t_end = time.time() + args.duration_s
@@ -529,14 +596,13 @@ def main() -> int:
             w_proc.writerow([ts, cpu_total, cpu_idle, pid, utime, stime, rss_pages])
             f_proc.flush()
 
-            # HAT interrupt counts + softirqs + CPU frequency
+            # HAT interrupt counts + CPU frequency
+            # /proc/softirqs intentionally not polled (OS noise, not HAT-relevant)
             interrupts = read_proc_interrupts()
-            softirqs = read_proc_softirqs()
-            freq = read_cpu_frequencies()
+            freq       = read_cpu_frequencies()
 
             all_metrics = {}
             all_metrics.update(interrupts)
-            all_metrics.update(softirqs)
             all_metrics.update(freq)
 
             hat_row = [ts]
