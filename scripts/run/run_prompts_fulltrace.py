@@ -210,9 +210,9 @@ def run() -> None:
                     help="Path to reset_server.sh.")
     ap.add_argument("--collector",
                     default=str(
-                        _script_dir.parent.parent / "collectors" / "substrate_collector_v2.py"
+                        _script_dir.parent / "collectors" / "substrate_collector_v2.py"
                     ),
-                    help="Path to substrate_collector_v2.py.")
+                    help="Path to substrate_collector.py.")
     ap.add_argument("--server_url", default="http://localhost:8000/completion",
                     help="llama.cpp completion endpoint.")
     ap.add_argument("--n_predict", type=int, default=50,
