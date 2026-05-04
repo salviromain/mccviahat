@@ -210,7 +210,7 @@ def run() -> None:
                     help="Path to reset_server.sh.")
     ap.add_argument("--collector",
                     default=str(
-                        _script_dir.parent / "collectors" / "substrate_collector_v2.py"
+                        _script_dir.parent / "collectors" / "substrate_collector.py"
                     ),
                     help="Path to substrate_collector.py.")
     ap.add_argument("--server_url", default="http://localhost:8000/completion",
