@@ -9,7 +9,6 @@ venv/
 # outputs / data
 runs/
 output/
-*.csv
 
 # model caches
 model_cache/
