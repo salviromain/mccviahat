@@ -19,12 +19,16 @@ on (condition, prompt_index) to use n_tokens as a confounder.
 
 Usage
 -----
+    # Default: all three independent sets (E, J, N) in prompts/20base
+    python scripts/run/token_count_csv.py
+
     # Single file — produces prompts/20base/independentE_token_counts.csv
     python scripts/run/token_count_csv.py prompts/20base/independentE.json
 
-    # Both independent sets — also produces combined_token_counts.csv
+    # All three independent sets — also produces combined_token_counts.csv
     python scripts/run/token_count_csv.py \\
         prompts/20base/independentE.json \\
+        prompts/20base/independentJ.json \\
         prompts/20base/independentN.json
 
     # Custom output paths
@@ -42,6 +46,7 @@ Output
 ------
 The 'condition' column is inferred from the filename stem:
     independentE  →  emotional
+    independentJ  →  independentJ
     independentN  →  neutral
     (anything else kept as-is)
 
@@ -67,6 +72,11 @@ CONDITION_MAP = {
     "training_r":   "neutral",
 }
 
+DEFAULT_PROMPT_DIR = Path(__file__).resolve().parents[2] / "prompts" / "20base"
+DEFAULT_FILES = [
+    DEFAULT_PROMPT_DIR / f"independent{suffix}.json" for suffix in ("E", "J", "N")
+]
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
@@ -76,9 +86,11 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument(
         "files",
-        nargs="+",
+        nargs="*",
         type=Path,
-        help="JSON prompt files (arrays of objects with an 'instructions' key).",
+        default=DEFAULT_FILES,
+        help="JSON prompt files (arrays of objects with an 'instructions' key). "
+             "Default: prompts/20base/independent{E,J,N}.json.",
     )
     p.add_argument(
         "--model",
