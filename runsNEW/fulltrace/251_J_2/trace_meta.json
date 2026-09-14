@@ -1,0 +1,13 @@
+{
+  "mode": "fulltrace",
+  "label": "joy",
+  "run_label": "251_J_2",
+  "model_size": "70b",
+  "n_prompts": 20,
+  "n_predict": 50,
+  "inter_prompt_pause_s": 0.0,
+  "all_ok": true,
+  "t_trace_start_ns": 1788989915097813610,
+  "t_trace_end_ns": 1788991055157815775,
+  "total_trace_ms": 1140060.002165
+}

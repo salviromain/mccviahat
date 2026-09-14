@@ -6,6 +6,7 @@ Feature extraction for full-trace HAT runs (produced by run_prompts_fulltrace.py
 
 Unlike extract_features.py which expects one perf_stat.csv per trial,
 full-trace runs produce a single perf_stat.csv covering all 20 prompts.
+LZ complexity is omitted because its computation is slow on long traces.
 This script extracts features at two levels:
 
   1. WHOLE-TRACE features: the entire ~20-prompt trace treated as one signal.
@@ -17,13 +18,39 @@ This script extracts features at two levels:
      Used for finer-grained analysis and compatibility with existing
      analysis notebooks.
 
-Outputs:
-  data/fulltrace/<run_label>_whole.csv    — 1 row, whole-trace features
-  data/fulltrace/<run_label>_prompts.csv  — N rows, per-prompt features
+How to run (from the project root):
+    # Extract all run folders directly inside runsNEW/fulltrace:
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py
 
-Usage:
-    python extract_features_fulltrace.py runs/fulltrace/emotional_trace_001
-    python extract_features_fulltrace.py runs/fulltrace/emotional_trace_001 runs/fulltrace/neutral_trace_001
+    # Explicitly select the parent directory:
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace
+
+    # Extract just one run:
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace/229_J_1
+
+    # Save this batch in a separate output directory:
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py --output-dir data/fulltraceNEW
+
+Inputs:
+    With no arguments, reads <project root>/runsNEW/fulltrace.
+    You may also supply one or more run folders or parent directories.
+    Each run contains perf_stat.csv (or perf_stat.txt), trace_meta.json,
+    prompt_log.json, and optionally collector_meta.json. Condition labels
+    come from trace_meta.json (for example, joy or neutral).
+
+Where feature files are saved:
+    Default: <project root>/data/fulltrace/ (independent of working directory).
+    <run_label>_whole.csv   — one whole-trace feature row per run.
+    <run_label>_prompts.csv — one row per successfully segmented prompt.
+    all_whole.csv          — combined output when more than one whole row exists.
+    all_prompts.csv        — combined output when more than one prompt row exists.
+    Example: runsNEW/fulltrace/229_J_1 produces
+      data/fulltrace/229_J_1_whole.csv
+      data/fulltrace/229_J_1_prompts.csv
+    --output-dir changes the destination for every CSV; relative paths are
+    relative to your current working directory. The directory is created
+    automatically. Existing CSVs with the same names are overwritten.
+
 """
 
 import argparse
@@ -40,7 +67,7 @@ import pandas as pd
 # ── Repo root ─────────────────────────────────────────────────────────────────
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_DIR  = REPO_ROOT / 'data' / 'fulltrace'
-DATA_DIR.mkdir(parents=True, exist_ok=True)
+DEFAULT_TRACE_DIR = REPO_ROOT / 'runsNEW' / 'fulltrace'
 
 # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
 EVENT_INDICATORS = {
@@ -174,25 +201,6 @@ def metric_burst_clustering(s):
         return 0.0
     return float(sum(s[a:b].sum() for a, b in zip(starts, ends)) / s.sum())
 
-def metric_lz_complexity(s):
-    s = _safe(s)
-    if len(s) < 4:
-        return np.nan
-    seq = ''.join(map(str, (s > np.median(s)).astype(int)))
-    n = len(seq)
-    i, k, l, c = 0, 1, 1, 1
-    while k + l <= n:
-        if seq[i + l - 1] == seq[k + l - 1]:
-            l += 1
-        else:
-            i += 1
-            if i == k:
-                c += 1; k += l; i = 0; l = 1
-            else:
-                l = 1
-    c += 1
-    return float(c / (n / math.log2(n))) if n > 1 else 0.0
-
 def metric_perm_entropy(s, order=3):
     s = _safe(s)
     if len(s) < order:
@@ -216,7 +224,6 @@ def compute_all_metrics(s, dur_s, indicator_type='event'):
         'iat_cv':           metric_iat_cv(s) if indicator_type == 'event' else np.nan,
         'burst_rate':       metric_burst_rate(s, dur_s),
         'burst_clustering': metric_burst_clustering(s),
-        'lz_complexity':    metric_lz_complexity(s),
         'perm_entropy':     metric_perm_entropy(s),
     }
 
@@ -326,23 +333,58 @@ def extract_per_prompt(trace_dir: Path) -> list[dict]:
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+def discover_trace_dirs(paths: list[Path]) -> list[Path]:
+    """Expand parent directories and deduplicate runs before extraction."""
+    traces = []
+    seen = set()
+    for path in paths:
+        if not path.is_dir():
+            raise ValueError(f'Directory not found: {path}')
+        def is_trace(candidate):
+            return candidate.is_dir() and any(
+                (candidate / name).is_file()
+                for name in ('perf_stat.csv', 'perf_stat.txt')
+            )
+        candidates = [path] if is_trace(path) else sorted(
+            child for child in path.iterdir() if is_trace(child)
+        )
+        if not candidates:
+            raise ValueError(f'No full-trace runs found in: {path}')
+        for candidate in candidates:
+            resolved = candidate.resolve()
+            if resolved not in seen:
+                seen.add(resolved)
+                traces.append(candidate)
+    names = [trace.name for trace in traces]
+    if len(names) != len(set(names)):
+        raise ValueError('Trace folder names must be unique to avoid overwriting outputs.')
+    return traces
+
+
 def main():
     parser = argparse.ArgumentParser(
-        description='Extract features from full-trace HAT runs.'
+        description='Extract features from full-trace HAT runs.',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=__doc__,
     )
-    parser.add_argument('trace_dirs', nargs='+',
-                        help='One or more full-trace run directories '
-                             '(e.g. runs/fulltrace/emotional_trace_001)')
+    parser.add_argument('trace_dirs', nargs='*', type=Path,
+                        default=[DEFAULT_TRACE_DIR],
+                        help='Run folders or parent directories. Default: runsNEW/fulltrace')
+    parser.add_argument('--output-dir', type=Path, default=DATA_DIR,
+                        help='Output directory. Default: <project root>/data/fulltrace')
     args = parser.parse_args()
+    try:
+        trace_dirs = discover_trace_dirs(args.trace_dirs)
+    except ValueError as exc:
+        parser.error(str(exc))
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    print(f'Found {len(trace_dirs)} trace directories')
+    print(f'Feature CSV destination: {args.output_dir.resolve()}')
 
     all_whole = []
     all_prompts = []
 
-    for td_str in args.trace_dirs:
-        td = Path(td_str)
-        if not td.exists():
-            print(f'SKIP — directory not found: {td}')
-            continue
+    for td in trace_dirs:
 
         print(f'\nProcessing: {td}')
 
@@ -350,7 +392,7 @@ def main():
         whole = extract_whole_trace(td)
         if whole is not None:
             all_whole.append(whole)
-            out = DATA_DIR / f'{td.name}_whole.csv'
+            out = args.output_dir / f'{td.name}_whole.csv'
             pd.DataFrame([whole]).to_csv(out, index=False)
             print(f'  whole-trace: 1 row → {out}')
 
@@ -358,18 +400,18 @@ def main():
         prompts = extract_per_prompt(td)
         if prompts:
             all_prompts.extend(prompts)
-            out = DATA_DIR / f'{td.name}_prompts.csv'
+            out = args.output_dir / f'{td.name}_prompts.csv'
             pd.DataFrame(prompts).to_csv(out, index=False)
             print(f'  per-prompt:  {len(prompts)} rows → {out}')
 
     # Combined CSVs if multiple traces were processed
     if len(all_whole) > 1:
-        out = DATA_DIR / 'all_whole.csv'
+        out = args.output_dir / 'all_whole.csv'
         pd.DataFrame(all_whole).to_csv(out, index=False)
         print(f'\n  combined whole-trace: {len(all_whole)} rows → {out}')
 
     if len(all_prompts) > 1:
-        out = DATA_DIR / 'all_prompts.csv'
+        out = args.output_dir / 'all_prompts.csv'
         pd.DataFrame(all_prompts).to_csv(out, index=False)
         print(f'  combined per-prompt:  {len(all_prompts)} rows → {out}')
 
