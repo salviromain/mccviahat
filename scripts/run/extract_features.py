@@ -130,7 +130,7 @@ def _safe(s: np.ndarray) -> np.ndarray:
 
 def metric_mean_rate(s, dt_s):
     s = _safe(s)
-    return float(s.mean() / dt_s) if (len(s) > 0 and dt_s > 0) else np.nan
+    return float(s.sum() / dt_s) if (len(s) > 0 and dt_s > 0) else np.nan
 
 def metric_variance(s):
     s = _safe(s)
