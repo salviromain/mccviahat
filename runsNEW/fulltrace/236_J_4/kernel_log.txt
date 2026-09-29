@@ -1,0 +1,4 @@
+Sep 23 02:19:24 node2.rsalvi-317390.mccviahat-pg0.clemson.cloudlab.us kernel: perf: interrupt took too long (2555 > 2500), lowering kernel.perf_event_max_sample_rate to 78000
+Sep 23 02:21:58 node2.rsalvi-317390.mccviahat-pg0.clemson.cloudlab.us kernel: perf: interrupt took too long (3213 > 3193), lowering kernel.perf_event_max_sample_rate to 62000
+Sep 23 02:25:24 node2.rsalvi-317390.mccviahat-pg0.clemson.cloudlab.us kernel: perf: interrupt took too long (4118 > 4016), lowering kernel.perf_event_max_sample_rate to 48000
+Sep 23 02:31:12 node2.rsalvi-317390.mccviahat-pg0.clemson.cloudlab.us kernel: perf: interrupt took too long (5235 > 5147), lowering kernel.perf_event_max_sample_rate to 38000

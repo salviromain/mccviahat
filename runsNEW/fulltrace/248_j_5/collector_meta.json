@@ -1,0 +1,40 @@
+{
+  "t0_epoch": 1790108149.8085206,
+  "t0_ns": 1790108149808522139,
+  "duration_s": 72060.0,
+  "perf_interval_ms": 1,
+  "proc_interval_s": 0.1,
+  "pid": 3455,
+  "llm_cpus": "",
+  "perf_cpu": "",
+  "taskset_enabled": false,
+  "perf_events": [
+    "tlb:tlb_flush",
+    "instructions",
+    "cycles",
+    "core_power.throttle"
+  ],
+  "probed_events": [
+    "core_power.throttle"
+  ],
+  "perf_command": [
+    "sudo",
+    "-n",
+    "perf",
+    "stat",
+    "-a",
+    "-x",
+    ",",
+    "-I",
+    "1",
+    "-e",
+    "tlb:tlb_flush,instructions,cycles,core_power.throttle",
+    "-o",
+    "runs/fulltrace/248_JOY_TO_SORT/perf_stat.txt",
+    "--",
+    "sleep",
+    "72060.0"
+  ],
+  "t1_epoch": 1790109305.9720213,
+  "t1_ns": 1790109306155985200
+}
