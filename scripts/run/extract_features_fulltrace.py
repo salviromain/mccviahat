@@ -31,6 +31,9 @@ How to run (from the project root):
     # Save this batch in a separate output directory:
     .mccvenv/bin/python scripts/run/extract_features_fulltrace.py --output-dir data/fulltraceNEW
 
+    # Recompute only whole-trace features from both experiment collections:
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace runs/fulltrace --whole-only --output-dir dataNEW
+
 Inputs:
     With no arguments, reads <project root>/runsNEW/fulltrace.
     You may also supply one or more run folders or parent directories.
@@ -50,6 +53,7 @@ Where feature files are saved:
     --output-dir changes the destination for every CSV; relative paths are
     relative to your current working directory. The directory is created
     automatically. Existing CSVs with the same names are overwritten.
+    --whole-only skips per-prompt extraction and writes only whole-trace CSVs.
 
 """
 
@@ -372,6 +376,8 @@ def main():
                         help='Run folders or parent directories. Default: runsNEW/fulltrace')
     parser.add_argument('--output-dir', type=Path, default=DATA_DIR,
                         help='Output directory. Default: <project root>/data/fulltrace')
+    parser.add_argument('--whole-only', action='store_true',
+                        help='Extract only whole-trace features; skip per-prompt features.')
     args = parser.parse_args()
     try:
         trace_dirs = discover_trace_dirs(args.trace_dirs)
@@ -397,7 +403,7 @@ def main():
             print(f'  whole-trace: 1 row → {out}')
 
         # Per-prompt features
-        prompts = extract_per_prompt(td)
+        prompts = [] if args.whole_only else extract_per_prompt(td)
         if prompts:
             all_prompts.extend(prompts)
             out = args.output_dir / f'{td.name}_prompts.csv'

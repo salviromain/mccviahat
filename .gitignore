@@ -9,6 +9,7 @@ venv/
 # outputs / data
 runs/
 output/
+runsNEW/
 
 # model caches
 model_cache/

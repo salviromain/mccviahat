@@ -82,6 +82,20 @@ python3 scripts/run/extract_features.py
 
 This processes the raw collector output in `runs/` and writes feature files used by the notebooks.
 
+To recompute **whole-trace features only** for all fulltrace experiments in both
+collections, saving directly in `dataNEW/`:
+
+```bash
+.mccvenv/bin/python scripts/run/extract_features_fulltrace.py \
+  runsNEW/fulltrace runs/fulltrace --whole-only --output-dir dataNEW
+```
+
+This writes one `<run_label>_whole.csv` per experiment and a combined
+`all_whole.csv`. It skips per-prompt extraction. Existing whole-trace CSVs with
+matching names are overwritten; existing per-prompt files are not removed.
+Feature definitions are unchanged, including the omission of LZ complexity for
+full traces. See `dataNEW/RECOMPUTATION.md` for the recorded batch and validation.
+
 ---
 
 ## 6. Analysis
