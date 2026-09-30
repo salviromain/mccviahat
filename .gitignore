@@ -11,6 +11,7 @@ runs/
 output/
 runsNEW/
 data/
+datanew/
 # model caches
 model_cache/
 .cache/
