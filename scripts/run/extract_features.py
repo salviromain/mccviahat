@@ -218,8 +218,8 @@ def metric_perm_entropy(s, order=3):
     h_max = math.log2(math.factorial(order))
     return float(h / h_max) if h_max > 0 else 0.0
 
-def compute_all_metrics(s, dur_s, indicator_type='event'):
-    return {
+def compute_all_metrics(s, dur_s, indicator_type='event', include_lz=True):
+    metrics = {
         'mean_rate':        metric_mean_rate(s, dur_s),
         'variance':         metric_variance(s),
         'p90_p10':          metric_p90_p10(s),
@@ -228,19 +228,22 @@ def compute_all_metrics(s, dur_s, indicator_type='event'):
         'iat_cv':           metric_iat_cv(s) if indicator_type == 'event' else np.nan,
         'burst_rate':       metric_burst_rate(s, dur_s),
         'burst_clustering': metric_burst_clustering(s),
-        'lz_complexity':    metric_lz_complexity(s),
         'perm_entropy':     metric_perm_entropy(s),
     }
+    if include_lz:
+        metrics['lz_complexity'] = metric_lz_complexity(s)
+    return metrics
 
 
 # ── Core extractor ────────────────────────────────────────────────────────────
 
-def extract_trial_features(trial_dir: Path, label: str) -> dict | None:
+def extract_trial_features(trial_dir: Path, label: str, include_lz=True) -> dict | None:
     """Return a flat feature dict for one trial, or None on failure.
 
     The 'label' parameter is used as a fallback only.  If trial_meta.json
     contains a 'label' field (written by run_prompts_isolated.py) that value
     takes precedence, which is what makes mixed-condition run dirs work.
+    Set include_lz=False to omit LZ complexity for every indicator.
     """
     meta = load_trial_meta(trial_dir)
     if not meta.get('ok', False):
@@ -263,7 +266,7 @@ def extract_trial_features(trial_dir: Path, label: str) -> dict | None:
 
     for evt in [c for c in perf.columns if c != 't_s']:
         itype = 'event' if evt in EVENT_INDICATORS else 'pci'
-        for m, v in compute_all_metrics(perf[evt].values.astype(float), dur_s, itype).items():
+        for m, v in compute_all_metrics(perf[evt].values.astype(float), dur_s, itype, include_lz).items():
             row[f'{evt}__{m}'] = v
 
     hat = load_hat_interrupts(trial_dir)
@@ -282,12 +285,12 @@ def extract_trial_features(trial_dir: Path, label: str) -> dict | None:
         hat_freq = [c for c in hat.columns if c.endswith('_freq_khz')]
 
         for col in hat_irq:
-            for m, v in compute_all_metrics(hat[col].values.astype(float), dur_s, 'event').items():
+            for m, v in compute_all_metrics(hat[col].values.astype(float), dur_s, 'event', include_lz).items():
                 row[f'hat_{col}__{m}'] = v
 
         if hat_freq:
             freq_mean = hat[hat_freq].mean(axis=1).values
-            for m, v in compute_all_metrics(freq_mean, dur_s, 'pci').items():
+            for m, v in compute_all_metrics(freq_mean, dur_s, 'pci', include_lz).items():
                 row[f'cpu_freq_mean__{m}'] = v
 
     return row
