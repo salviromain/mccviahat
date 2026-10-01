@@ -87,11 +87,13 @@ collections, saving directly in `dataNEW/`:
 
 ```bash
 .mccvenv/bin/python scripts/run/extract_features_fulltrace.py \
-  runsNEW/fulltrace runs/fulltrace --whole-only --output-dir dataNEW
+  runsNEW/fulltrace runs/fulltrace --output-dir dataNEW
 ```
 
 This writes one `<run_label>_whole.csv` per experiment and a combined
-`all_whole.csv`. It skips per-prompt extraction. Existing whole-trace CSVs with
+`all_whole.csv` when multiple traces are processed. The extractor always produces
+whole-trace features only, without LZ complexity; `--whole-only` remains accepted
+for compatibility. Existing whole-trace CSVs with
 matching names are overwritten; existing per-prompt files are not removed.
 Feature definitions are unchanged, including the omission of LZ complexity for
 full traces. See `dataNEW/RECOMPUTATION.md` for the recorded batch and validation.
@@ -106,3 +108,11 @@ Open the notebooks in `analysis/notebooks/` and run them in order:
 - `token_centroid_analysis.ipynb` — token-level centroid analysis
 
 Shared plotting utilities live in `analysis/lib/hat_viz.py`.
+
+For three-class prediction from the whole-trace features in `dataNEW`, open
+`analysis/notebooks/fulltrace_classification_dataNEW.ipynb` with the `.mccvenv`
+kernel and run all cells. It uses only the original four throttle features
+(mean rate, variance, spectral entropy, and slope), compares six classifier families, tunes the best
+with grouped cross-validated grid search, and evaluates on held-out nodes.
+Results and the fitted pipeline are saved in `output/fulltrace_classification_four_throttle/`.
+The notebook explains the node grouping and collection-batch limitations.

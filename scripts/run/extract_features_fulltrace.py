@@ -7,16 +7,8 @@ Feature extraction for full-trace HAT runs (produced by run_prompts_fulltrace.py
 Unlike extract_features.py which expects one perf_stat.csv per trial,
 full-trace runs produce a single perf_stat.csv covering all 20 prompts.
 LZ complexity is omitted because its computation is slow on long traces.
-This script extracts features at two levels:
-
-  1. WHOLE-TRACE features: the entire ~20-prompt trace treated as one signal.
-     One feature row per trace. Used to compare emotional vs neutral traces
-     directly (e.g. k-means on 8 emotional traces vs 8 neutral traces).
-
-  2. PER-PROMPT features: the trace is segmented into per-prompt windows
-     using the timestamps in prompt_log.json. One feature row per prompt.
-     Used for finer-grained analysis and compatibility with existing
-     analysis notebooks.
+This script extracts whole-trace features only: the entire ~20-prompt trace
+is treated as one signal, producing one feature row per trace.
 
 How to run (from the project root):
     # Extract all run folders directly inside runsNEW/fulltrace:
@@ -32,35 +24,32 @@ How to run (from the project root):
     .mccvenv/bin/python scripts/run/extract_features_fulltrace.py --output-dir data/fulltraceNEW
 
     # Recompute only whole-trace features from both experiment collections:
-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace runs/fulltrace --whole-only --output-dir dataNEW
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace runs/fulltrace --output-dir dataNEW
 
 Inputs:
     With no arguments, reads <project root>/runsNEW/fulltrace.
     You may also supply one or more run folders or parent directories.
-    Each run contains perf_stat.csv (or perf_stat.txt), trace_meta.json,
-    prompt_log.json, and optionally collector_meta.json. Condition labels
+    Each run contains perf_stat.csv (or perf_stat.txt) and trace_meta.json.
+    No prompt log or collector metadata is required. Condition labels
     come from trace_meta.json (for example, joy or neutral).
 
 Where feature files are saved:
     Default: <project root>/data/fulltrace/ (independent of working directory).
     <run_label>_whole.csv   — one whole-trace feature row per run.
-    <run_label>_prompts.csv — one row per successfully segmented prompt.
     all_whole.csv          — combined output when more than one whole row exists.
-    all_prompts.csv        — combined output when more than one prompt row exists.
     Example: runsNEW/fulltrace/229_J_1 produces
       data/fulltrace/229_J_1_whole.csv
-      data/fulltrace/229_J_1_prompts.csv
     --output-dir changes the destination for every CSV; relative paths are
     relative to your current working directory. The directory is created
     automatically. Existing CSVs with the same names are overwritten.
-    --whole-only skips per-prompt extraction and writes only whole-trace CSVs.
+    --whole-only is accepted for compatibility; whole-trace extraction is always used.
+    Existing per-prompt CSVs are left untouched.
 
 """
 
 import argparse
 import json
 import math
-import sys
 from collections import defaultdict, OrderedDict
 from pathlib import Path
 
@@ -120,22 +109,8 @@ def _parse_perf_txt(path: Path) -> pd.DataFrame:
     return pd.DataFrame(records).sort_values('t_s').reset_index(drop=True)
 
 
-def load_prompt_log(trace_dir: Path) -> list[dict] | None:
-    p = trace_dir / 'prompt_log.json'
-    if not p.exists():
-        return None
-    return json.loads(p.read_text())
-
-
 def load_trace_meta(trace_dir: Path) -> dict:
     p = trace_dir / 'trace_meta.json'
-    if not p.exists():
-        return {}
-    return json.loads(p.read_text())
-
-
-def load_collector_meta(trace_dir: Path) -> dict:
-    p = trace_dir / 'collector_meta.json'
     if not p.exists():
         return {}
     return json.loads(p.read_text())
@@ -237,7 +212,6 @@ def compute_all_metrics(s, dur_s, indicator_type='event'):
 def extract_whole_trace(trace_dir: Path) -> dict | None:
     """Extract features from the entire trace as one signal."""
     trace_meta = load_trace_meta(trace_dir)
-    collector_meta = load_collector_meta(trace_dir)
     perf = load_perf(trace_dir)
 
     if perf is None or len(perf) < 10:
@@ -263,76 +237,6 @@ def extract_whole_trace(trace_dir: Path) -> dict | None:
             row[f'{evt}__{m}'] = v
 
     return row
-
-
-# ── Per-prompt feature extraction ─────────────────────────────────────────────
-
-def extract_per_prompt(trace_dir: Path) -> list[dict]:
-    """Segment the trace by prompt timestamps and extract per-prompt features."""
-    perf = load_perf(trace_dir)
-    prompt_log = load_prompt_log(trace_dir)
-    trace_meta = load_trace_meta(trace_dir)
-    collector_meta = load_collector_meta(trace_dir)
-
-    if perf is None or len(perf) < 10:
-        print(f'  [{trace_dir.name}] WARNING: no perf data')
-        return []
-
-    if prompt_log is None or len(prompt_log) == 0:
-        print(f'  [{trace_dir.name}] WARNING: no prompt_log.json')
-        return []
-
-    label = trace_meta.get('label', 'unknown')
-
-    # Collector start time (epoch nanoseconds) — needed to align prompt
-    # timestamps (which are absolute epoch ns) with perf t_s (which is
-    # seconds from collector start)
-    t0_ns = collector_meta.get('t0_ns')
-    if t0_ns is None:
-        # Fallback: use the trace start time from trace_meta
-        t0_ns = trace_meta.get('t_trace_start_ns')
-    if t0_ns is None:
-        print(f'  [{trace_dir.name}] WARNING: cannot determine collector start time')
-        return []
-
-    records = []
-    for entry in prompt_log:
-        if not entry.get('ok', False):
-            continue
-
-        # Convert absolute ns timestamps to seconds from collector start
-        req_start_s = (entry['t_request_start_ns'] - t0_ns) / 1e9
-        req_end_s   = (entry['t_request_end_ns'] - t0_ns) / 1e9
-        dur_s = (entry['t_request_end_ns'] - entry['t_request_start_ns']) / 1e9
-
-        # Select the perf rows within this prompt's time window
-        mask = (perf['t_s'] >= req_start_s) & (perf['t_s'] <= req_end_s)
-        segment = perf.loc[mask]
-
-        if len(segment) < 5:
-            print(f'    prompt {entry["prompt_index"]}: only {len(segment)} samples, skipping')
-            continue
-
-        row = {
-            'run_label':    trace_dir.name,
-            'condition':    label,
-            'prompt_index': entry['prompt_index'],
-            'elapsed_ms':   entry['elapsed_ms'],
-            'dur_s':        dur_s,
-            't_start_s':    req_start_s,
-            't_end_s':      req_end_s,
-            'n_samples':    len(segment),
-            'mode':         'per_prompt',
-        }
-
-        for evt in [c for c in segment.columns if c != 't_s']:
-            itype = 'event' if evt in EVENT_INDICATORS else 'pci'
-            for m, v in compute_all_metrics(segment[evt].values.astype(float), dur_s, itype).items():
-                row[f'{evt}__{m}'] = v
-
-        records.append(row)
-
-    return records
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -367,7 +271,7 @@ def discover_trace_dirs(paths: list[Path]) -> list[Path]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Extract features from full-trace HAT runs.',
+        description='Extract whole-trace HAT features only, without LZ complexity.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
@@ -377,7 +281,7 @@ def main():
     parser.add_argument('--output-dir', type=Path, default=DATA_DIR,
                         help='Output directory. Default: <project root>/data/fulltrace')
     parser.add_argument('--whole-only', action='store_true',
-                        help='Extract only whole-trace features; skip per-prompt features.')
+                        help='Compatibility flag; whole-trace-only extraction is now always used.')
     args = parser.parse_args()
     try:
         trace_dirs = discover_trace_dirs(args.trace_dirs)
@@ -388,7 +292,6 @@ def main():
     print(f'Feature CSV destination: {args.output_dir.resolve()}')
 
     all_whole = []
-    all_prompts = []
 
     for td in trace_dirs:
 
@@ -402,24 +305,11 @@ def main():
             pd.DataFrame([whole]).to_csv(out, index=False)
             print(f'  whole-trace: 1 row → {out}')
 
-        # Per-prompt features
-        prompts = [] if args.whole_only else extract_per_prompt(td)
-        if prompts:
-            all_prompts.extend(prompts)
-            out = args.output_dir / f'{td.name}_prompts.csv'
-            pd.DataFrame(prompts).to_csv(out, index=False)
-            print(f'  per-prompt:  {len(prompts)} rows → {out}')
-
     # Combined CSVs if multiple traces were processed
     if len(all_whole) > 1:
         out = args.output_dir / 'all_whole.csv'
         pd.DataFrame(all_whole).to_csv(out, index=False)
         print(f'\n  combined whole-trace: {len(all_whole)} rows → {out}')
-
-    if len(all_prompts) > 1:
-        out = args.output_dir / 'all_prompts.csv'
-        pd.DataFrame(all_prompts).to_csv(out, index=False)
-        print(f'  combined per-prompt:  {len(all_prompts)} rows → {out}')
 
     print('\nDone.')
 
