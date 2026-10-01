@@ -1,33 +1,33 @@
-# Three-condition fulltrace analysis
+# Three-batch fulltrace analysis
 
-Executed `analysis/notebooks/fulltrace_analysis_NEJ.ipynb` using the project's
-`.mccvenv` on 2026-09-29. The original notebook was preserved.
+`analysis/notebooks/fulltrace_analysis_NEJ.ipynb` pools individual whole-trace
+CSVs recursively from these `dataNEW` folders:
 
-Inputs: all 67 individual whole-trace CSVs in `dataNEW` (20 neutral, 20 emotional,
-27 joy), validated against `all_whole.csv`. No per-prompt feature data is used.
+| Folder | Neutral | Emotional | Joy |
+| --- | ---: | ---: | ---: |
+| `fulltrace_0ld_batch` (or `fulltrace_old_batch`) | 20 | 20 | 0 |
+| `fulltrace_1st_batch` | 0 | 0 | 27 |
+| `fulltrace_2nd_batch` (including nested `2nd_batch`) | 10 | 10 | 3 |
+| Total | 30 | 30 | 30 |
 
-Changes from the original notebook:
-- Load `dataNEW`; include N, E, and J and all three condition pairs.
-- Validate unique run labels, whole-trace mode, all three conditions, and finite
-  values for the four selected throttle features.
-- Retain the original four features, test methods, effect-size calculation,
-  distance calculations, and prompt TTR analysis.
-- Apply Bonferroni correction across 12 feature/pair tests separately for Welch
-  and Mann–Whitney; across three pairs per test family for prompt TTR.
-- Use three class colors and compact distance-plot labels.
-- Save outputs in the notebook and export `pairwise_tests.csv`,
-  `feature_distances.csv`, and `prompt_ttr_tests.csv` here.
+The 90 traces retain batch and source-file provenance. Run labels are read as
+strings so names such as `222E1` remain intact. Duplicate run labels are rejected.
+Combined CSVs are checked against individual files in their directory subtree
+and are never counted as additional observations. Root-level CSVs outside the
+three batch folders are not analysis inputs.
 
-Execution dependencies `nbclient` and `nbformat` were installed in `.mccvenv`.
-Select that Python environment when rerunning all cells in the notebook.
+The original four throttle features (mean rate, variance, spectral entropy,
+and slope), pairwise tests, distance calculations, and prompt TTR analysis are
+preserved. Use `.mccvenv` and run all notebook cells to refresh the outputs:
 
-At alpha 0.05, corrected Mann–Whitney tests identify five comparisons: joy has
-higher mean rate and lower spectral entropy than both neutral and emotional,
-and higher variance than neutral. No neutral–emotional feature comparison is
-significant after correction. Corrected Welch tests identify the four mean-rate
-and spectral-entropy joy comparisons, but not the variance comparison.
+- `pooled_whole_traces.csv`: combined observations with provenance.
+- `batch_condition_counts.csv`: batch-by-condition sample counts.
+- `pairwise_tests.csv`: Welch and Mann–Whitney comparisons, Bonferroni-corrected
+  over 12 feature/pair tests separately for each test family.
+- `feature_distances.csv`: within-/between-condition feature distances.
+- `prompt_ttr_tests.csv`: supplementary comparisons of the three prompt sets.
 
-Joy and the other conditions belong to different collection batches, and
-repeated runs on a node may be dependent. These exploratory trace-level tests
-do not isolate a causal effect of condition. Prompt TTR is supplementary and
-does not control workload confounding.
+The analyses pool batches and treat traces as independent. Batch composition
+is uneven and repeated runs on a node may be dependent, so pooled differences
+are exploratory and do not isolate causal effects of condition. TTR does not
+control workload confounding.
