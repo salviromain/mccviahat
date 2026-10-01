@@ -2,11 +2,11 @@
 
 Results reviewed on 2026-10-01 from [fulltrace_analysis_NEJ.ipynb](fulltrace_analysis_NEJ.ipynb) and its exported tables in [dataNEW/analysis_NEJ](../../dataNEW/analysis_NEJ/).
 
-The strongest pooled finding is a **higher mean throttle rate in joy traces** than in either neutral or emotional traces. Joy also has higher throttle variance, supported by the corrected Mann–Whitney tests but not the corrected Welch tests. **None of the four features significantly distinguishes emotional from neutral after correction.** These findings describe this collection of traces; uneven batch composition and repeated measurements limit their interpretation as effects of condition.
+The strongest pooled finding is a **higher mean throttle rate in joy traces** than in either neutral or emotional traces. Joy also has higher throttle variance, supported by the corrected Mann–Whitney tests but not the corrected Welch tests. The new throttle-to-cycles ratio is also higher for joy under both corrected tests. **None of the five features significantly distinguishes emotional from neutral after correction.** These findings describe this collection of traces; uneven batch composition and repeated measurements limit their interpretation as effects of condition.
 
 ## What was analyzed
 
-The notebook pools 90 whole traces, with 30 observations per condition, using only four `core_power.throttle` features: mean rate, variance, spectral entropy, and slope. It does not use instructions, cycles, TLB features, or LZ complexity.
+The notebook pools 90 whole traces, with 30 observations per condition, using the original four `core_power.throttle` features (mean rate, variance, spectral entropy, and slope), plus the ratio of summed throttle counts to summed cycles. Cycles are used only as the denominator of this fifth feature; instructions, TLB features, and LZ complexity are excluded.
 
 | Collection batch | Neutral | Emotional | Joy |
 | --- | ---: | ---: | ---: |
@@ -17,7 +17,7 @@ The notebook pools 90 whole traces, with 30 observations per condition, using on
 
 Equal pooled class counts do not imply balanced sampling within batches. Ninety percent of joy traces come from the first batch, whereas two-thirds of neutral and emotional traces come from the old batch.
 
-For each feature, the notebook compares all three condition pairs using Welch's t-test and a two-sided Mann–Whitney U test. Each test family receives its own Bonferroni correction across 12 comparisons. Significance below means **corrected p < 0.05**. The two test families are not jointly corrected as a single family.
+For each feature, the notebook compares all three condition pairs using Welch's t-test and a two-sided Mann–Whitney U test. Each test family receives its own Bonferroni correction across 15 comparisons. Significance below means **corrected p < 0.05**. The two test families are not jointly corrected as a single family.
 
 ## Feature-level findings
 
@@ -36,8 +36,8 @@ Joy's mean rate is approximately **7.5% higher than neutral** and **5.1% higher 
 
 | Comparison | Corrected Welch p | Corrected Mann–Whitney p | Absolute standardized mean difference |
 | --- | ---: | ---: | ---: |
-| Neutral–joy | 3.13 × 10⁻⁶ | 1.09 × 10⁻⁶ | 1.65 |
-| Emotional–joy | 5.63 × 10⁻⁵ | 2.78 × 10⁻⁵ | 1.39 |
+| Neutral–joy | 3.91 × 10⁻⁶ | 1.36 × 10⁻⁶ | 1.65 |
+| Emotional–joy | 7.04 × 10⁻⁵ | 3.48 × 10⁻⁵ | 1.39 |
 
 The standardized differences are large relative to the observed within-condition spread. The notebook calls this statistic `cohens_d` and computes the absolute mean difference divided by the square root of the average sample variance. Direction must therefore be read from the means, not the sign of this statistic.
 
@@ -49,8 +49,8 @@ Joy's mean variance is approximately 13.6% higher than neutral and 14.3% higher 
 
 | Comparison | Corrected Welch p | Corrected Mann–Whitney p |
 | --- | ---: | ---: |
-| Neutral–joy | 0.0886 | **0.00304** |
-| Emotional–joy | 0.0706 | **0.000673** |
+| Neutral–joy | 0.1107 | **0.00380** |
+| Emotional–joy | 0.0882 | **0.000841** |
 
 The rank-based tests detect a difference, while the mean-based Welch tests do not meet the corrected threshold. This is evidence of a distributional difference under the test assumptions, but not agreement between both tests about a mean shift. Mann–Whitney should not automatically be interpreted as a test of medians when distribution shapes may differ.
 
@@ -58,11 +58,38 @@ Neutral and emotional have almost identical mean variance, with an absolute stan
 
 ### Spectral entropy and slope: no corrected significance
 
-None of the six feature/pair comparisons for spectral entropy or slope survives correction. Emotional–joy spectral entropy has a noticeable standardized difference (0.71), but corrected p-values are 0.0977 for Welch and 0.129 for Mann–Whitney. It should not be reported as a significant result.
+None of the six feature/pair comparisons for spectral entropy or slope survives correction. Emotional–joy spectral entropy has a noticeable standardized difference (0.71), but corrected p-values are 0.1221 for Welch and 0.1614 for Mann–Whitney. It should not be reported as a significant result.
 
 Joy has a lower average slope than the other classes, but the observed differences are insufficient to establish separation with these tests. Failure to reject a difference is not an equivalence result or proof that a larger study would find no effect.
 
-Overall, **two comparisons survive corrected Welch testing and four survive corrected Mann–Whitney testing**. All involve joy; none is emotional–neutral.
+### Throttle-to-cycles ratio: joy differences persist after normalization
+
+The fifth feature is `sum(core_power.throttle) / sum(cycles)`. The notebook computes
+it from the corresponding mean-rate columns because their common trace duration
+cancels. This is a ratio of totals, not an average of interval ratios. It assumes
+matching valid intervals for the counters; the feature CSVs cannot verify that
+coverage. Nonfinite rates, negative throttle rates, and nonpositive cycle rates
+are rejected. Treat it as a dimensionless ratio, not a verified physical percentage.
+
+The pooled means are **0.009096 for neutral**, **0.009376 for emotional**, and
+**0.009916 for joy**. Joy is about 9.0% higher than neutral and 5.8% higher than
+emotional. These are relative differences in the ratio, not percentage points.
+
+| Comparison | Corrected Welch p | Corrected Mann–Whitney p | Absolute standardized mean difference |
+| --- | ---: | ---: | ---: |
+| N–E | 1 | 1 | 0.48 |
+| N–J | 7.573e-06 | 2.238e-05 | 1.60 |
+| E–J | 5.854e-06 | 0.0001083 | 1.57 |
+
+Joy differs from both other conditions under both corrected tests; emotional–neutral
+does not. These results indicate that the pooled joy association persists when
+throttle counts are normalized by counted CPU cycles. They do not show that batch,
+instruction mix, background activity, or all workload effects have been controlled.
+The ratio also shares a numerator with mean throttle rate, so it is not independent
+replication of that result. Adding it increases the correction multiplier from 12
+to 15 for all feature tests, including the original four.
+
+Overall, **four comparisons survive corrected Welch testing and six survive corrected Mann–Whitney testing**. All involve joy; none is emotional–neutral.
 
 ## How the distance analysis fits
 
@@ -71,6 +98,7 @@ The inter/intra ratio divides the mean cross-condition absolute feature distance
 - Mean rate gives the strongest separation: **1.81 for neutral–joy** and **1.56 for emotional–joy**.
 - Variance gives smaller joy-related ratios: **1.15** and **1.26**.
 - All emotional–neutral ratios are close to one: **1.020, 0.997, 1.031, and 0.983** for mean rate, variance, spectral entropy, and slope.
+- The throttle-to-cycles feature gives ratios of **1.765 for neutral–joy**, **1.669 for emotional–joy**, and **1.039 for neutral–emotional**.
 - The other entropy/slope ratios range from about 1.00 to 1.12.
 
 This agrees with mean rate being the clearest individual feature for joy comparisons, while emotional–neutral distances resemble within-condition variation. These univariate summaries do not establish multivariate classification accuracy; this notebook does not train a classifier.
@@ -112,7 +140,7 @@ This identifies another difference between the prompt sets, but does not establi
 
 A defensible statement is:
 
-> Across 90 pooled whole traces, joy is associated with higher mean throttle rate than neutral and emotional conditions under both corrected test families. Joy-related variance differences are supported by corrected rank-based tests only. No emotional–neutral comparison, spectral-entropy comparison, or slope comparison survives correction. Uneven collection-batch composition and repeated-node dependence prevent attributing these associations to condition alone.
+> Across 90 pooled whole traces, joy is associated with higher mean throttle rate and higher throttle-to-cycles ratio than neutral and emotional conditions under both corrected test families. Joy-related variance differences are supported by corrected rank-based tests only. No emotional–neutral comparison, spectral-entropy comparison, or slope comparison survives correction. Uneven collection-batch composition and repeated-node dependence prevent attributing these associations to condition alone.
 
 These results do not establish consciousness, subjective experience, or a causal emotional response in the hardware. They establish associations in measured throttle features under the current experimental design.
 

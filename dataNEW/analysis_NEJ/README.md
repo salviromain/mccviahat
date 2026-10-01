@@ -18,12 +18,16 @@ three batch folders are not analysis inputs.
 
 The original four throttle features (mean rate, variance, spectral entropy,
 and slope), pairwise tests, distance calculations, and prompt TTR analysis are
-preserved. Use `.mccvenv` and run all notebook cells to refresh the outputs:
+preserved. A fifth feature, `throttle_per_cycle`, divides throttle mean rate by
+cycle mean rate (equivalent to the ratio of totals for matching valid counter
+intervals). Rates must be finite, throttle nonnegative, and cycles positive.
+The feature is included in all feature tests, plots, and distance summaries.
+Use `.mccvenv` and run all notebook cells to refresh the outputs:
 
 - `pooled_whole_traces.csv`: combined observations with provenance.
 - `batch_condition_counts.csv`: batch-by-condition sample counts.
 - `pairwise_tests.csv`: Welch and Mann–Whitney comparisons, Bonferroni-corrected
-  over 12 feature/pair tests separately for each test family.
+  over 15 feature/pair tests separately for each test family.
 - `feature_distances.csv`: within-/between-condition feature distances.
 - `prompt_ttr_tests.csv`: supplementary comparisons of the three prompt sets.
 

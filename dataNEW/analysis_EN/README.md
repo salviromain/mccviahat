@@ -1,22 +1,32 @@
 # E–N fulltrace analysis
 
-Executed `analysis/notebooks/fulltrace_analysis_EN.ipynb` on 2026-09-29 using
-`.mccvenv`. All eight code cells completed successfully with saved outputs.
-The original and three-class notebooks are preserved.
+Executed `analysis/notebooks/fulltrace_analysis_EN.ipynb` with `.mccvenv` on
+2026-10-01. All code cells completed with saved outputs and two plots.
 
-Includes 20 emotional and 20 neutral whole traces from `dataNEW`; excludes
-27 joy traces. Individual inputs were verified against the E–N subset of
-`all_whole.csv`. No per-prompt feature data is used.
+Loads individual whole-trace CSVs recursively from the three batch folders in
+`dataNEW`, preserving batch/source provenance and validating local aggregates.
+Includes 30 emotional and 30 neutral traces; excludes 30 joy traces. Run labels
+are read as strings. Duplicate labels and nonfinite selected features are rejected.
 
-Retains the four throttle features, Welch and Mann–Whitney tests, original
-standardized effect-size calculation, distance plots, and supplementary prompt
-TTR analysis. Bonferroni multiplies feature p-values by 4 separately per test
-family; TTR has one pair and therefore multiplier 1.
+The original four throttle features are supplemented with `throttle_per_cycle`:
+`core_power.throttle__mean_rate / cycles__mean_rate`. Because the rates share a
+trace duration, this equals the ratio of summed throttle counts to summed cycles,
+assuming matching valid counter intervals. Feature CSVs do not verify interval
+coverage. Cycle rates must be positive; both rates must be finite and throttle
+rates nonnegative. The feature is a dimensionless ratio, not a verified physical
+percentage of throttled cycles.
 
-Exports: `pairwise_tests.csv`, `feature_distances.csv`, `prompt_ttr_tests.csv`.
-Mean-rate Mann–Whitney p=0.00771, corrected p=0.0308; corrected Welch p=0.187.
-No other feature is significant at 0.05 after correction.
+All five features appear in the Welch and Mann–Whitney tests, standardized
+effect sizes, distribution plots, and distance analysis. Bonferroni multiplies
+feature p-values by 5 separately per test family. Supplementary prompt TTR
+still has one condition pair and multiplier 1.
 
-This focused analysis follows inspection of the three-class results and is
-exploratory. Trace-level tests assume independent observations; repeated runs
-on a node may be dependent. Select `.mccvenv` to rerun the notebook.
+The new ratio averages 0.009096 for neutral and 0.009376 for emotional.
+Corrected p-values are 0.3524 (Welch) and 0.3741 (Mann–Whitney), so this
+comparison is not significant at 0.05.
+
+Exports: `pooled_whole_traces.csv`, `batch_condition_counts.csv`,
+`pairwise_tests.csv`, `feature_distances.csv`, and `prompt_ttr_tests.csv`.
+
+This analysis is exploratory. Pooled tests do not adjust for batch or
+repeated-node dependence. The ratio does not eliminate all workload confounding.
