@@ -35,7 +35,7 @@ python3 scripts/run/run_prompts_fulltrace.py \
   --label neutral --run_label 232_N
 ```
 
-Replace `232` with your node ID. Use lowercase condition labels and a unique run label for every recording, such as `232_E_2` for another emotional run.
+**Replace `232` with your node ID. Use lowercase condition labels and a unique run label for every recording, such as `232_E_2` for another emotional run.**
 
 ## 3. Find the recorded data
 
@@ -46,3 +46,20 @@ data/raw/fulltrace/incoming/<run_label>/
 ```
 
 To choose a different parent folder, add `--output-root data/raw/fulltrace/<new_batch>` to the run command.
+
+## 4. Pull the data onto your own device
+
+Run this command from a terminal on your own device, outside the node's SSH session:
+
+```bash
+rsync -avP "rsalvi@clnode184.clemson.cloudlab.us:~/mccviahat/data/raw/fulltrace/incoming/" \
+  "$HOME/Desktop/mccviahat/data/raw/fulltrace/"
+```
+
+Change:
+
+- `rsalvi` to your CloudLab username.
+- `clnode184.clemson.cloudlab.us` to your reserved node's hostname.
+- "$HOME/Desktop/mccviahat/data/raw/fulltrace/" to the destination folder on your own device.
+
+Keep the trailing `/` on the source directory to copy its contents into the destination folder.
