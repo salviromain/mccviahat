@@ -37,7 +37,32 @@ python3 scripts/run/run_prompts_fulltrace.py \
 
 **Replace `232` with your node ID. Use lowercase condition labels and a unique run label for every recording, such as `232_E_2` for another emotional run.**
 
-## 3. Find the recorded data
+## 3. Reboot between experiments on the same node
+
+**After each experiment finishes, reboot the node before starting the next experiment on that same node:**
+
+```bash
+sudo reboot
+```
+
+This disconnects your SSH session. Wait for the node to come back online, then SSH back in from your own device:
+
+```bash
+ssh YOUR_CLOUDLAB_USERNAME@clnode232.clemson.cloudlab.us
+```
+
+Replace the username and hostname with your CloudLab details. Return to the repository and run the next experiment, for example:
+
+```bash
+cd ~/mccviahat
+python3 scripts/run/run_prompts_fulltrace.py \
+  --json prompts/20base/independentN.json \
+  --label neutral --run_label 232_N
+```
+
+Choose the prompt file, condition, and unique run label for the next experiment. You do not need to clone the repository, download the model, or rebuild the Docker image again.
+
+## 4. Find the recorded data
 
 Each command records all prompts in the selected JSON as one continuous trace. Raw files are saved in:
 
@@ -47,7 +72,7 @@ data/raw/fulltrace/incoming/<run_label>/
 
 To choose a different parent folder, add `--output-root data/raw/fulltrace/<new_batch>` to the run command.
 
-## 4. Pull the data onto your own device
+## 5. Pull the data onto your own device
 
 Run this command from a terminal on your own device, outside the node's SSH session:
 
