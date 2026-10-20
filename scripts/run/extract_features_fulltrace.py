@@ -11,34 +11,34 @@ This script extracts whole-trace features only: the entire ~20-prompt trace
 is treated as one signal, producing one feature row per trace.
 
 How to run (from the project root):
-    # Extract all run folders directly inside runsNEW/fulltrace:
+    # Extract all run folders directly inside data/raw/fulltrace/batch_002_joy:
     .mccvenv/bin/python scripts/run/extract_features_fulltrace.py
 
     # Explicitly select the parent directory:
-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py data/raw/fulltrace/batch_002_joy
 
     # Extract just one run:
-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace/229_J_1
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py data/raw/fulltrace/batch_002_joy/229_J_1
 
     # Save this batch in a separate output directory:
-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py --output-dir data/fulltraceNEW
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py --output-dir data/features/recomputed/fulltrace/new_extraction
 
     # Recompute only whole-trace features from both experiment collections:
-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace runs/fulltrace --output-dir dataNEW
+    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py data/raw/fulltrace/batch_002_joy data/raw/fulltrace/batch_001_en --output-dir data/features/recomputed/fulltrace/new_extraction
 
 Inputs:
-    With no arguments, reads <project root>/runsNEW/fulltrace.
+    With no arguments, reads <project root>/data/raw/fulltrace/batch_002_joy.
     You may also supply one or more run folders or parent directories.
     Each run contains perf_stat.csv (or perf_stat.txt) and trace_meta.json.
     No prompt log or collector metadata is required. Condition labels
     come from trace_meta.json (for example, joy or neutral).
 
 Where feature files are saved:
-    Default: <project root>/data/fulltrace/ (independent of working directory).
+    Default: <project root>/data/features/recomputed/fulltrace/batch_002_joy/ (independent of working directory).
     <run_label>_whole.csv   — one whole-trace feature row per run.
     all_whole.csv          — combined output when more than one whole row exists.
-    Example: runsNEW/fulltrace/229_J_1 produces
-      data/fulltrace/229_J_1_whole.csv
+    Example: data/raw/fulltrace/batch_002_joy/229_J_1 produces
+      data/features/recomputed/fulltrace/batch_002_joy/229_J_1_whole.csv
     --output-dir changes the destination for every CSV; relative paths are
     relative to your current working directory. The directory is created
     automatically. Existing CSVs with the same names are overwritten.
@@ -59,8 +59,8 @@ import pandas as pd
 
 # ── Repo root ─────────────────────────────────────────────────────────────────
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DATA_DIR  = REPO_ROOT / 'data' / 'fulltrace'
-DEFAULT_TRACE_DIR = REPO_ROOT / 'runsNEW' / 'fulltrace'
+DATA_DIR  = REPO_ROOT / 'data' / 'features' / 'recomputed' / 'fulltrace' / 'batch_002_joy'
+DEFAULT_TRACE_DIR = REPO_ROOT / 'data' / 'raw' / 'fulltrace' / 'batch_002_joy'
 
 # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
 EVENT_INDICATORS = {
@@ -277,9 +277,9 @@ def main():
     )
     parser.add_argument('trace_dirs', nargs='*', type=Path,
                         default=[DEFAULT_TRACE_DIR],
-                        help='Run folders or parent directories. Default: runsNEW/fulltrace')
+                        help='Run folders or parent directories. Default: data/raw/fulltrace/batch_002_joy')
     parser.add_argument('--output-dir', type=Path, default=DATA_DIR,
-                        help='Output directory. Default: <project root>/data/fulltrace')
+                        help='Output directory. Default: <project root>/data/features/recomputed/fulltrace/batch_002_joy')
     parser.add_argument('--whole-only', action='store_true',
                         help='Compatibility flag; whole-trace-only extraction is now always used.')
     args = parser.parse_args()

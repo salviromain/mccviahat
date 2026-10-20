@@ -18,7 +18,7 @@ For each prompt:
   7. Write minimal metadata (prompt index, label, timing, ok)
 
 Directory layout:
-  runs/<label>/p<N>/
+  data/raw/isolated/<model>/<label>/p<N>/
       perf_stat.txt
       perf_stat.csv
       hat_interrupts.csv
@@ -255,6 +255,9 @@ def run() -> None:
                     help="CPU cores for LLM container (enables taskset).")
     ap.add_argument("--perf_cpu", type=str, default="",
                     help="CPU core for perf stat (enables taskset).")
+    ap.add_argument("--output-root", type=Path,
+                    default=_script_dir.parents[1] / "data" / "raw" / "isolated" / cfg["MODEL_SIZE"],
+                    help="Parent directory for raw recordings; choose a new batch folder for new experiments.")
     args = ap.parse_args()
 
     # ── Print active config so the user can verify ────────────────────────────
@@ -306,7 +309,7 @@ def run() -> None:
         if not isinstance(instr, str) or not instr.strip():
             raise SystemExit(f"Prompt {idx}: missing or empty 'instructions' field.")
 
-        out_dir = Path("runs") / label / f"p{file_idx:04d}"
+        out_dir = args.output_root / label / f"p{file_idx:04d}"
         out_dir.mkdir(parents=True, exist_ok=True)
 
         print(
@@ -392,7 +395,7 @@ def run() -> None:
             )
 
     dest = args.label if args.label else "<per-prompt-condition>"
-    print(f"\n✓ Done. Results in runs/{dest}/")
+    print(f"\n✓ Done. Results in {args.output_root}/{dest}/")
 
 
 if __name__ == "__main__":

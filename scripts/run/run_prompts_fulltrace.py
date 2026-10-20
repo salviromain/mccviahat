@@ -18,7 +18,7 @@ This tests whether the substrate signal accumulates over repeated
 emotional (or neutral) computations.
 
 Directory layout:
-  runs/<run_label>/
+  data/raw/fulltrace/incoming/<run_label>/
       perf_stat.txt
       perf_stat.csv
       hat_interrupts.csv
@@ -237,6 +237,9 @@ def run() -> None:
                     help="CPU core for perf stat (enables taskset).")
     ap.add_argument("--inter_prompt_pause_s", type=float, default=0.0,
                     help="Optional pause between prompts (s). Default 0 = back-to-back.")
+    ap.add_argument("--output-root", type=Path,
+                    default=_script_dir.parents[1] / "data" / "raw" / "fulltrace" / "incoming",
+                    help="Parent directory for raw recordings; choose a new batch folder for new experiments.")
     args = ap.parse_args()
 
     # ── Print config ──────────────────────────────────────────────────────────
@@ -256,7 +259,7 @@ def run() -> None:
     print(f"Loaded {n_prompts} prompts  label={args.label}")
 
     # ── Output directory ──────────────────────────────────────────────────────
-    out_dir = Path("runs") / "fulltrace" / args.run_label
+    out_dir = args.output_root / args.run_label
     out_dir.mkdir(parents=True, exist_ok=True)
     print(f"Output: {out_dir}\n")
 

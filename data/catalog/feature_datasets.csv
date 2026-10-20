@@ -1,0 +1,12 @@
+dataset_path,original_path,version_family,csv_files,notes
+data/features/legacy/isolated/70b,data/70b,legacy,7,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/legacy/isolated/clemsonc6420,data/clemsonc6420,legacy,13,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/legacy/isolated/longer70b,data/longer70b,legacy,8,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/legacy/isolated/shorter7b,data/shorter7b,legacy,8,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/legacy/fulltrace,data/fulltrace,legacy,57,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/legacy/fulltrace_prompts,data/fulltrace_prompts,legacy,40,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/recomputed/isolated/70b,dataNEW/70b,recomputed,9,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/recomputed/fulltrace/batch_001_en,dataNEW/fulltrace_0ld_batch,recomputed,40,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/recomputed/fulltrace/batch_002_joy,dataNEW/fulltrace_1st_batch,recomputed,27,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/recomputed/fulltrace/batch_003_enj,dataNEW/fulltrace_2nd_batch,recomputed,24,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."
+data/features/recomputed/fulltrace/batch_004_enm,dataNEW/fulltraceMECHAbatch,recomputed,15,"Existing files preserved separately; version names describe their previous storage, not equivalent feature definitions."

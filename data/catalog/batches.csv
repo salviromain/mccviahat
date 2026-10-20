@@ -1,0 +1,5 @@
+batch_id,collection_mode,raw_path,features_path,original_raw_path,original_features_path,n_recordings,conditions,condition_counts
+batch_001_en,fulltrace,data/raw/fulltrace/batch_001_en,data/features/recomputed/fulltrace/batch_001_en,runs/fulltrace,dataNEW/fulltrace_0ld_batch,40,emotional;neutral,"{""emotional"": 20, ""neutral"": 20}"
+batch_002_joy,fulltrace,data/raw/fulltrace/batch_002_joy,data/features/recomputed/fulltrace/batch_002_joy,runsNEW/fulltrace,dataNEW/fulltrace_1st_batch,27,joy,"{""joy"": 27}"
+batch_003_enj,fulltrace,data/raw/fulltrace/batch_003_enj,data/features/recomputed/fulltrace/batch_003_enj,runsNEW/fulltrace_2nd_batch,dataNEW/fulltrace_2nd_batch,23,emotional;joy;neutral,"{""emotional"": 10, ""joy"": 3, ""neutral"": 10}"
+batch_004_enm,fulltrace,data/raw/fulltrace/batch_004_enm,data/features/recomputed/fulltrace/batch_004_enm,runsMECHA/fulltrace,dataNEW/fulltraceMECHAbatch,15,emotional;mechanical;neutral,"{""emotional"": 5, ""mechanical"": 5, ""neutral"": 5}"

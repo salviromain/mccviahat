@@ -1,0 +1,6 @@
+{
+  "date": "2026-10-17",
+  "exit_code": 0,
+  "result": "Original files accounted for: 9334\nMoved files verified: 9288\nFiles with identical contents: 9312\nProject files changed for paths/documentation: 22\nPASS: all original files are present; every moved file is byte-for-byte unchanged.\n",
+  "errors": ""
+}

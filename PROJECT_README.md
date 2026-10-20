@@ -28,28 +28,27 @@ The central experiment — the **LLM-emotion test** — compares the HAT produce
 
 ```
 mccviahat/
-├── collectors/          # HAT data collection scripts
-│   ├── substrate_collector.py
-│   └── substrate_collector_v2.py
 ├── scripts/
-│   └── run/
-│       ├── run_prompts_isolated.py    # Per-trial isolated runner
-│       └── run_prompts_fulltrace.py   # Full-trace continuous runner
-│   └── model/
-│       ├── model_config.sh
-│       └── reset_server.sh
+│   ├── collectors/        # HAT signal collectors
+│   ├── run/               # Experiment runners and feature extraction
+│   ├── model/             # Model/server setup
+│   └── node/              # CloudLab node setup
 ├── analysis/
-│   ├── extract_features.py            # Per-trial feature extraction
-│   ├── extract_features_fulltrace.py  # Full-trace feature extraction
-│   └── *.ipynb                        # Analysis notebooks
-├── prompts/
-│   ├── 20base/                        # Prompt JSON files
-│   └── token_counts.csv
-├── runs/                              # Raw experimental data
-├── data/                              # Extracted feature CSVs
-├── docker/                            # LLM server container config
-└── results/                           # Figures and outputs
+│   ├── lib/               # Plotting utilities
+│   └── notebooks/         # Existing analysis notebooks
+├── prompts/               # Original prompt sets and token counts
+├── data/
+│   ├── raw/               # Original recordings: isolated trials and fulltrace batches
+│   ├── features/          # Existing CSVs, separated into legacy and recomputed versions
+│   ├── catalog/           # Recording index, batch index, path mapping, checksum audit
+│   ├── provenance/        # Original historical recomputation records
+│   └── archives/          # Original ZIPs and pre-reorganization code backup
+├── results/               # Existing analysis tables, models, plots, and presentations
+└── docker/                # LLM server container config
 ```
+
+See [DATA_ORGANIZATION.md](DATA_ORGANIZATION.md) for the folder mapping,
+what changed, what was preserved, and verification details.
 
 ## Current Status
 

@@ -1,0 +1,58 @@
+[
+  {
+    "notebook": "70b_blocks_analysis.ipynb",
+    "loaded_rows": 320,
+    "input_comparison": "identical",
+    "full_execution": "passed"
+  },
+  {
+    "notebook": "70b_blocks_analysis_dataNEW.ipynb",
+    "loaded_rows": 320,
+    "input_comparison": "identical",
+    "full_execution": "passed"
+  },
+  {
+    "notebook": "7b_blocks_analysis.ipynb",
+    "loaded_rows": 320,
+    "full_execution": "failed",
+    "error": "NameError(\"name 'p_ms' is not defined\")",
+    "pre_existing_error_confirmed": true,
+    "original_notebook_error": "name 'p_ms' is not defined"
+  },
+  {
+    "notebook": "fulltrace_analysis.ipynb",
+    "loaded_rows": 40,
+    "input_comparison": "identical",
+    "full_execution": "passed"
+  },
+  {
+    "notebook": "fulltrace_analysis_EN.ipynb",
+    "loaded_rows": 40,
+    "input_comparison": "identical",
+    "full_execution": "passed"
+  },
+  {
+    "notebook": "fulltrace_analysis_NEJ.ipynb",
+    "loaded_rows": 50,
+    "input_comparison": "identical",
+    "full_execution": "passed"
+  },
+  {
+    "notebook": "fulltrace_analysis_MECHA.ipynb",
+    "loaded_rows": 15,
+    "input_comparison": "identical",
+    "full_execution": "passed"
+  },
+  {
+    "notebook": "token_centroid_analysis.ipynb",
+    "loaded_rows": 320,
+    "input_comparison": "identical",
+    "full_execution": "passed"
+  },
+  {
+    "notebook": "fulltrace_classification_dataNEW.ipynb",
+    "loaded_rows": 67,
+    "input_comparison": "67 exact saved hashes and identical node splits",
+    "full_execution": "passed"
+  }
+]

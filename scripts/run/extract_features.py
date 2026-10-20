@@ -8,8 +8,8 @@ For every split defined in RUN_SPLITS it:
   1. Walks every p???? trial directory
   2. Loads perf_stat.csv + hat_interrupts.csv
   3. Computes the same 10 metrics per indicator used in hat_clustering_analysis.ipynb
-  4. Saves one CSV per split to  data/<split>.csv
-  5. Also saves a combined  data/features.csv  (training sets only, for backwards compat)
+  4. Saves one CSV per split to  data/features/legacy/isolated/<split>.csv
+  5. Also saves a combined  data/features/legacy/isolated/features.csv  (training sets only, for backwards compat)
 
 Usage:
     python scripts/extract_features.py            # all splits
@@ -28,31 +28,31 @@ import pandas as pd
 
 # ── Repo root (script lives in scripts/) ─────────────────────────────────────
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-DATA_DIR  = REPO_ROOT / 'data'
-DATA_DIR.mkdir(exist_ok=True)
+DATA_DIR  = REPO_ROOT / 'data' / 'features' / 'legacy' / 'isolated'
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── All available splits ──────────────────────────────────────────────────────
-# key = output CSV stem,  value = (runs/<dir>, label)
+# key = output CSV stem,  value = (data/raw/isolated/<model>/<dir>, label)
 RUN_SPLITS = {
    
     # Independent sets — run dirs are already split by condition by
     # run_prompts_isolated.py (label comes from trial_meta.json)
-   #'emotional187a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional187a',  'emotional'),
-    #'neutral187a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral187a',    'neutral'),
-    #'emotional187b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional187b',  'emotional'),
-    #'neutral187b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral187b',    'neutral'),
-    #'emotional194a': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional194a',  'emotional'),
-    #'neutral194a': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral194a',    'neutral'),
-    #'emotional194b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional194b',  'emotional'),
-    #'neutral194b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral194b',    'neutral'),
-    #'emotional200a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional200a',  'emotional'),
-    #'neutral200a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral200a',    'neutral'),
-    #'emotional200b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional200b',  'emotional'),
-    #'neutral200b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral200b',    'neutral'),
-    #'emotional204a': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional204a',  'emotional'),
-    #'neutral204a': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral204a',    'neutral'),
-    #'emotional204b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional204b',  'emotional'),
-    #'neutral204b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral204b',    'neutral'),
+   #'emotional187a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b' / 'emotional187a',  'emotional'),
+    #'neutral187a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b' / 'neutral187a',    'neutral'),
+    #'emotional187b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional187b',  'emotional'),
+    #'neutral187b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral187b',    'neutral'),
+    #'emotional194a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional194a',  'emotional'),
+    #'neutral194a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral194a',    'neutral'),
+    #'emotional194b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional194b',  'emotional'),
+    #'neutral194b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral194b',    'neutral'),
+    #'emotional200a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b' / 'emotional200a',  'emotional'),
+    #'neutral200a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b' / 'neutral200a',    'neutral'),
+    #'emotional200b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional200b',  'emotional'),
+    #'neutral200b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral200b',    'neutral'),
+    #'emotional204a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional204a',  'emotional'),
+    #'neutral204a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral204a',    'neutral'),
+    #'emotional204b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional204b',  'emotional'),
+    #'neutral204b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral204b',    'neutral'),
     
 }
 

@@ -312,7 +312,7 @@ def main() -> int:
         description="HAT-focused substrate collector for LLM inference experiments."
     )
     ap.add_argument("--out_dir", required=True,
-                    help="Run output directory (e.g., runs/<run_id>).")
+                    help="Run output directory (e.g., data/raw/fulltrace/incoming/<run_id>).")
     ap.add_argument("--pid", type=int, required=True,
                     help="Target host PID (e.g., docker inspect .State.Pid).")
     ap.add_argument("--duration_s", type=float, required=True,

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recompute runs/70b isolated-trial features into dataNEW/70b.
+"""Recompute data/raw/isolated/70b isolated-trial features into data/features/recomputed/isolated/70b.
 
 Run from any directory with .mccvenv/bin/python scripts/run/recompute_70b_features.py.
 Pair emotional/neutral folders by their shared suffix; use the existing trial
@@ -14,8 +14,8 @@ from extract_features import REPO_ROOT, extract_trial_features
 
 
 def main():
-    source = REPO_ROOT / 'runs' / '70b'
-    output = REPO_ROOT / 'dataNEW' / '70b'
+    source = REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b'
+    output = REPO_ROOT / 'data' / 'features' / 'recomputed' / 'isolated' / '70b'
     output.mkdir(parents=True, exist_ok=True)
     folders = sorted(p for p in source.iterdir() if p.is_dir())
     suffixes = sorted({p.name[len('emotional'):] for p in folders if p.name.startswith('emotional')})

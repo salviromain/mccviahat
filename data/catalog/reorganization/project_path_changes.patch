@@ -1,0 +1,688 @@
+--- before/analysis/notebooks/70b_blocks_analysis.ipynb
++++ after/analysis/notebooks/70b_blocks_analysis.ipynb
+@@ -43,8 +43,8 @@
+     "\n",
+     "# ── Paths ─────────────────────────────────────────────────────────────────────\n",
+     "BASE_DIR = next(p for p in [Path.cwd(), *Path.cwd().parents]\n",
+-    "                if (p / 'data' / 'longer70b').is_dir())\n",
+-    "DATA_DIR   = BASE_DIR / 'data' / 'longer70b'\n",
++    "                if (p / 'data' / 'features' / 'legacy' / 'isolated' / 'longer70b').is_dir())\n",
++    "DATA_DIR   = BASE_DIR / 'data' / 'features' / 'legacy' / 'isolated' / 'longer70b'\n",
+     "RESULT_DIR = BASE_DIR / 'results' / 'hat_analysis'\n",
+     "RESULT_DIR.mkdir(parents=True, exist_ok=True)\n",
+     "\n",
+--- before/analysis/notebooks/7b_blocks_analysis.ipynb
++++ after/analysis/notebooks/7b_blocks_analysis.ipynb
+@@ -55,8 +55,9 @@
+     "warnings.filterwarnings('ignore')\n",
+     "\n",
+     "# ── Paths ──────────────────────────────────────────────────────────────────────\n",
+-    "BASE_DIR   = Path.home() / 'Desktop' / 'mccviahat'\n",
+-    "DATA_DIR   = BASE_DIR / 'data' / 'shorter7b'\n",
++    "BASE_DIR   = next(p for p in [Path.cwd(), *Path.cwd().parents]\n",
++    "                  if (p / 'data' / 'features' / 'legacy' / 'isolated' / 'shorter7b').is_dir())\n",
++    "DATA_DIR   = BASE_DIR / 'data' / 'features' / 'legacy' / 'isolated' / 'shorter7b'\n",
+     "RESULT_DIR = BASE_DIR / 'results' / 'hat_analysis'\n",
+     "RESULT_DIR.mkdir(parents=True, exist_ok=True)\n",
+     "\n",
+--- before/analysis/notebooks/70b_blocks_analysis_dataNEW.ipynb
++++ after/analysis/notebooks/70b_blocks_analysis_dataNEW.ipynb
+@@ -5,10 +5,10 @@
+    "id": "77e8c78a",
+    "metadata": {},
+    "source": [
+-    "# 70B Block-Design Analysis — Recomputed runs/70b\n",
+-    "\n",
+-    "Uses isolated-trial features recomputed from all folders in `runs/70b`, saved in\n",
+-    "`dataNEW/70b`. E and N folders are paired by shared suffix; the unsuffixed folders\n",
++    "# 70B Block-Design Analysis — Recomputed data/raw/isolated/70b\n",
++    "\n",
++    "Uses isolated-trial features recomputed from all folders in `data/raw/isolated/70b`, saved in\n",
++    "`data/features/recomputed/isolated/70b`. E and N folders are paired by shared suffix; the unsuffixed folders\n",
+     "form the eighth pair. No fulltrace data is included.\n",
+     "\n",
+     "Preserves the original notebook's single-feature clustering, 75% within-run\n",
+@@ -71,9 +71,9 @@
+     "\n",
+     "# ── Paths ─────────────────────────────────────────────────────────────────────\n",
+     "BASE_DIR = next(p for p in [Path.cwd(), *Path.cwd().parents]\n",
+-    "                if (p / 'dataNEW' / '70b').is_dir())\n",
+-    "DATA_DIR   = BASE_DIR / 'dataNEW' / '70b'\n",
+-    "RESULT_DIR = DATA_DIR / 'analysis'\n",
++    "                if (p / 'data' / 'features' / 'recomputed' / 'isolated' / '70b').is_dir())\n",
++    "DATA_DIR   = BASE_DIR / 'data' / 'features' / 'recomputed' / 'isolated' / '70b'\n",
++    "RESULT_DIR = BASE_DIR / 'results' / 'isolated_70b_recomputed'\n",
+     "RESULT_DIR.mkdir(parents=True, exist_ok=True)\n",
+     "\n",
+     "assert BASE_DIR.exists(), f'Repo root not found: {BASE_DIR}'\n",
+--- before/analysis/notebooks/fulltrace_analysis.ipynb
++++ after/analysis/notebooks/fulltrace_analysis.ipynb
+@@ -40,8 +40,8 @@
+     "\n",
+     "# ── Configuration ──────────────────────────────────────────────────────────\n",
+     "BASE_DIR = next(p for p in [Path.cwd(), *Path.cwd().parents]\n",
+-    "                if (p / 'data' / 'fulltrace').is_dir())\n",
+-    "DATA_DIR  = BASE_DIR / 'data' / 'fulltrace'\n",
++    "                if (p / 'data' / 'features' / 'legacy' / 'fulltrace').is_dir())\n",
++    "DATA_DIR  = BASE_DIR / 'data' / 'features' / 'legacy' / 'fulltrace'\n",
+     "\n",
+     "FEATURES = [\n",
+     "    'core_power.throttle__mean_rate',\n",
+--- before/analysis/notebooks/token_centroid_analysis.ipynb
++++ after/analysis/notebooks/token_centroid_analysis.ipynb
+@@ -209,7 +209,7 @@
+    ],
+    "source": [
+     "# ── Load feature data (matching 70b_blocks_analysis.ipynb) ────────────────\n",
+-    "DATA_DIR  = BASE_DIR / 'data'\n",
++    "DATA_DIR  = BASE_DIR / 'data' / 'features' / 'legacy' / 'isolated'\n",
+     "\n",
+     "FEATURE_DIR = DATA_DIR / 'longer70b'\n",
+     "RUNS = ['219a', '219b', '219c', '220a', '233a', '233c', '187a', '200a']\n",
+--- before/analysis/notebooks/fulltrace_analysis_EN.ipynb
++++ after/analysis/notebooks/fulltrace_analysis_EN.ipynb
+@@ -62,19 +62,19 @@
+     "\n",
+     "# ── Configuration ──────────────────────────────────────────────────────────\n",
+     "BASE_DIR = next(p for p in [Path.cwd(), *Path.cwd().parents]\n",
+-    "                if (p / 'dataNEW').is_dir())\n",
+-    "DATA_DIR = BASE_DIR / 'dataNEW'\n",
+-    "# Accept either spelling of the old-batch directory, but reject ambiguity.\n",
+-    "old_candidates = [DATA_DIR / name for name in ('fulltrace_0ld_batch', 'fulltrace_old_batch')\n",
++    "                if (p / 'data' / 'features' / 'recomputed' / 'fulltrace').is_dir())\n",
++    "DATA_DIR = BASE_DIR / 'data' / 'features' / 'recomputed' / 'fulltrace'\n",
++    "# The historical old batch now has one canonical directory name.\n",
++    "old_candidates = [DATA_DIR / name for name in ('batch_001_en',)\n",
+     "                  if (DATA_DIR / name).is_dir()]\n",
+     "if len(old_candidates) != 1:\n",
+-    "    raise ValueError('Expected exactly one fulltrace_0ld_batch or fulltrace_old_batch directory.')\n",
++    "    raise ValueError('Expected the batch_001_en directory.')\n",
+     "BATCH_DIRS = {\n",
+     "    'old': old_candidates[0],\n",
+-    "    #'first': DATA_DIR / 'fulltrace_1st_batch',\n",
+-    "   # 'second': DATA_DIR / 'fulltrace_2nd_batch',\n",
++    "    #'first': DATA_DIR / 'batch_002_joy',\n",
++    "   # 'second': DATA_DIR / 'batch_003_enj',\n",
+     "}\n",
+-    "RESULTS_DIR = DATA_DIR / 'analysis_EN'\n",
++    "RESULTS_DIR = BASE_DIR / 'results' / 'analysis_EN'\n",
+     "RESULTS_DIR.mkdir(exist_ok=True)\n",
+     "\n",
+     "BASE_FEATURES = [\n",
+--- before/analysis/notebooks/fulltrace_analysis_NEJ.ipynb
++++ after/analysis/notebooks/fulltrace_analysis_NEJ.ipynb
+@@ -8,9 +8,9 @@
+     "# Full-Trace Analysis — Neutral, Emotional, and Joy\n",
+     "\n",
+     "Each observation is one complete continuous trace. Load individual whole-trace\n",
+-    "feature CSVs recursively from all three configured batch folders in `dataNEW`:\n",
+-    "`fulltrace_0ld_batch` (also accepts `fulltrace_old_batch`), `fulltrace_1st_batch`,\n",
+-    "and `fulltrace_2nd_batch`. Combined CSVs are validation inputs only, never extra observations.\n",
++    "feature CSVs recursively from all three configured batch folders in `data/features/recomputed/fulltrace`:\n",
++    "`batch_001_en`, `batch_002_joy`,\n",
++    "and `batch_003_enj`. Combined CSVs are validation inputs only, never extra observations.\n",
+     "\n",
+     "Conditions: **N** = neutral, **E** = emotional, **J** = joy. All three pairwise\n",
+     "comparisons are included. The original four throttle features and statistical\n",
+@@ -70,19 +70,19 @@
+     "\n",
+     "# ── Configuration ──────────────────────────────────────────────────────────\n",
+     "BASE_DIR = next(p for p in [Path.cwd(), *Path.cwd().parents]\n",
+-    "                if (p / 'dataNEW').is_dir())\n",
+-    "DATA_DIR = BASE_DIR / 'dataNEW'\n",
+-    "# Accept either spelling of the old-batch directory, but reject ambiguity.\n",
+-    "old_candidates = [DATA_DIR / name for name in ('fulltrace_0ld_batch', 'fulltrace_old_batch')\n",
++    "                if (p / 'data' / 'features' / 'recomputed' / 'fulltrace').is_dir())\n",
++    "DATA_DIR = BASE_DIR / 'data' / 'features' / 'recomputed' / 'fulltrace'\n",
++    "# The historical old batch now has one canonical directory name.\n",
++    "old_candidates = [DATA_DIR / name for name in ('batch_001_en',)\n",
+     "                  if (DATA_DIR / name).is_dir()]\n",
+     "if len(old_candidates) != 1:\n",
+-    "    raise ValueError('Expected exactly one fulltrace_0ld_batch or fulltrace_old_batch directory.')\n",
++    "    raise ValueError('Expected the batch_001_en directory.')\n",
+     "BATCH_DIRS = {\n",
+     "   # 'old': old_candidates[0],\n",
+-    "    'first': DATA_DIR / 'fulltrace_1st_batch',\n",
+-    "    'second': DATA_DIR / 'fulltrace_2nd_batch',\n",
++    "    'first': DATA_DIR / 'batch_002_joy',\n",
++    "    'second': DATA_DIR / 'batch_003_enj',\n",
+     "}\n",
+-    "RESULTS_DIR = DATA_DIR / 'analysis_NEJ'\n",
++    "RESULTS_DIR = BASE_DIR / 'results' / 'analysis_NEJ'\n",
+     "RESULTS_DIR.mkdir(exist_ok=True)\n",
+     "\n",
+     "BASE_FEATURES = [\n",
+--- before/analysis/notebooks/fulltrace_analysis_MECHA.ipynb
++++ after/analysis/notebooks/fulltrace_analysis_MECHA.ipynb
+@@ -7,7 +7,7 @@
+    "source": [
+     "# Full-trace pooled comparison: M−N versus E−N\n",
+     "\n",
+-    "Use **all observations** in `dataNEW/fulltraceMECHAbatch`, without node pairing or averaging. N = neutral, M = mechanical, E = emotional/anxiety.\n",
++    "Use **all observations** in `data/features/recomputed/fulltrace/batch_004_enm`, without node pairing or averaging. N = neutral, M = mechanical, E = emotional/anxiety.\n",
+     "\n",
+     "The primary question compares signed mean differences: **(M−N) − (E−N) = M−E**. Thus the direct test is an independent-sample Welch test of mechanical versus emotional means. Testing M−N and E−N separately and comparing their significance would not answer this question.\n",
+     "\n",
+@@ -39,9 +39,9 @@
+     "from scipy.stats import t\n",
+     "from IPython.display import display\n",
+     "\n",
+-    "BASE_DIR = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p/'dataNEW').is_dir())\n",
+-    "INPUT_DIR = BASE_DIR/'dataNEW/fulltraceMECHAbatch'\n",
+-    "RESULTS_DIR = BASE_DIR/'dataNEW/analysis_MECHA_pooled'\n",
++    "BASE_DIR = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p/'data/features/recomputed/fulltrace').is_dir())\n",
++    "INPUT_DIR = BASE_DIR/'data/features/recomputed/fulltrace/batch_004_enm'\n",
++    "RESULTS_DIR = BASE_DIR/'results/analysis_MECHA_pooled'\n",
+     "RESULTS_DIR.mkdir(exist_ok=True)\n",
+     "CONDITIONS = ['neutral', 'mechanical', 'emotional']\n",
+     "FEATURES = ['core_power.throttle__'+x for x in ['mean_rate','variance','spectral_entropy','slope']]\n",
+--- before/analysis/notebooks/fulltrace_classification_dataNEW.ipynb
++++ after/analysis/notebooks/fulltrace_classification_dataNEW.ipynb
+@@ -77,9 +77,9 @@
+     "from sklearn.dummy import DummyClassifier\n",
+     "from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score, classification_report, ConfusionMatrixDisplay\n",
+     "\n",
+-    "ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / 'dataNEW').is_dir())\n",
+-    "DATA_DIR = ROOT / 'dataNEW'\n",
+-    "OUTPUT_DIR = ROOT / 'output' / 'fulltrace_classification_four_throttle'\n",
++    "ROOT = next(p for p in [Path.cwd(), *Path.cwd().parents] if (p / 'data' / 'features' / 'recomputed' / 'fulltrace').is_dir())\n",
++    "DATA_DIR = ROOT / 'data' / 'features' / 'recomputed' / 'fulltrace'\n",
++    "OUTPUT_DIR = ROOT / 'results' / 'fulltrace_classification_four_throttle'\n",
+     "SEED = 42\n",
+     "N_JOBS = 1  # Small data: avoids process startup overhead; increase if desired.\n",
+     "FEATURE_SET = 'original_four_throttle'\n",
+@@ -385,7 +385,10 @@
+     }
+    ],
+    "source": [
+-    "paths = sorted(p for p in DATA_DIR.glob('*_whole.csv') if p.name != 'all_whole.csv')\n",
++    "# Preserve the original 67-trace input set: the E/N batch and the joy batch.\n",
++    "INPUT_DIRS = [DATA_DIR / 'batch_001_en', DATA_DIR / 'batch_002_joy']\n",
++    "paths = sorted(p for folder in INPUT_DIRS for p in folder.glob('*_whole.csv')\n",
++    "               if p.name != 'all_whole.csv')\n",
+     "if not paths:\n",
+     "    raise ValueError(f'No individual whole-trace CSVs in {DATA_DIR}')\n",
+     "frames = [pd.read_csv(p) for p in paths]\n",
+--- before/scripts/run/extract_features.py
++++ after/scripts/run/extract_features.py
+@@ -8,8 +8,8 @@
+   1. Walks every p???? trial directory
+   2. Loads perf_stat.csv + hat_interrupts.csv
+   3. Computes the same 10 metrics per indicator used in hat_clustering_analysis.ipynb
+-  4. Saves one CSV per split to  data/<split>.csv
+-  5. Also saves a combined  data/features.csv  (training sets only, for backwards compat)
++  4. Saves one CSV per split to  data/features/legacy/isolated/<split>.csv
++  5. Also saves a combined  data/features/legacy/isolated/features.csv  (training sets only, for backwards compat)
+ 
+ Usage:
+     python scripts/extract_features.py            # all splits
+@@ -28,31 +28,31 @@
+ 
+ # ── Repo root (script lives in scripts/) ─────────────────────────────────────
+ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+-DATA_DIR  = REPO_ROOT / 'data'
+-DATA_DIR.mkdir(exist_ok=True)
++DATA_DIR  = REPO_ROOT / 'data' / 'features' / 'legacy' / 'isolated'
++DATA_DIR.mkdir(parents=True, exist_ok=True)
+ 
+ # ── All available splits ──────────────────────────────────────────────────────
+-# key = output CSV stem,  value = (runs/<dir>, label)
++# key = output CSV stem,  value = (data/raw/isolated/<model>/<dir>, label)
+ RUN_SPLITS = {
+    
+     # Independent sets — run dirs are already split by condition by
+     # run_prompts_isolated.py (label comes from trial_meta.json)
+-   #'emotional187a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional187a',  'emotional'),
+-    #'neutral187a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral187a',    'neutral'),
+-    #'emotional187b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional187b',  'emotional'),
+-    #'neutral187b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral187b',    'neutral'),
+-    #'emotional194a': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional194a',  'emotional'),
+-    #'neutral194a': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral194a',    'neutral'),
+-    #'emotional194b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional194b',  'emotional'),
+-    #'neutral194b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral194b',    'neutral'),
+-    #'emotional200a': (REPO_ROOT / 'runs' / 'longer70b' / 'emotional200a',  'emotional'),
+-    #'neutral200a': (REPO_ROOT / 'runs' / 'longer70b' / 'neutral200a',    'neutral'),
+-    #'emotional200b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional200b',  'emotional'),
+-    #'neutral200b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral200b',    'neutral'),
+-    #'emotional204a': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional204a',  'emotional'),
+-    #'neutral204a': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral204a',    'neutral'),
+-    #'emotional204b': (REPO_ROOT / 'runs' / 'shorter7b' / 'emotional204b',  'emotional'),
+-    #'neutral204b': (REPO_ROOT / 'runs' / 'shorter7b' / 'neutral204b',    'neutral'),
++   #'emotional187a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b' / 'emotional187a',  'emotional'),
++    #'neutral187a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b' / 'neutral187a',    'neutral'),
++    #'emotional187b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional187b',  'emotional'),
++    #'neutral187b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral187b',    'neutral'),
++    #'emotional194a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional194a',  'emotional'),
++    #'neutral194a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral194a',    'neutral'),
++    #'emotional194b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional194b',  'emotional'),
++    #'neutral194b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral194b',    'neutral'),
++    #'emotional200a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b' / 'emotional200a',  'emotional'),
++    #'neutral200a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b' / 'neutral200a',    'neutral'),
++    #'emotional200b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional200b',  'emotional'),
++    #'neutral200b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral200b',    'neutral'),
++    #'emotional204a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional204a',  'emotional'),
++    #'neutral204a': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral204a',    'neutral'),
++    #'emotional204b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional204b',  'emotional'),
++    #'neutral204b': (REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral204b',    'neutral'),
+     
+ }
+ 
+--- before/scripts/run/recompute_70b_features.py
++++ after/scripts/run/recompute_70b_features.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Recompute runs/70b isolated-trial features into dataNEW/70b.
++"""Recompute data/raw/isolated/70b isolated-trial features into data/features/recomputed/isolated/70b.
+ 
+ Run from any directory with .mccvenv/bin/python scripts/run/recompute_70b_features.py.
+ Pair emotional/neutral folders by their shared suffix; use the existing trial
+@@ -14,8 +14,8 @@
+ 
+ 
+ def main():
+-    source = REPO_ROOT / 'runs' / '70b'
+-    output = REPO_ROOT / 'dataNEW' / '70b'
++    source = REPO_ROOT / 'data' / 'raw' / 'isolated' / '70b'
++    output = REPO_ROOT / 'data' / 'features' / 'recomputed' / 'isolated' / '70b'
+     output.mkdir(parents=True, exist_ok=True)
+     folders = sorted(p for p in source.iterdir() if p.is_dir())
+     suffixes = sorted({p.name[len('emotional'):] for p in folders if p.name.startswith('emotional')})
+--- before/scripts/run/extract_features_fulltrace.py
++++ after/scripts/run/extract_features_fulltrace.py
+@@ -11,34 +11,34 @@
+ is treated as one signal, producing one feature row per trace.
+ 
+ How to run (from the project root):
+-    # Extract all run folders directly inside runsNEW/fulltrace:
++    # Extract all run folders directly inside data/raw/fulltrace/batch_002_joy:
+     .mccvenv/bin/python scripts/run/extract_features_fulltrace.py
+ 
+     # Explicitly select the parent directory:
+-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace
++    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py data/raw/fulltrace/batch_002_joy
+ 
+     # Extract just one run:
+-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace/229_J_1
++    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py data/raw/fulltrace/batch_002_joy/229_J_1
+ 
+     # Save this batch in a separate output directory:
+-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py --output-dir data/fulltraceNEW
++    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py --output-dir data/features/recomputed/fulltrace/new_extraction
+ 
+     # Recompute only whole-trace features from both experiment collections:
+-    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py runsNEW/fulltrace runs/fulltrace --output-dir dataNEW
++    .mccvenv/bin/python scripts/run/extract_features_fulltrace.py data/raw/fulltrace/batch_002_joy data/raw/fulltrace/batch_001_en --output-dir data/features/recomputed/fulltrace/new_extraction
+ 
+ Inputs:
+-    With no arguments, reads <project root>/runsNEW/fulltrace.
++    With no arguments, reads <project root>/data/raw/fulltrace/batch_002_joy.
+     You may also supply one or more run folders or parent directories.
+     Each run contains perf_stat.csv (or perf_stat.txt) and trace_meta.json.
+     No prompt log or collector metadata is required. Condition labels
+     come from trace_meta.json (for example, joy or neutral).
+ 
+ Where feature files are saved:
+-    Default: <project root>/data/fulltrace/ (independent of working directory).
++    Default: <project root>/data/features/recomputed/fulltrace/batch_002_joy/ (independent of working directory).
+     <run_label>_whole.csv   — one whole-trace feature row per run.
+     all_whole.csv          — combined output when more than one whole row exists.
+-    Example: runsNEW/fulltrace/229_J_1 produces
+-      data/fulltrace/229_J_1_whole.csv
++    Example: data/raw/fulltrace/batch_002_joy/229_J_1 produces
++      data/features/recomputed/fulltrace/batch_002_joy/229_J_1_whole.csv
+     --output-dir changes the destination for every CSV; relative paths are
+     relative to your current working directory. The directory is created
+     automatically. Existing CSVs with the same names are overwritten.
+@@ -59,8 +59,8 @@
+ 
+ # ── Repo root ─────────────────────────────────────────────────────────────────
+ REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+-DATA_DIR  = REPO_ROOT / 'data' / 'fulltrace'
+-DEFAULT_TRACE_DIR = REPO_ROOT / 'runsNEW' / 'fulltrace'
++DATA_DIR  = REPO_ROOT / 'data' / 'features' / 'recomputed' / 'fulltrace' / 'batch_002_joy'
++DEFAULT_TRACE_DIR = REPO_ROOT / 'data' / 'raw' / 'fulltrace' / 'batch_002_joy'
+ 
+ # Perf events that are discrete (IRQ/fault counters) vs continuous PCIs
+ EVENT_INDICATORS = {
+@@ -277,9 +277,9 @@
+     )
+     parser.add_argument('trace_dirs', nargs='*', type=Path,
+                         default=[DEFAULT_TRACE_DIR],
+-                        help='Run folders or parent directories. Default: runsNEW/fulltrace')
++                        help='Run folders or parent directories. Default: data/raw/fulltrace/batch_002_joy')
+     parser.add_argument('--output-dir', type=Path, default=DATA_DIR,
+-                        help='Output directory. Default: <project root>/data/fulltrace')
++                        help='Output directory. Default: <project root>/data/features/recomputed/fulltrace/batch_002_joy')
+     parser.add_argument('--whole-only', action='store_true',
+                         help='Compatibility flag; whole-trace-only extraction is now always used.')
+     args = parser.parse_args()
+--- before/scripts/run/run_prompts_isolated.py
++++ after/scripts/run/run_prompts_isolated.py
+@@ -18,7 +18,7 @@
+   7. Write minimal metadata (prompt index, label, timing, ok)
+ 
+ Directory layout:
+-  runs/<label>/p<N>/
++  data/raw/isolated/<model>/<label>/p<N>/
+       perf_stat.txt
+       perf_stat.csv
+       hat_interrupts.csv
+@@ -255,6 +255,9 @@
+                     help="CPU cores for LLM container (enables taskset).")
+     ap.add_argument("--perf_cpu", type=str, default="",
+                     help="CPU core for perf stat (enables taskset).")
++    ap.add_argument("--output-root", type=Path,
++                    default=_script_dir.parents[1] / "data" / "raw" / "isolated" / cfg["MODEL_SIZE"],
++                    help="Parent directory for raw recordings; choose a new batch folder for new experiments.")
+     args = ap.parse_args()
+ 
+     # ── Print active config so the user can verify ────────────────────────────
+@@ -306,7 +309,7 @@
+         if not isinstance(instr, str) or not instr.strip():
+             raise SystemExit(f"Prompt {idx}: missing or empty 'instructions' field.")
+ 
+-        out_dir = Path("runs") / label / f"p{file_idx:04d}"
++        out_dir = args.output_root / label / f"p{file_idx:04d}"
+         out_dir.mkdir(parents=True, exist_ok=True)
+ 
+         print(
+@@ -392,7 +395,7 @@
+             )
+ 
+     dest = args.label if args.label else "<per-prompt-condition>"
+-    print(f"\n✓ Done. Results in runs/{dest}/")
++    print(f"\n✓ Done. Results in {args.output_root}/{dest}/")
+ 
+ 
+ if __name__ == "__main__":
+--- before/scripts/run/run_prompts_fulltrace.py
++++ after/scripts/run/run_prompts_fulltrace.py
+@@ -18,7 +18,7 @@
+ emotional (or neutral) computations.
+ 
+ Directory layout:
+-  runs/<run_label>/
++  data/raw/fulltrace/incoming/<run_label>/
+       perf_stat.txt
+       perf_stat.csv
+       hat_interrupts.csv
+@@ -237,6 +237,9 @@
+                     help="CPU core for perf stat (enables taskset).")
+     ap.add_argument("--inter_prompt_pause_s", type=float, default=0.0,
+                     help="Optional pause between prompts (s). Default 0 = back-to-back.")
++    ap.add_argument("--output-root", type=Path,
++                    default=_script_dir.parents[1] / "data" / "raw" / "fulltrace" / "incoming",
++                    help="Parent directory for raw recordings; choose a new batch folder for new experiments.")
+     args = ap.parse_args()
+ 
+     # ── Print config ──────────────────────────────────────────────────────────
+@@ -256,7 +259,7 @@
+     print(f"Loaded {n_prompts} prompts  label={args.label}")
+ 
+     # ── Output directory ──────────────────────────────────────────────────────
+-    out_dir = Path("runs") / "fulltrace" / args.run_label
++    out_dir = args.output_root / args.run_label
+     out_dir.mkdir(parents=True, exist_ok=True)
+     print(f"Output: {out_dir}\n")
+ 
+--- before/analysis/lib/hat_viz.py
++++ after/analysis/lib/hat_viz.py
+@@ -6,7 +6,7 @@
+ 
+ Usage:
+     python hat_viz.py
+-    python hat_viz.py --emotional_trial runs/70b/emotional7/p0000 --neutral_trial runs/70b/neutral7/p0000
++    python hat_viz.py --emotional_trial data/raw/isolated/70b/emotional7/p0000 --neutral_trial data/raw/isolated/70b/neutral7/p0003
+ """
+ 
+ import argparse
+@@ -19,8 +19,8 @@
+ 
+ # ── Defaults ──────────────────────────────────────────────────────────────────
+ REPO_ROOT         = Path(__file__).resolve().parent.parent.parent
+-DEFAULT_EMOTIONAL = REPO_ROOT / 'mccviahat'/'runs' / 'shorter7b' / 'emotional187a' / 'p0006'
+-DEFAULT_NEUTRAL   = REPO_ROOT / 'mccviahat'/'runs' / 'shorter7b' / 'neutral187a'   / 'p0008'
++DEFAULT_EMOTIONAL = REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional1' / 'p0007'
++DEFAULT_NEUTRAL   = REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral1'   / 'p0006'
+ 
+ 
+ def load_perf(trial_dir: Path) -> pd.DataFrame | None:
+@@ -82,7 +82,7 @@
+ 
+ if __name__ == "__main__":
+     import pandas as pd
+-    df = pd.read_csv('runs/shorter7b/emotional187a/p0007/perf_stat.csv')
++    df = pd.read_csv(REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional1' / 'p0007' / 'perf_stat.csv')
+     print(df['core_power.throttle'].head(20))
+     print(df['core_power.throttle'].diff().head(20))
+     main()--- before/scripts/collectors/substrate_collector.py
++++ after/scripts/collectors/substrate_collector.py
+@@ -34,7 +34,7 @@
+     sched:sched_stat_wait
+ 
+ Usage:
+-    python substrate_collector_v2.py --out_dir runs/trial_001 --pid 12345 --duration_s 60
++    python substrate_collector_v2.py --out_dir data/raw/fulltrace/incoming/trial_001 --pid 12345 --duration_s 60
+ """
+ 
+ import argparse
+@@ -243,7 +243,7 @@
+         description="Streamlined HAT collector: throttle + TLB + workload confound controls."
+     )
+     ap.add_argument("--out_dir", required=True,
+-                    help="Run output directory (e.g., runs/<run_id>).")
++                    help="Run output directory (e.g., data/raw/fulltrace/incoming/<run_id>).")
+     ap.add_argument("--pid", type=int, required=True,
+                     help="Target host PID (e.g., docker inspect .State.Pid).")
+     ap.add_argument("--duration_s", type=float, required=True,
+--- before/scripts/collectors/substrate_collector_old.py
++++ after/scripts/collectors/substrate_collector_old.py
+@@ -312,7 +312,7 @@
+         description="HAT-focused substrate collector for LLM inference experiments."
+     )
+     ap.add_argument("--out_dir", required=True,
+-                    help="Run output directory (e.g., runs/<run_id>).")
++                    help="Run output directory (e.g., data/raw/fulltrace/incoming/<run_id>).")
+     ap.add_argument("--pid", type=int, required=True,
+                     help="Target host PID (e.g., docker inspect .State.Pid).")
+     ap.add_argument("--duration_s", type=float, required=True,
+--- before/scripts/run/token_count_csv.py
++++ after/scripts/run/token_count_csv.py
+@@ -36,7 +36,7 @@
+         prompts/20base/independentE.json \\
+         prompts/20base/independentN.json \\
+         --output token_counts.csv \\
+-        --combined data/clemsonc6420/token_counts_combined.csv
++        --combined data/features/legacy/isolated/clemsonc6420/token_counts_combined.csv
+ 
+     # Custom tokenizer
+     python scripts/run/token_count_csv.py prompts/20base/*.json \\
+--- before/analysis/notebooks/fulltrace_analysis_NEJ_interpretation.md
++++ after/analysis/notebooks/fulltrace_analysis_NEJ_interpretation.md
+@@ -1,6 +1,6 @@
+ # Interpreting the three-batch full-trace results
+ 
+-Results reviewed on 2026-10-01 from [fulltrace_analysis_NEJ.ipynb](fulltrace_analysis_NEJ.ipynb) and its exported tables in [dataNEW/analysis_NEJ](../../dataNEW/analysis_NEJ/).
++Results reviewed on 2026-10-01 from [fulltrace_analysis_NEJ.ipynb](fulltrace_analysis_NEJ.ipynb) and its exported tables in [results/analysis_NEJ](../../results/analysis_NEJ/).
+ 
+ The strongest pooled finding is a **higher mean throttle rate in joy traces** than in either neutral or emotional traces. Joy also has higher throttle variance, supported by the corrected Mann–Whitney tests but not the corrected Welch tests. The new throttle-to-cycles ratio is also higher for joy under both corrected tests. **None of the five features significantly distinguishes emotional from neutral after correction.** These findings describe this collection of traces; uneven batch composition and repeated measurements limit their interpretation as effects of condition.
+ 
+--- before/.gitignore
++++ after/.gitignore
+@@ -7,11 +7,14 @@
+ .vscode/
+ 
+ # outputs / data
+-runs/
+-output/
+-runsNEW/
+-data/
+-datanew/
++/data/raw/*
++!/data/raw/fulltrace/
++/data/raw/fulltrace/*
++!/data/raw/fulltrace/batch_002_joy/
++/data/archives/
++/results/fulltrace_classification/
++/results/fulltrace_classification_four_throttle/
++/results/presentations/
+ # model caches
+ model_cache/
+ .cache/
+--- before/PROJECT_README.md
++++ after/PROJECT_README.md
+@@ -28,28 +28,27 @@
+ 
+ ```
+ mccviahat/
+-├── collectors/          # HAT data collection scripts
+-│   ├── substrate_collector.py
+-│   └── substrate_collector_v2.py
+ ├── scripts/
+-│   └── run/
+-│       ├── run_prompts_isolated.py    # Per-trial isolated runner
+-│       └── run_prompts_fulltrace.py   # Full-trace continuous runner
+-│   └── model/
+-│       ├── model_config.sh
+-│       └── reset_server.sh
++│   ├── collectors/        # HAT signal collectors
++│   ├── run/               # Experiment runners and feature extraction
++│   ├── model/             # Model/server setup
++│   └── node/              # CloudLab node setup
+ ├── analysis/
+-│   ├── extract_features.py            # Per-trial feature extraction
+-│   ├── extract_features_fulltrace.py  # Full-trace feature extraction
+-│   └── *.ipynb                        # Analysis notebooks
+-├── prompts/
+-│   ├── 20base/                        # Prompt JSON files
+-│   └── token_counts.csv
+-├── runs/                              # Raw experimental data
+-├── data/                              # Extracted feature CSVs
+-├── docker/                            # LLM server container config
+-└── results/                           # Figures and outputs
++│   ├── lib/               # Plotting utilities
++│   └── notebooks/         # Existing analysis notebooks
++├── prompts/               # Original prompt sets and token counts
++├── data/
++│   ├── raw/               # Original recordings: isolated trials and fulltrace batches
++│   ├── features/          # Existing CSVs, separated into legacy and recomputed versions
++│   ├── catalog/           # Recording index, batch index, path mapping, checksum audit
++│   ├── provenance/        # Original historical recomputation records
++│   └── archives/          # Original ZIPs and pre-reorganization code backup
++├── results/               # Existing analysis tables, models, plots, and presentations
++└── docker/                # LLM server container config
+ ```
++
++See [DATA_ORGANIZATION.md](DATA_ORGANIZATION.md) for the folder mapping,
++what changed, what was preserved, and verification details.
+ 
+ ## Current Status
+ 
+--- before/RUNNING.md
++++ after/RUNNING.md
+@@ -52,12 +52,17 @@
+ ```bash
+ python3 scripts/run/run_prompts_fulltrace.py \
+   --json prompts/20base/independentE.json \
+-  --label emotional
++  --label emotional \
++  --run_label node_condition_repeat
+ ```
+ 
+ Swap `independentE.json` / `emotional` for `independentN.json` / `neutral` for the neutral condition.
+ 
+-Run outputs land in `runs/` on the node.
++Isolated outputs now land in `data/raw/isolated/<model>/<label>/pNNNN/`.
++Fulltrace outputs land in `data/raw/fulltrace/incoming/<run_label>/`.
++Both runners accept `--output-root <directory>` to select a different raw-data
++parent, such as a new collection batch. Use a fresh directory and unique labels
++for a new collection; the collectors retain their existing overwrite behavior.
+ 
+ ---
+ 
+@@ -66,37 +71,52 @@
+ From your laptop, rsync the runs directory down:
+ 
+ ```bash
+-rsync -avP "rsalvi@clnode234.clemson.cloudlab.us:~/mccviahat/runs/" \
+-  "$HOME/Desktop/mccviahat/runs/"
++rsync -avP "rsalvi@clnode234.clemson.cloudlab.us:~/mccviahat/data/raw/" \
++  "$HOME/Desktop/mccviahat/data/raw/"
+ ```
+ 
+ ---
+ 
+ ## 5. Extract Features
+ 
+-From the root of the local `mccviahat` repo:
++From the root of the local `mccviahat` repo, the 70B isolated-trial
++recomputation script reads `data/raw/isolated/70b` and writes to
++`data/features/recomputed/isolated/70b`:
+ 
+ ```bash
+-python3 scripts/run/extract_features.py
++.mccvenv/bin/python scripts/run/recompute_70b_features.py
+ ```
+ 
+-This processes the raw collector output in `runs/` and writes feature files used by the notebooks.
++This explicitly regenerates and overwrites its named feature files. It was **not**
++run against existing outputs during the reorganization. The older generic
++`scripts/run/extract_features.py` still has an empty `RUN_SPLITS` configuration;
++configure its splits before using it. Its mathematical functions are unchanged.
+ 
+-To recompute **whole-trace features only** for all fulltrace experiments in both
+-collections, saving directly in `dataNEW/`:
++To extract fulltrace features into a separate directory while retaining all
++existing feature versions:
+ 
+ ```bash
+ .mccvenv/bin/python scripts/run/extract_features_fulltrace.py \
+-  runsNEW/fulltrace runs/fulltrace --output-dir dataNEW
++  data/raw/fulltrace/batch_001_en \
++  --output-dir data/features/recomputed/fulltrace/new_extraction/batch_001_en
+ ```
+ 
+-This writes one `<run_label>_whole.csv` per experiment and a combined
+-`all_whole.csv` when multiple traces are processed. The extractor always produces
+-whole-trace features only, without LZ complexity; `--whole-only` remains accepted
+-for compatibility. Existing whole-trace CSVs with
+-matching names are overwritten; existing per-prompt files are not removed.
+-Feature definitions are unchanged, including the omission of LZ complexity for
+-full traces. See `dataNEW/RECOMPUTATION.md` for the recorded batch and validation.
++Repeat with another batch and a separate output folder as needed. Input folders
++must contain recordings directly; select a batch rather than the overall
++`data/raw/fulltrace` parent. With no arguments, the extractor reads
++`data/raw/fulltrace/batch_002_joy` and writes into
++`data/features/recomputed/fulltrace/batch_002_joy`.
++
++The extractor writes one `<run_label>_whole.csv` per recording and an
++`all_whole.csv` when multiple traces are processed. Existing files with matching
++names are overwritten by an extraction command. Feature calculations are
++unchanged, including the omission of LZ complexity for full traces.
++`--whole-only` remains accepted for compatibility.
++
++The original recomputation record is preserved verbatim in
++`data/provenance/fulltrace_recomputation/RECOMPUTATION.md`; its old paths describe
++the layout at the time. See [DATA_ORGANIZATION.md](DATA_ORGANIZATION.md) for the
++current mapping.
+ 
+ ---
+ 
+@@ -109,10 +129,15 @@
+ 
+ Shared plotting utilities live in `analysis/lib/hat_viz.py`.
+ 
+-For three-class prediction from the whole-trace features in `dataNEW`, open
++For three-class prediction from the whole-trace features in `data/features/recomputed/fulltrace`, open
+ `analysis/notebooks/fulltrace_classification_dataNEW.ipynb` with the `.mccvenv`
+ kernel and run all cells. It uses only the original four throttle features
+ (mean rate, variance, spectral entropy, and slope), compares six classifier families, tunes the best
+ with grouped cross-validated grid search, and evaluates on held-out nodes.
+-Results and the fitted pipeline are saved in `output/fulltrace_classification_four_throttle/`.
++Results and the fitted pipeline are saved in `results/fulltrace_classification_four_throttle/`.
+ The notebook explains the node grouping and collection-batch limitations.
++
++The classification notebook explicitly selects `batch_001_en` and
++`batch_002_joy`, preserving its original 67 inputs. The EN, NEJ, and MECHA
++notebooks retain their existing batch selections and write into `results/`.
++Existing saved notebook outputs are historical and have not been rewritten.

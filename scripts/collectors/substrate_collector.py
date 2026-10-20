@@ -34,7 +34,7 @@ Removed vs v1 (not needed for current analysis):
     sched:sched_stat_wait
 
 Usage:
-    python substrate_collector_v2.py --out_dir runs/trial_001 --pid 12345 --duration_s 60
+    python substrate_collector_v2.py --out_dir data/raw/fulltrace/incoming/trial_001 --pid 12345 --duration_s 60
 """
 
 import argparse
@@ -243,7 +243,7 @@ def main() -> int:
         description="Streamlined HAT collector: throttle + TLB + workload confound controls."
     )
     ap.add_argument("--out_dir", required=True,
-                    help="Run output directory (e.g., runs/<run_id>).")
+                    help="Run output directory (e.g., data/raw/fulltrace/incoming/<run_id>).")
     ap.add_argument("--pid", type=int, required=True,
                     help="Target host PID (e.g., docker inspect .State.Pid).")
     ap.add_argument("--duration_s", type=float, required=True,

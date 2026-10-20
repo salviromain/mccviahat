@@ -1,0 +1,10 @@
+pair,batch,matched_nodes,unmatched_left_nodes,unmatched_right_nodes
+E−N,old,13,0,0
+E−N,first,0,0,0
+E−N,second,5,0,0
+J−N,old,0,13,0
+J−N,first,0,0,6
+J−N,second,3,2,0
+J−E,old,0,13,0
+J−E,first,0,0,6
+J−E,second,3,2,0

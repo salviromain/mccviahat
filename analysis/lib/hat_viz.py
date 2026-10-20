@@ -6,7 +6,7 @@ Plots core_power.throttle raw time series for one emotional and one neutral tria
 
 Usage:
     python hat_viz.py
-    python hat_viz.py --emotional_trial runs/70b/emotional7/p0000 --neutral_trial runs/70b/neutral7/p0000
+    python hat_viz.py --emotional_trial data/raw/isolated/70b/emotional7/p0000 --neutral_trial data/raw/isolated/70b/neutral7/p0003
 """
 
 import argparse
@@ -19,8 +19,8 @@ import matplotlib.pyplot as plt
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
 REPO_ROOT         = Path(__file__).resolve().parent.parent.parent
-DEFAULT_EMOTIONAL = REPO_ROOT / 'mccviahat'/'runs' / 'shorter7b' / 'emotional187a' / 'p0006'
-DEFAULT_NEUTRAL   = REPO_ROOT / 'mccviahat'/'runs' / 'shorter7b' / 'neutral187a'   / 'p0008'
+DEFAULT_EMOTIONAL = REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional1' / 'p0007'
+DEFAULT_NEUTRAL   = REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'neutral1'   / 'p0006'
 
 
 def load_perf(trial_dir: Path) -> pd.DataFrame | None:
@@ -82,7 +82,7 @@ def main():
 
 if __name__ == "__main__":
     import pandas as pd
-    df = pd.read_csv('runs/shorter7b/emotional187a/p0007/perf_stat.csv')
+    df = pd.read_csv(REPO_ROOT / 'data' / 'raw' / 'isolated' / '7b' / 'emotional1' / 'p0007' / 'perf_stat.csv')
     print(df['core_power.throttle'].head(20))
     print(df['core_power.throttle'].diff().head(20))
     main()

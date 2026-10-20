@@ -36,7 +36,7 @@ Usage
         prompts/20base/independentE.json \\
         prompts/20base/independentN.json \\
         --output token_counts.csv \\
-        --combined data/clemsonc6420/token_counts_combined.csv
+        --combined data/features/legacy/isolated/clemsonc6420/token_counts_combined.csv
 
     # Custom tokenizer
     python scripts/run/token_count_csv.py prompts/20base/*.json \\

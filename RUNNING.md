@@ -52,12 +52,17 @@ python3 scripts/run/run_prompts_isolated.py \
 ```bash
 python3 scripts/run/run_prompts_fulltrace.py \
   --json prompts/20base/independentE.json \
-  --label emotional
+  --label emotional \
+  --run_label node_condition_repeat
 ```
 
 Swap `independentE.json` / `emotional` for `independentN.json` / `neutral` for the neutral condition.
 
-Run outputs land in `runs/` on the node.
+Isolated outputs now land in `data/raw/isolated/<model>/<label>/pNNNN/`.
+Fulltrace outputs land in `data/raw/fulltrace/incoming/<run_label>/`.
+Both runners accept `--output-root <directory>` to select a different raw-data
+parent, such as a new collection batch. Use a fresh directory and unique labels
+for a new collection; the collectors retain their existing overwrite behavior.
 
 ---
 
@@ -66,37 +71,52 @@ Run outputs land in `runs/` on the node.
 From your laptop, rsync the runs directory down:
 
 ```bash
-rsync -avP "rsalvi@clnode234.clemson.cloudlab.us:~/mccviahat/runs/" \
-  "$HOME/Desktop/mccviahat/runs/"
+rsync -avP "rsalvi@clnode234.clemson.cloudlab.us:~/mccviahat/data/raw/" \
+  "$HOME/Desktop/mccviahat/data/raw/"
 ```
 
 ---
 
 ## 5. Extract Features
 
-From the root of the local `mccviahat` repo:
+From the root of the local `mccviahat` repo, the 70B isolated-trial
+recomputation script reads `data/raw/isolated/70b` and writes to
+`data/features/recomputed/isolated/70b`:
 
 ```bash
-python3 scripts/run/extract_features.py
+.mccvenv/bin/python scripts/run/recompute_70b_features.py
 ```
 
-This processes the raw collector output in `runs/` and writes feature files used by the notebooks.
+This explicitly regenerates and overwrites its named feature files. It was **not**
+run against existing outputs during the reorganization. The older generic
+`scripts/run/extract_features.py` still has an empty `RUN_SPLITS` configuration;
+configure its splits before using it. Its mathematical functions are unchanged.
 
-To recompute **whole-trace features only** for all fulltrace experiments in both
-collections, saving directly in `dataNEW/`:
+To extract fulltrace features into a separate directory while retaining all
+existing feature versions:
 
 ```bash
 .mccvenv/bin/python scripts/run/extract_features_fulltrace.py \
-  runsNEW/fulltrace runs/fulltrace --output-dir dataNEW
+  data/raw/fulltrace/batch_001_en \
+  --output-dir data/features/recomputed/fulltrace/new_extraction/batch_001_en
 ```
 
-This writes one `<run_label>_whole.csv` per experiment and a combined
-`all_whole.csv` when multiple traces are processed. The extractor always produces
-whole-trace features only, without LZ complexity; `--whole-only` remains accepted
-for compatibility. Existing whole-trace CSVs with
-matching names are overwritten; existing per-prompt files are not removed.
-Feature definitions are unchanged, including the omission of LZ complexity for
-full traces. See `dataNEW/RECOMPUTATION.md` for the recorded batch and validation.
+Repeat with another batch and a separate output folder as needed. Input folders
+must contain recordings directly; select a batch rather than the overall
+`data/raw/fulltrace` parent. With no arguments, the extractor reads
+`data/raw/fulltrace/batch_002_joy` and writes into
+`data/features/recomputed/fulltrace/batch_002_joy`.
+
+The extractor writes one `<run_label>_whole.csv` per recording and an
+`all_whole.csv` when multiple traces are processed. Existing files with matching
+names are overwritten by an extraction command. Feature calculations are
+unchanged, including the omission of LZ complexity for full traces.
+`--whole-only` remains accepted for compatibility.
+
+The original recomputation record is preserved verbatim in
+`data/provenance/fulltrace_recomputation/RECOMPUTATION.md`; its old paths describe
+the layout at the time. See [DATA_ORGANIZATION.md](DATA_ORGANIZATION.md) for the
+current mapping.
 
 ---
 
@@ -109,10 +129,15 @@ Open the notebooks in `analysis/notebooks/` and run them in order:
 
 Shared plotting utilities live in `analysis/lib/hat_viz.py`.
 
-For three-class prediction from the whole-trace features in `dataNEW`, open
+For three-class prediction from the whole-trace features in `data/features/recomputed/fulltrace`, open
 `analysis/notebooks/fulltrace_classification_dataNEW.ipynb` with the `.mccvenv`
 kernel and run all cells. It uses only the original four throttle features
 (mean rate, variance, spectral entropy, and slope), compares six classifier families, tunes the best
 with grouped cross-validated grid search, and evaluates on held-out nodes.
-Results and the fitted pipeline are saved in `output/fulltrace_classification_four_throttle/`.
+Results and the fitted pipeline are saved in `results/fulltrace_classification_four_throttle/`.
 The notebook explains the node grouping and collection-batch limitations.
+
+The classification notebook explicitly selects `batch_001_en` and
+`batch_002_joy`, preserving its original 67 inputs. The EN, NEJ, and MECHA
+notebooks retain their existing batch selections and write into `results/`.
+Existing saved notebook outputs are historical and have not been rewritten.

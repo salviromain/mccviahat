@@ -1,6 +1,6 @@
 # Interpreting the three-batch full-trace results
 
-Results reviewed on 2026-10-01 from [fulltrace_analysis_NEJ.ipynb](fulltrace_analysis_NEJ.ipynb) and its exported tables in [dataNEW/analysis_NEJ](../../dataNEW/analysis_NEJ/).
+Results reviewed on 2026-10-01 from [fulltrace_analysis_NEJ.ipynb](fulltrace_analysis_NEJ.ipynb) and its exported tables in [results/analysis_NEJ](../../results/analysis_NEJ/).
 
 The strongest pooled finding is a **higher mean throttle rate in joy traces** than in either neutral or emotional traces. Joy also has higher throttle variance, supported by the corrected Mann–Whitney tests but not the corrected Welch tests. The new throttle-to-cycles ratio is also higher for joy under both corrected tests. **None of the five features significantly distinguishes emotional from neutral after correction.** These findings describe this collection of traces; uneven batch composition and repeated measurements limit their interpretation as effects of condition.
 

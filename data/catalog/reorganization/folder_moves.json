@@ -1,0 +1,130 @@
+[
+  {
+    "old_path": "dataNEW/70b/analysis",
+    "new_path": "results/isolated_70b_recomputed"
+  },
+  {
+    "old_path": "runs/70b",
+    "new_path": "data/raw/isolated/70b"
+  },
+  {
+    "old_path": "runs/7b",
+    "new_path": "data/raw/isolated/7b"
+  },
+  {
+    "old_path": "runs/fulltrace",
+    "new_path": "data/raw/fulltrace/batch_001_en"
+  },
+  {
+    "old_path": "runsNEW/fulltrace",
+    "new_path": "data/raw/fulltrace/batch_002_joy"
+  },
+  {
+    "old_path": "runsNEW/fulltrace_2nd_batch",
+    "new_path": "data/raw/fulltrace/batch_003_enj"
+  },
+  {
+    "old_path": "runsMECHA/fulltrace",
+    "new_path": "data/raw/fulltrace/batch_004_enm"
+  },
+  {
+    "old_path": "data/70b",
+    "new_path": "data/features/legacy/isolated/70b"
+  },
+  {
+    "old_path": "data/clemsonc6420",
+    "new_path": "data/features/legacy/isolated/clemsonc6420"
+  },
+  {
+    "old_path": "data/longer70b",
+    "new_path": "data/features/legacy/isolated/longer70b"
+  },
+  {
+    "old_path": "data/shorter7b",
+    "new_path": "data/features/legacy/isolated/shorter7b"
+  },
+  {
+    "old_path": "data/fulltrace",
+    "new_path": "data/features/legacy/fulltrace"
+  },
+  {
+    "old_path": "data/fulltrace_prompts",
+    "new_path": "data/features/legacy/fulltrace_prompts"
+  },
+  {
+    "old_path": "dataNEW/70b",
+    "new_path": "data/features/recomputed/isolated/70b"
+  },
+  {
+    "old_path": "dataNEW/fulltrace_0ld_batch",
+    "new_path": "data/features/recomputed/fulltrace/batch_001_en"
+  },
+  {
+    "old_path": "dataNEW/fulltrace_1st_batch",
+    "new_path": "data/features/recomputed/fulltrace/batch_002_joy"
+  },
+  {
+    "old_path": "dataNEW/fulltrace_2nd_batch",
+    "new_path": "data/features/recomputed/fulltrace/batch_003_enj"
+  },
+  {
+    "old_path": "dataNEW/fulltraceMECHAbatch",
+    "new_path": "data/features/recomputed/fulltrace/batch_004_enm"
+  },
+  {
+    "old_path": "dataNEW/RECOMPUTATION.md",
+    "new_path": "data/provenance/fulltrace_recomputation/RECOMPUTATION.md"
+  },
+  {
+    "old_path": "dataNEW/input_manifest.json",
+    "new_path": "data/provenance/fulltrace_recomputation/input_manifest.json"
+  },
+  {
+    "old_path": "dataNEW/fulltraceMECHAbatch.zip",
+    "new_path": "data/archives/fulltraceMECHAbatch.zip"
+  },
+  {
+    "old_path": "runsMECHA.zip",
+    "new_path": "data/archives/runsMECHA.zip"
+  },
+  {
+    "old_path": "dataNEW/analysis_EN",
+    "new_path": "results/analysis_EN"
+  },
+  {
+    "old_path": "dataNEW/analysis_NEJ",
+    "new_path": "results/analysis_NEJ"
+  },
+  {
+    "old_path": "dataNEW/analysis_MECHA",
+    "new_path": "results/analysis_MECHA"
+  },
+  {
+    "old_path": "dataNEW/analysis_MECHA_pooled",
+    "new_path": "results/analysis_MECHA_pooled"
+  },
+  {
+    "old_path": "dataNEW/batch_corrected_analysisFTNEJ",
+    "new_path": "results/batch_corrected_analysisFTNEJ"
+  },
+  {
+    "old_path": "output",
+    "new_path": "results"
+  },
+  {
+    "old_path": "data/.DS_Store",
+    "new_path": "data/archives/layout_metadata/data/.DS_Store"
+  },
+  {
+    "old_path": "dataNEW/.DS_Store",
+    "new_path": "data/archives/layout_metadata/dataNEW/.DS_Store"
+  },
+  {
+    "old_path": "runs/.DS_Store",
+    "new_path": "data/archives/layout_metadata/runs/.DS_Store"
+  },
+  {
+    "old_path": "runsNEW/.DS_Store",
+    "new_path": "data/archives/layout_metadata/runsNEW/.DS_Store"
+  }
+]

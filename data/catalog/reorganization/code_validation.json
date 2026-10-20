@@ -1,0 +1,59 @@
+[
+  {
+    "script": "analysis/lib/hat_viz.py",
+    "functions_with_path_or_help_changes": [],
+    "all_other_functions_identical": true
+  },
+  {
+    "script": "scripts/collectors/substrate_collector.py",
+    "functions_with_path_or_help_changes": [
+      "main"
+    ],
+    "all_other_functions_identical": true
+  },
+  {
+    "script": "scripts/collectors/substrate_collector_old.py",
+    "functions_with_path_or_help_changes": [
+      "main"
+    ],
+    "all_other_functions_identical": true
+  },
+  {
+    "script": "scripts/run/extract_features.py",
+    "functions_with_path_or_help_changes": [],
+    "all_other_functions_identical": true
+  },
+  {
+    "script": "scripts/run/extract_features_fulltrace.py",
+    "functions_with_path_or_help_changes": [
+      "main"
+    ],
+    "all_other_functions_identical": true
+  },
+  {
+    "script": "scripts/run/recompute_70b_features.py",
+    "functions_with_path_or_help_changes": [
+      "main"
+    ],
+    "all_other_functions_identical": true
+  },
+  {
+    "script": "scripts/run/run_prompts_fulltrace.py",
+    "functions_with_path_or_help_changes": [
+      "run"
+    ],
+    "all_other_functions_identical": true
+  },
+  {
+    "script": "scripts/run/run_prompts_isolated.py",
+    "functions_with_path_or_help_changes": [
+      "run"
+    ],
+    "all_other_functions_identical": true
+  },
+  {
+    "script": "scripts/run/token_count_csv.py",
+    "functions_with_path_or_help_changes": [],
+    "all_other_functions_identical": true
+  }
+]

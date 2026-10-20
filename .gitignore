@@ -7,11 +7,14 @@ venv/
 .vscode/
 
 # outputs / data
-runs/
-output/
-runsNEW/
-data/
-datanew/
+/data/raw/*
+!/data/raw/fulltrace/
+/data/raw/fulltrace/*
+!/data/raw/fulltrace/batch_002_joy/
+/data/archives/
+/results/fulltrace_classification/
+/results/fulltrace_classification_four_throttle/
+/results/presentations/
 # model caches
 model_cache/
 .cache/

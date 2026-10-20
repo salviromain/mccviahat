@@ -1,0 +1,9 @@
+{
+  "syntax": "passed",
+  "original_computational_functions": "identical",
+  "previously_tracked_files_visible": 417,
+  "sample_extractions": "bit-for-bit identical before/after",
+  "visualization": "passed; output only in /tmp",
+  "cli_help": "passed for both runners and both extractors",
+  "hardware_collection": "not executed; requires CloudLab/Linux/perf/Docker"
+}
