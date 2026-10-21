@@ -1,0 +1,6 @@
+{
+  "root": "/Users/rsalvi/Desktop/mccviahat",
+  "results": "/Users/rsalvi/Desktop/mccviahat/results/all_trials_2026-10-20",
+  "per_prompt_choice": "320 recomputed trials; current four-feature definition",
+  "blocks_notebook": "analysis/notebooks/70b_blocks_analysis.ipynb"
+}

@@ -13,7 +13,7 @@ CONFIG_FILE="${SCRIPT_DIR}/model_config.sh"
 
 if [ ! -f "$CONFIG_FILE" ]; then
   echo "ERROR: model_config.sh not found."
-  echo "Run first: bash scripts/model/model_fetch.sh [7b|70b]"
+  echo "Run first: bash scripts/model/model_fetch.sh [7b|70b|405b]"
   exit 1
 fi
 

@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "notebook": "analysis/notebooks/fulltrace_analysis_EN.ipynb",
+  "executed_copy": "results/all_trials_2026-10-20/fulltrace_EN/fulltrace_analysis_EN.ipynb",
+  "seconds": 23.59,
+  "figures": [
+    "results/all_trials_2026-10-20/fulltrace_EN/figures/cell_06_00.png",
+    "results/all_trials_2026-10-20/fulltrace_EN/figures/cell_09_00.png"
+  ],
+  "code_cells": 8,
+  "notebook_sha256": "22a4064b3df4a3b944c44a102f0c25140d95d5bbcfb8ea50660358439001facb"
+}

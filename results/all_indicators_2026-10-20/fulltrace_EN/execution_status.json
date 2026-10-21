@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "notebook": "analysis/notebooks/fulltrace_analysis_EN.ipynb",
+  "executed_copy": "results/all_indicators_2026-10-20/fulltrace_EN/fulltrace_analysis_EN.ipynb",
+  "seconds": 5.33,
+  "figures": [
+    "results/all_indicators_2026-10-20/fulltrace_EN/figures/cell_06_00.png",
+    "results/all_indicators_2026-10-20/fulltrace_EN/figures/cell_09_00.png"
+  ],
+  "code_cells": 8,
+  "notebook_sha256": "2f7964520b3d2d5a8f7d5edc0a9a290315076b04ee317eab40b7234aa262e6a2"
+}

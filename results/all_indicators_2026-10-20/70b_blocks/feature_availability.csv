@@ -1,0 +1,177 @@
+indicator,metric,feature,status,reason
+LLC-load-misses,mean_rate,LLC-load-misses__mean_rate,included,
+LLC-load-misses,variance,LLC-load-misses__variance,included,
+LLC-load-misses,spectral_entropy,LLC-load-misses__spectral_entropy,included,
+LLC-load-misses,slope,LLC-load-misses__slope,included,
+branch-instructions,mean_rate,branch-instructions__mean_rate,included,
+branch-instructions,variance,branch-instructions__variance,included,
+branch-instructions,spectral_entropy,branch-instructions__spectral_entropy,included,
+branch-instructions,slope,branch-instructions__slope,included,
+branch-misses,mean_rate,branch-misses__mean_rate,included,
+branch-misses,variance,branch-misses__variance,included,
+branch-misses,spectral_entropy,branch-misses__spectral_entropy,included,
+branch-misses,slope,branch-misses__slope,included,
+cache-misses,mean_rate,cache-misses__mean_rate,included,
+cache-misses,variance,cache-misses__variance,included,
+cache-misses,spectral_entropy,cache-misses__spectral_entropy,included,
+cache-misses,slope,cache-misses__slope,included,
+cache-references,mean_rate,cache-references__mean_rate,included,
+cache-references,variance,cache-references__variance,included,
+cache-references,spectral_entropy,cache-references__spectral_entropy,included,
+cache-references,slope,cache-references__slope,included,
+context-switches,mean_rate,context-switches__mean_rate,included,
+context-switches,variance,context-switches__variance,included,
+context-switches,spectral_entropy,context-switches__spectral_entropy,included,
+context-switches,slope,context-switches__slope,included,
+core_power.throttle,mean_rate,core_power.throttle__mean_rate,included,
+core_power.throttle,variance,core_power.throttle__variance,included,
+core_power.throttle,spectral_entropy,core_power.throttle__spectral_entropy,included,
+core_power.throttle,slope,core_power.throttle__slope,included,
+cpu-clock,mean_rate,cpu-clock__mean_rate,included,
+cpu-clock,variance,cpu-clock__variance,included,
+cpu-clock,spectral_entropy,cpu-clock__spectral_entropy,included,
+cpu-clock,slope,cpu-clock__slope,included,
+cpu-migrations,mean_rate,cpu-migrations__mean_rate,included,
+cpu-migrations,variance,cpu-migrations__variance,included,
+cpu-migrations,spectral_entropy,cpu-migrations__spectral_entropy,included,
+cpu-migrations,slope,cpu-migrations__slope,included,
+cpu_freq_mean,mean_rate,cpu_freq_mean__mean_rate,included,
+cpu_freq_mean,variance,cpu_freq_mean__variance,included,
+cpu_freq_mean,spectral_entropy,cpu_freq_mean__spectral_entropy,included,
+cpu_freq_mean,slope,cpu_freq_mean__slope,included,
+cycles,mean_rate,cycles__mean_rate,included,
+cycles,variance,cycles__variance,included,
+cycles,spectral_entropy,cycles__spectral_entropy,included,
+cycles,slope,cycles__slope,included,
+dTLB-load-misses,mean_rate,dTLB-load-misses__mean_rate,included,
+dTLB-load-misses,variance,dTLB-load-misses__variance,included,
+dTLB-load-misses,spectral_entropy,dTLB-load-misses__spectral_entropy,included,
+dTLB-load-misses,slope,dTLB-load-misses__slope,included,
+hat_CAL,mean_rate,hat_CAL__mean_rate,included,
+hat_CAL,variance,hat_CAL__variance,included,
+hat_CAL,spectral_entropy,hat_CAL__spectral_entropy,included,
+hat_CAL,slope,hat_CAL__slope,included,
+hat_DFR,mean_rate,hat_DFR__mean_rate,excluded,constant across all trials
+hat_DFR,variance,hat_DFR__variance,excluded,constant across all trials
+hat_DFR,spectral_entropy,hat_DFR__spectral_entropy,excluded,constant across all trials
+hat_DFR,slope,hat_DFR__slope,excluded,constant across all trials
+hat_ERR,mean_rate,hat_ERR__mean_rate,excluded,constant across all trials
+hat_ERR,variance,hat_ERR__variance,excluded,constant across all trials
+hat_ERR,spectral_entropy,hat_ERR__spectral_entropy,excluded,constant across all trials
+hat_ERR,slope,hat_ERR__slope,excluded,constant across all trials
+hat_IWI,mean_rate,hat_IWI__mean_rate,included,
+hat_IWI,variance,hat_IWI__variance,included,
+hat_IWI,spectral_entropy,hat_IWI__spectral_entropy,included,
+hat_IWI,slope,hat_IWI__slope,included,
+hat_LOC,mean_rate,hat_LOC__mean_rate,included,
+hat_LOC,variance,hat_LOC__variance,included,
+hat_LOC,spectral_entropy,hat_LOC__spectral_entropy,included,
+hat_LOC,slope,hat_LOC__slope,included,
+hat_MCE,mean_rate,hat_MCE__mean_rate,excluded,constant across all trials
+hat_MCE,variance,hat_MCE__variance,excluded,constant across all trials
+hat_MCE,spectral_entropy,hat_MCE__spectral_entropy,excluded,constant across all trials
+hat_MCE,slope,hat_MCE__slope,excluded,constant across all trials
+hat_MCP,mean_rate,hat_MCP__mean_rate,included,
+hat_MCP,variance,hat_MCP__variance,included,
+hat_MCP,spectral_entropy,hat_MCP__spectral_entropy,included,
+hat_MCP,slope,hat_MCP__slope,included,
+hat_MIS,mean_rate,hat_MIS__mean_rate,excluded,constant across all trials
+hat_MIS,variance,hat_MIS__variance,excluded,constant across all trials
+hat_MIS,spectral_entropy,hat_MIS__spectral_entropy,excluded,constant across all trials
+hat_MIS,slope,hat_MIS__slope,excluded,constant across all trials
+hat_NMI,mean_rate,hat_NMI__mean_rate,included,
+hat_NMI,variance,hat_NMI__variance,included,
+hat_NMI,spectral_entropy,hat_NMI__spectral_entropy,included,
+hat_NMI,slope,hat_NMI__slope,included,
+hat_NPI,mean_rate,hat_NPI__mean_rate,excluded,constant across all trials
+hat_NPI,variance,hat_NPI__variance,excluded,constant across all trials
+hat_NPI,spectral_entropy,hat_NPI__spectral_entropy,excluded,constant across all trials
+hat_NPI,slope,hat_NPI__slope,excluded,constant across all trials
+hat_PIN,mean_rate,hat_PIN__mean_rate,excluded,constant across all trials
+hat_PIN,variance,hat_PIN__variance,excluded,constant across all trials
+hat_PIN,spectral_entropy,hat_PIN__spectral_entropy,excluded,constant across all trials
+hat_PIN,slope,hat_PIN__slope,excluded,constant across all trials
+hat_PIW,mean_rate,hat_PIW__mean_rate,excluded,constant across all trials
+hat_PIW,variance,hat_PIW__variance,excluded,constant across all trials
+hat_PIW,spectral_entropy,hat_PIW__spectral_entropy,excluded,constant across all trials
+hat_PIW,slope,hat_PIW__slope,excluded,constant across all trials
+hat_PMI,mean_rate,hat_PMI__mean_rate,included,
+hat_PMI,variance,hat_PMI__variance,included,
+hat_PMI,spectral_entropy,hat_PMI__spectral_entropy,included,
+hat_PMI,slope,hat_PMI__slope,included,
+hat_RES,mean_rate,hat_RES__mean_rate,included,
+hat_RES,variance,hat_RES__variance,included,
+hat_RES,spectral_entropy,hat_RES__spectral_entropy,included,
+hat_RES,slope,hat_RES__slope,included,
+hat_RTR,mean_rate,hat_RTR__mean_rate,excluded,constant across all trials
+hat_RTR,variance,hat_RTR__variance,excluded,constant across all trials
+hat_RTR,spectral_entropy,hat_RTR__spectral_entropy,excluded,constant across all trials
+hat_RTR,slope,hat_RTR__slope,excluded,constant across all trials
+hat_SPU,mean_rate,hat_SPU__mean_rate,excluded,constant across all trials
+hat_SPU,variance,hat_SPU__variance,excluded,constant across all trials
+hat_SPU,spectral_entropy,hat_SPU__spectral_entropy,excluded,constant across all trials
+hat_SPU,slope,hat_SPU__slope,excluded,constant across all trials
+hat_THR,mean_rate,hat_THR__mean_rate,excluded,constant across all trials
+hat_THR,variance,hat_THR__variance,excluded,constant across all trials
+hat_THR,spectral_entropy,hat_THR__spectral_entropy,excluded,constant across all trials
+hat_THR,slope,hat_THR__slope,excluded,constant across all trials
+hat_TLB,mean_rate,hat_TLB__mean_rate,included,
+hat_TLB,variance,hat_TLB__variance,included,
+hat_TLB,spectral_entropy,hat_TLB__spectral_entropy,included,
+hat_TLB,slope,hat_TLB__slope,included,
+hat_TRM,mean_rate,hat_TRM__mean_rate,excluded,constant across all trials
+hat_TRM,variance,hat_TRM__variance,excluded,constant across all trials
+hat_TRM,spectral_entropy,hat_TRM__spectral_entropy,excluded,constant across all trials
+hat_TRM,slope,hat_TRM__slope,excluded,constant across all trials
+instructions,mean_rate,instructions__mean_rate,included,
+instructions,variance,instructions__variance,included,
+instructions,spectral_entropy,instructions__spectral_entropy,included,
+instructions,slope,instructions__slope,included,
+mce:mce_record,mean_rate,mce:mce_record__mean_rate,excluded,constant across all trials
+mce:mce_record,variance,mce:mce_record__variance,excluded,constant across all trials
+mce:mce_record,spectral_entropy,mce:mce_record__spectral_entropy,excluded,constant across all trials
+mce:mce_record,slope,mce:mce_record__slope,excluded,constant across all trials
+msr/cpu_thermal_margin/,mean_rate,msr/cpu_thermal_margin/__mean_rate,included,
+msr/cpu_thermal_margin/,variance,msr/cpu_thermal_margin/__variance,included,
+msr/cpu_thermal_margin/,spectral_entropy,msr/cpu_thermal_margin/__spectral_entropy,included,
+msr/cpu_thermal_margin/,slope,msr/cpu_thermal_margin/__slope,included,
+page-faults,mean_rate,page-faults__mean_rate,included,
+page-faults,variance,page-faults__variance,included,
+page-faults,spectral_entropy,page-faults__spectral_entropy,included,
+page-faults,slope,page-faults__slope,included,
+power/energy-pkg/,mean_rate,power/energy-pkg/__mean_rate,included,
+power/energy-pkg/,variance,power/energy-pkg/__variance,included,
+power/energy-pkg/,spectral_entropy,power/energy-pkg/__spectral_entropy,included,
+power/energy-pkg/,slope,power/energy-pkg/__slope,included,
+power/energy-ram/,mean_rate,power/energy-ram/__mean_rate,included,
+power/energy-ram/,variance,power/energy-ram/__variance,included,
+power/energy-ram/,spectral_entropy,power/energy-ram/__spectral_entropy,included,
+power/energy-ram/,slope,power/energy-ram/__slope,included,
+sched:sched_stat_wait,mean_rate,sched:sched_stat_wait__mean_rate,excluded,constant across all trials
+sched:sched_stat_wait,variance,sched:sched_stat_wait__variance,excluded,constant across all trials
+sched:sched_stat_wait,spectral_entropy,sched:sched_stat_wait__spectral_entropy,excluded,constant across all trials
+sched:sched_stat_wait,slope,sched:sched_stat_wait__slope,excluded,constant across all trials
+stalled-cycles-backend,mean_rate,stalled-cycles-backend__mean_rate,excluded,missing or nonfinite measurements
+stalled-cycles-backend,variance,stalled-cycles-backend__variance,excluded,missing or nonfinite measurements
+stalled-cycles-backend,spectral_entropy,stalled-cycles-backend__spectral_entropy,excluded,missing or nonfinite measurements
+stalled-cycles-backend,slope,stalled-cycles-backend__slope,excluded,missing or nonfinite measurements
+stalled-cycles-frontend,mean_rate,stalled-cycles-frontend__mean_rate,excluded,missing or nonfinite measurements
+stalled-cycles-frontend,variance,stalled-cycles-frontend__variance,excluded,missing or nonfinite measurements
+stalled-cycles-frontend,spectral_entropy,stalled-cycles-frontend__spectral_entropy,excluded,missing or nonfinite measurements
+stalled-cycles-frontend,slope,stalled-cycles-frontend__slope,excluded,missing or nonfinite measurements
+tlb:tlb_flush,mean_rate,tlb:tlb_flush__mean_rate,included,
+tlb:tlb_flush,variance,tlb:tlb_flush__variance,included,
+tlb:tlb_flush,spectral_entropy,tlb:tlb_flush__spectral_entropy,included,
+tlb:tlb_flush,slope,tlb:tlb_flush__slope,included,
+uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/,mean_rate,uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/__mean_rate,excluded,constant across all trials
+uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/,variance,uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/__variance,excluded,constant across all trials
+uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/,spectral_entropy,uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/__spectral_entropy,excluded,constant across all trials
+uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/,slope,uncore_imc/UNC_M_ECC_CORRECTABLE_ERRORS/__slope,excluded,constant across all trials
+uncore_imc/cas_count_read/,mean_rate,uncore_imc/cas_count_read/__mean_rate,included,
+uncore_imc/cas_count_read/,variance,uncore_imc/cas_count_read/__variance,included,
+uncore_imc/cas_count_read/,spectral_entropy,uncore_imc/cas_count_read/__spectral_entropy,included,
+uncore_imc/cas_count_read/,slope,uncore_imc/cas_count_read/__slope,included,
+uncore_imc/cas_count_write/,mean_rate,uncore_imc/cas_count_write/__mean_rate,included,
+uncore_imc/cas_count_write/,variance,uncore_imc/cas_count_write/__variance,included,
+uncore_imc/cas_count_write/,spectral_entropy,uncore_imc/cas_count_write/__spectral_entropy,included,
+uncore_imc/cas_count_write/,slope,uncore_imc/cas_count_write/__slope,included,

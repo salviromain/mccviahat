@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "notebook": "analysis/notebooks/70b_blocks_analysis.ipynb",
+  "executed_copy": "results/all_indicators_2026-10-20/70b_blocks/70b_blocks_analysis.ipynb",
+  "seconds": 336.43,
+  "figures": [
+    "results/all_indicators_2026-10-20/70b_blocks/figures/cell_18_00.png",
+    "results/all_indicators_2026-10-20/70b_blocks/figures/cell_19_00.png",
+    "results/all_indicators_2026-10-20/70b_blocks/figures/cell_19_01.png",
+    "results/all_indicators_2026-10-20/70b_blocks/figures/cell_19_02.png",
+    "results/all_indicators_2026-10-20/70b_blocks/figures/cell_19_03.png"
+  ],
+  "code_cells": 12,
+  "notebook_sha256": "aff80dfe470d80a956d5a502b1e7e6172d4373208021bc534870c746d497596d"
+}

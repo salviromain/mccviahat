@@ -4,14 +4,14 @@ set -euo pipefail
 # Usage: bash scripts/model/llama_up.sh
 #
 # All parameters are read from model_config.sh (written by model_fetch.sh).
-# To switch models: bash scripts/model/model_fetch.sh [7b|70b]
+# To switch models: bash scripts/model/model_fetch.sh [7b|70b|405b]
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_FILE="${SCRIPT_DIR}/model_config.sh"
 
 if [ ! -f "$CONFIG_FILE" ]; then
   echo "ERROR: model_config.sh not found."
-  echo "Run first: bash scripts/model/model_fetch.sh [7b|70b]"
+  echo "Run first: bash scripts/model/model_fetch.sh [7b|70b|405b]"
   exit 1
 fi
 

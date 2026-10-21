@@ -1,0 +1,5 @@
+feature,accuracy,ari,direction,runs_majority,majority_frac,pair
+core_power.throttle__mean_rate,0.546875,0.005941783927783943,↑E,5/8,0.625,E–N
+core_power.throttle__variance,0.528125,8.352534951366752e-05,↑N,4/8,0.5,E–N
+core_power.throttle__spectral_entropy,0.5125,-0.0024935523859734117,↑N,5/8,0.625,E–N
+core_power.throttle__slope,0.50625,-0.002810036152195881,↑E,5/8,0.625,E–N

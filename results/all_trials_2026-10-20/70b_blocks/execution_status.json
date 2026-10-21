@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "notebook": "analysis/notebooks/70b_blocks_analysis.ipynb",
+  "executed_copy": "results/all_trials_2026-10-20/70b_blocks/70b_blocks_analysis.ipynb",
+  "seconds": 12.88,
+  "figures": [
+    "results/all_trials_2026-10-20/70b_blocks/figures/cell_18_00.png"
+  ],
+  "code_cells": 12,
+  "notebook_sha256": "ccbb4a658acaba27eeffa52f2acfb7014038d04cb112b3c34f8b76b2b9e46aa0"
+}

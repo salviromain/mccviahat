@@ -7,7 +7,7 @@ After reserving a node and connecting via SSH:
 ```bash
 git clone https://github.com/salviromain/mccviahat
 cd mccviahat
-git switch newfeatures
+git switch main
 bash scripts/node/bootstrap_node.sh
 newgrp docker
 export HF_TOKEN="YOUR_HF_TOKEN"
@@ -16,6 +16,51 @@ bash scripts/model/llama_build.sh
 ```
 
 Replace `YOUR_HF_TOKEN` with your Hugging Face access token. The runner starts the model server automatically.
+
+### Use Llama 3.1 405B instead
+
+Use the updated model scripts and a large-memory node. The
+[Q4_K_M model](https://huggingface.co/bullerwins/Meta-Llama-3.1-405B-Instruct-GGUF/tree/main)
+has six shards totaling about 246 GB. For this CPU setup, budget 384 GB RAM and
+at least 300 GB free disk; these are planning recommendations, not measured
+requirements from a completed 405B experiment.
+
+```bash
+free -h
+df -h "$HOME"
+bash scripts/model/model_fetch.sh 405b
+bash scripts/model/llama_build.sh
+```
+
+The fetch script downloads all six shards and configures the first shard for
+llama.cpp, which loads the others automatically. It keeps the same context size,
+CPU affinity, baseline, sampling interval, and generated-token count as 70B;
+startup and request timeouts are increased. The CPU affinity still assumes CPUs
+`0-61` are available. Set `MCC_MODEL_DIR` before fetching if the weights must go
+on a different disk.
+
+Run 405B with its own output directory and unique run labels:
+
+```bash
+python3 scripts/run/run_prompts_fulltrace.py \
+  --json prompts/20base/independentE.json \
+  --label emotional --run_label 232_E_1 \
+  --output-root data/raw/fulltrace/405b
+```
+
+Reboot between experiments as described below, SSH back in, and run:
+
+```bash
+cd ~/mccviahat
+python3 scripts/run/run_prompts_fulltrace.py \
+  --json prompts/20base/independentN.json \
+  --label neutral --run_label 232_N_1 \
+  --output-root data/raw/fulltrace/405b
+```
+
+Replace `232` with your node ID. The saved metadata records `model_size: 405b`.
+Existing 70B data is kept separate. To switch back, run
+`bash scripts/model/model_fetch.sh 70b` before starting the next experiment.
 
 ## 2. Run an experiment
 

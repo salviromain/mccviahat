@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "preserved_existing_feature_and_result_files": 336,
+  "blocks_trials": 320,
+  "blocks_recorded_indicators": 44,
+  "blocks_usable_indicators": 28,
+  "blocks_features": 112,
+  "blocks_excluded_features": 64,
+  "blocks_screened_family_size": 112,
+  "blocks_direction_filter_passes": 27,
+  "blocks_corrected_discoveries": 0,
+  "all_112_features_have_robustness_sweeps": true,
+  "prior_throttle_values_and_curves_unchanged": true,
+  "fulltrace_traces": 70,
+  "fulltrace_indicators": 4,
+  "fulltrace_features_including_ratio": 17,
+  "fulltrace_Welch_discoveries": [
+    "instructions__slope"
+  ],
+  "fulltrace_MWU_discoveries": [
+    "cycles__variance",
+    "instructions__variance",
+    "instructions__slope"
+  ],
+  "fulltrace_same_70_recordings": true,
+  "both_notebooks_executed_without_errors": true,
+  "versions": {
+    "python": "3.12.12",
+    "numpy": "2.4.2",
+    "pandas": "3.0.1",
+    "scipy": "1.17.1",
+    "sklearn": "1.8.0"
+  }
+}
