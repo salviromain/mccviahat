@@ -1,0 +1,94 @@
+{
+  "status": "passed",
+  "n_recordings": 70,
+  "n_features": 17,
+  "input_files": 140,
+  "reference_fits": [
+    {
+      "condition": "emotional",
+      "feature": "core_power.throttle__mean_rate",
+      "custom_loglik": -47.10186236069063,
+      "statsmodels_loglik": -47.1018626875727,
+      "difference": 3.268820663038241e-07
+    },
+    {
+      "condition": "emotional",
+      "feature": "cycles__variance",
+      "custom_loglik": 21.93279656015578,
+      "statsmodels_loglik": 21.93249999834221,
+      "difference": 0.00029656181357040623
+    },
+    {
+      "condition": "emotional",
+      "feature": "cycles__spectral_entropy",
+      "custom_loglik": -41.134544889387634,
+      "statsmodels_loglik": -41.13454489389263,
+      "difference": 4.504997264120902e-09
+    },
+    {
+      "condition": "emotional",
+      "feature": "core_power.throttle__slope",
+      "custom_loglik": -49.61788566174605,
+      "statsmodels_loglik": -49.61788566312419,
+      "difference": 1.37814026857086e-09
+    },
+    {
+      "condition": "neutral",
+      "feature": "core_power.throttle__mean_rate",
+      "custom_loglik": -45.948138625739034,
+      "statsmodels_loglik": -45.948138625781546,
+      "difference": 4.2511771880526794e-11
+    },
+    {
+      "condition": "neutral",
+      "feature": "cycles__variance",
+      "custom_loglik": 14.127504890677741,
+      "statsmodels_loglik": 14.127500632973703,
+      "difference": 4.257704038224119e-06
+    },
+    {
+      "condition": "neutral",
+      "feature": "cycles__spectral_entropy",
+      "custom_loglik": -48.582361332464835,
+      "statsmodels_loglik": -48.58236133286875,
+      "difference": 4.0391512357018655e-10
+    },
+    {
+      "condition": "neutral",
+      "feature": "core_power.throttle__slope",
+      "custom_loglik": -49.03672811716806,
+      "statsmodels_loglik": -49.03672814737937,
+      "difference": 3.0211310786398826e-08
+    }
+  ],
+  "checks": [
+    "statsmodels reference likelihoods",
+    "scale/shift invariance",
+    "row-order invariance",
+    "independent Gaussian analytic MLE",
+    "synthetic crossed grouping recovery",
+    "seeded bootstrap reproducibility",
+    "raw/processed metadata identity",
+    "conditional residuals equal y minus fixed mean and BLUP offsets on all 34 fits",
+    "variance component estimates unchanged by diagnostic correction on all 34 fits"
+  ],
+  "notebook_execution": "passed",
+  "notebook_code_cells": 8,
+  "figures": 5,
+  "new_analysis_checks": [
+    "68-hypothesis Holm correction independently reproduced",
+    "variance fractions and uncertainty bounds valid",
+    "all 70 original E/N feature vectors matched",
+    "raw-to-feature and feature-to-raw coverage complete",
+    "midnight rule verified for all 70 traces",
+    "all 140 input file hashes unchanged",
+    "no previously tracked project files modified"
+  ],
+  "source_sha256": {
+    "analysis/lib/fulltrace_node_day.py": "5bf53b1caeca5720d07c648e00bda5991714d66a278cf120cd0c6ad1176ebcaa",
+    "analysis/notebooks/fulltrace_node_day_EN.ipynb": "54bfd73ddfe1a5f955d42d02e388055a1d0aa6d2674c173219e53a2ea724f67f"
+  },
+  "cross_midnight_traces": 5,
+  "supported_tests": 17,
+  "mc_sensitive_decisions": 1
+}

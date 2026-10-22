@@ -1,0 +1,30 @@
+{
+  "timezone": "America/Chicago",
+  "date_rule": "trace start date",
+  "seed": 42,
+  "test_bootstraps": 5999,
+  "interval_bootstraps": 999,
+  "workers": 4,
+  "correction": "Holm across all feature/condition/node-or-day tests",
+  "features": [
+    "core_power.throttle__mean_rate",
+    "core_power.throttle__variance",
+    "core_power.throttle__spectral_entropy",
+    "core_power.throttle__slope",
+    "cycles__mean_rate",
+    "cycles__variance",
+    "cycles__spectral_entropy",
+    "cycles__slope",
+    "instructions__mean_rate",
+    "instructions__variance",
+    "instructions__spectral_entropy",
+    "instructions__slope",
+    "tlb:tlb_flush__mean_rate",
+    "tlb:tlb_flush__variance",
+    "tlb:tlb_flush__spectral_entropy",
+    "tlb:tlb_flush__slope",
+    "core_power.throttle__per_cycle"
+  ],
+  "n_recordings": 70,
+  "model": "Gaussian crossed random intercepts; ML"
+}

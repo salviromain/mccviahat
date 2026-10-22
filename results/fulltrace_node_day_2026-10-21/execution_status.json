@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "seconds": 899.28,
+  "code_cells": 8,
+  "notebook": "analysis/notebooks/fulltrace_node_day_EN.ipynb",
+  "diagnostic_refresh": {
+    "status": "passed",
+    "seconds": 7.69,
+    "bootstrap_results": "retained from the successful full run",
+    "verification": "All 34 residual vectors equal y minus fitted intercept and random-effect offsets.",
+    "bootstrap_tests_sha256": "e91754262af0199d2eda0ed13f3f97175803c61f3c6101f8408d8a6d0478cf90"
+  }
+}
