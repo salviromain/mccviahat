@@ -1,0 +1,21 @@
+{
+  "timezone": "America/Chicago",
+  "date_rule": "trace start date",
+  "seed": 42,
+  "test_bootstraps": 19999,
+  "interval_bootstraps": 1999,
+  "workers": 4,
+  "features": [
+    "core_power.throttle__mean_rate",
+    "core_power.throttle__variance",
+    "core_power.throttle__spectral_entropy",
+    "core_power.throttle__slope",
+    "core_power.throttle__per_cycle"
+  ],
+  "n_traces": 70,
+  "n_groups": 23,
+  "correction": "Holm over five overall E-N tests",
+  "estimation": "Gaussian ML",
+  "interval": "studentized parametric bootstrap; pointwise 95%",
+  "prediction": "approximate bootstrap mixture for new node and new date"
+}

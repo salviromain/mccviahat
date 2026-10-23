@@ -1,0 +1,73 @@
+feature,label,scale,unit,omitted_type,omitted,n_remaining,estimate,display_estimate,same_sign
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,day,2026-05-04,21,0.0196868913170688,1.9881956132400016,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,day,2026-05-06,22,0.0193946561864732,1.9583954341174523,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,day,2026-05-07,22,0.0204296051189386,2.0639717902726917,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,day,2026-05-10,18,0.0129533079276028,1.3037565432159015,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,day,2026-05-12,19,0.0290725353598777,2.949926686671973,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,day,2026-09-30,18,0.0265259236393235,2.6880867405870013,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,day,2026-10-12,18,0.0206630259500731,2.087798428105484,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,184,22,0.0196552241611534,1.9849659882847663,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,222,21,0.0233378057635458,2.3612263272365968,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,224,22,0.0188479820885055,1.9026726527516389,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,226,21,0.0208893398352167,2.110904928955865,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,229,21,0.0216751872156153,2.191180053971572,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,230,21,0.0185139795434923,1.868642584123092,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,231,21,0.0194288676514713,1.9618836398620871,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,232,21,0.0363482045377107,3.7016877613405934,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,235,22,0.0206265167623263,2.084071353542658,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,237,22,0.015664550128838,1.5787882333860543,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,238,22,0.0211470396890467,2.1372222850742832,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,239,22,0.0195720886698903,1.9764877704611663,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,244,22,0.01847059529297,1.8642231852797015,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,246,22,0.0212422871275273,2.146951057183409,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,249,22,0.0217435391310511,2.198165255592138,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,251,22,0.0210459924718035,2.1269021244059596,True
+core_power.throttle__mean_rate,Mean throttle rate,log_ratio,% vs neutral,node,252,22,0.0145790167791007,1.4685808988235332,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,day,2026-05-04,21,0.0157768657993174,0.0157768657993174,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,day,2026-05-06,22,0.0142935102083377,0.0142935102083377,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,day,2026-05-07,22,0.0184291882849868,0.0184291882849868,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,day,2026-05-10,18,0.0138431111014616,0.0138431111014616,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,day,2026-05-12,19,0.0146054546837406,0.0146054546837406,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,day,2026-09-30,18,0.0134891940687386,0.0134891940687386,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,day,2026-10-12,18,0.0134431956577047,0.0134431956577047,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,184,22,0.0145349070053076,0.0145349070053076,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,222,21,0.0142685976680209,0.0142685976680209,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,224,22,0.0148575552143658,0.0148575552143658,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,226,21,0.0185647898194298,0.0185647898194298,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,229,21,0.0145431712974969,0.0145431712974969,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,230,21,0.0145890683038366,0.0145890683038366,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,231,21,0.014532193752839,0.014532193752839,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,232,21,0.0148486807121034,0.0148486807121034,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,235,22,0.0151292492595922,0.0151292492595922,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,237,22,0.0131791988394142,0.0131791988394142,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,238,22,0.014646969574165,0.014646969574165,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,239,22,0.0148033949189941,0.0148033949189941,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,244,22,0.0151466571671395,0.0151466571671395,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,246,22,0.0142252669760856,0.0142252669760856,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,249,22,0.0147166958188216,0.0147166958188216,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,251,22,0.0146932529874564,0.0146932529874564,True
+core_power.throttle__spectral_entropy,Spectral entropy,difference,entropy units,node,252,22,0.0139233703303106,0.0139233703303106,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-05-04,21,0.0362463511685814,3.6911259329457433,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-05-06,22,0.0343813493410532,3.497922012415445,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-05-07,22,0.0350607344392756,3.568260849200943,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-05-10,18,0.0274104756178488,2.778959875965048,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-05-12,19,0.029902868717003,3.0354449443311093,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-09-30,18,0.0442303724363837,4.52231177510163,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-10-12,18,0.0367381625531679,3.742134951540025,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,184,22,0.0352308761078875,3.585883625058792,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,222,21,0.0403867452263872,4.1213380638922,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,224,22,0.0341698508909996,3.4760346769764054,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,226,21,0.0362455221333936,3.6910399693893168,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,229,21,0.0372185319040004,3.7919814649708,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,230,21,0.0343129578020797,3.4908438722936608,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,231,21,0.0366760161151724,3.735687947713972,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,232,21,0.0385846300129166,3.933868388233464,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,235,22,0.0367463210834544,3.742981338342649,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,237,22,0.0278316574137007,2.8222576203321963,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,238,22,0.037441980165551,3.815176194106484,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,239,22,0.0350435139207032,3.566477365397785,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,244,22,0.0332760259968491,3.3835865436105608,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,246,22,0.0379981369626862,3.8729297685254584,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,249,22,0.0384515251623204,3.920035206861964,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,251,22,0.0369089646263532,3.7598558366052934,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,252,22,0.0266036574965683,2.696069391919562,True

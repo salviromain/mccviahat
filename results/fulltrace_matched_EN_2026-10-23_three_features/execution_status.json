@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "model_results": "reused verified 19,999/1,999 simulation outputs; all presentation cells rerun",
+  "seconds": 5.46,
+  "code_cells": 9,
+  "figures": 8,
+  "notebook": "analysis/notebooks/fulltrace_matched_EN.ipynb",
+  "preserved_files": 223
+}
