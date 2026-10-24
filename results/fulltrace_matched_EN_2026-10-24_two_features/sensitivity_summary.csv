@@ -1,0 +1,5 @@
+label,omitted_type,refits,same_direction,smallest_estimate,largest_estimate
+PTE / cycles,day,7,7,3.03544494433111,4.666789526475172
+PTE / cycles,node,17,17,3.0225671110812087,4.342106678245954
+PTE mean rate,day,7,7,2.949926686671972,4.261355839473008
+PTE mean rate,node,17,17,2.85532070567632,4.012388311554475
