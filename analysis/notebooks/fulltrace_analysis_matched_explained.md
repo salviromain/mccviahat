@@ -16,8 +16,8 @@ When the 70B model answers **emotional (E)** prompts, does the CPU throttle more
 Every recording (a "run") gets two measurements:
 
 ```
-PTE mean rate  = total throttle events / run duration (seconds)
-PTE / cycles   = PTE mean rate / CPU cycles per second
+PTE mean rate  = total PTE events / run duration (seconds)
+PTE / cycles   = total PTE events / total CPU cycles 
 ```
 
 **Why two?**
@@ -99,7 +99,7 @@ p = (number of fake datasets at least as convincing + 1) / (19,999 + 1)
 
 A small p means pure chance rarely produces a result like ours.
 
-**Correcting for testing two measures (Holm correction).** If you test two things, you get two chances to be fooled by luck. Holm's rule: sort the p-values, multiply the smallest by 2 and the next by 1, and never let a later one fall below an earlier one. A corrected p below **0.05** is the usual threshold for "unlikely to be chance". This is very similr to Bonferroni correction, just a little less strict. The results would still be significant if Bonferroni was used.
+**Correcting for testing two measures (Bonferroni correction).** If you test two things, you get two chances to be fooled by luck. Bonferroni's rule: multiply each p-value by the number of tests (here 2), capped at 1. A corrected p below **0.05** is the usual threshold for "unlikely to be chance".
 
 ---
 
@@ -126,7 +126,7 @@ Again by simulation: generate **1,999 datasets** from the fitted model and re-es
 |---|---|---|
 | **Overall: E higher than N by** | **+3.6%** | **+3.9%** |
 | 95% CI for the average | +1.1% to +6.4% | +1.0% to +6.8% |
-| Corrected p (Holm) | **0.023** | **0.023** |
+| Corrected p (Bonferroni) | **0.023** | **0.035** |
 | Pairs where E > N | 20 of 22 | 19 of 22 |
 | Dates where E > N on average | 6 of 7 | 6 of 7 |
 | Range for one new node/date | −4.9% to +13.0% | −5.6% to +14.4% |
@@ -136,7 +136,7 @@ Again by simulation: generate **1,999 datasets** from the fitted model and re-es
 ### In plain words
 
 1. **Emotional prompts produced about 3.5–4% more CPU throttling than neutral prompts** on the same machine and day. Both measures agree.
-2. **It is unlikely to be chance.** Both corrected p-values are about 0.02, below the 0.05 threshold.
+2. **It is unlikely to be chance.** Both corrected p-values (0.023 and 0.035) are below the 0.05 threshold.
 3. **It is consistent.** E was higher in 19–20 of the 22 pairs and on 6 of 7 dates. Removing any single date or machine never changed the direction, and the size stayed between about +3% and +4.7%.
 
 4. **Machines differ more than days.** Most of the pair-to-pair variation comes from which node was used (about 45–60%), not which date (about 10%)!

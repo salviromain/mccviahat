@@ -223,10 +223,10 @@ def analyze(contrasts, test_repeats=19999, interval_repeats=1999, seed=42, worke
         if executor:
             executor.shutdown(wait=True, cancel_futures=True)
     estimates = pd.DataFrame(estimates)
-    estimates["p_holm"] = multipletests(estimates.p, method="holm")[1]
+    estimates["p_bonferroni"] = multipletests(estimates.p, method="bonferroni")[1]
     for bound in ("low", "high"):
-        estimates["p_holm_mc_" + bound] = multipletests(estimates["p_mc_" + bound], method="holm")[1]
-    estimates["supported"] = estimates.p_holm < .05
-    estimates["mc_sensitive"] = (estimates.p_holm_mc_low < .05) & (estimates.p_holm_mc_high >= .05)
+        estimates["p_bonferroni_mc_" + bound] = multipletests(estimates["p_mc_" + bound], method="bonferroni")[1]
+    estimates["supported"] = estimates.p_bonferroni < .05
+    estimates["mc_sensitive"] = (estimates.p_bonferroni_mc_low < .05) & (estimates.p_bonferroni_mc_high >= .05)
     estimates["prediction_crosses_zero"] = (estimates.prediction_low <= 0) & (estimates.prediction_high >= 0)
     return estimates, pd.DataFrame(sensitivity), pd.concat(residuals, ignore_index=True), pd.DataFrame(bootstraps)
