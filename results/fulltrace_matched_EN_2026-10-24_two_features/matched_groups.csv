@@ -21,3 +21,8 @@ node,day,block,batch,n_E,n_N,runs_E,runs_N
 231,2026-10-12,2026-10-12 / 231,batch_004_enm,1,1,231_E_1,231_N_1
 232,2026-10-12,2026-10-12 / 232,batch_004_enm,1,1,232_E_1,232_N_1
 239,2026-10-12,2026-10-12 / 239,batch_004_enm,1,1,239_E_1,239_N_1
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,2,2,"183_Emotional_1, 183_Emotional_2","183_Neutral_1, 183_Neutral_2"
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,2,1,"187_Emotional_1, 187_Emotional_2",187_Neutral_1
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,2,2,"218_Emotional_1, 218_Emotional_2","218_Neutral_1, 218_Neutral_2"
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,2,2,"220_Emotional_1, 220_Emotional_2","220_Neutral_1, 220_Neutral_2"
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,2,2,"222_Emotional_1, 222_Emotional_2","222_Neutral_1, 222_Neutral_2"

@@ -1,0 +1,21 @@
+{
+  "timezone": "America/Chicago",
+  "date_rule": "trace start date",
+  "seed": 42,
+  "test_bootstraps": 19999,
+  "interval_bootstraps": 1999,
+  "workers": 4,
+  "features": [
+    "core_power.throttle__mean_rate",
+    "core_power.throttle__per_cycle"
+  ],
+  "comparisons": [
+    "E vs N",
+    "M vs N",
+    "E vs M"
+  ],
+  "n_traces": 44,
+  "n_groups": 10,
+  "pairing": "every run vs every run within node/date; shared-run covariance",
+  "correction": "Bonferroni over two measures, within each comparison"
+}

@@ -27,7 +27,7 @@ METRICS = ("mean_rate", "variance", "spectral_entropy", "slope")
 RATIO = "core_power.throttle__per_cycle"
 
 
-def load_recordings(root: Path, timezone: str):
+def load_recordings(root: Path, timezone: str, conditions=CONDITIONS):
     """Join individual feature rows to raw metadata; never use aggregate CSVs."""
     zone = ZoneInfo(timezone)
     raw_root = root / "data/raw/fulltrace"
@@ -36,9 +36,9 @@ def load_recordings(root: Path, timezone: str):
     for meta_path in sorted(raw_root.glob("batch_*/*/trace_meta.json")):
         meta = json.loads(meta_path.read_text())
         batch, run = meta_path.parts[-3:-1]
-        if meta.get("label") not in CONDITIONS or meta.get("model_size") != "70b":
+        if meta.get("label") not in conditions or meta.get("model_size") != "70b":
             exclusions.append(dict(batch=batch, run_label=run,
-                                   condition=meta.get("label"), reason="not 70B E/N"))
+                                   condition=meta.get("label"), reason="not 70B or other condition"))
             continue
         if meta.get("run_label") != run or not meta.get("all_ok"):
             raise ValueError(f"Unsuccessful trace or ambiguous run label: {meta_path}")
@@ -86,8 +86,8 @@ def load_recordings(root: Path, timezone: str):
         raise ValueError("Duplicate recording identities")
     if df.started_utc.duplicated().any():
         raise ValueError("Duplicate start timestamps: check for copied recordings")
-    if set(df.condition) != set(CONDITIONS):
-        raise ValueError("Both emotional and neutral recordings are required")
+    if set(df.condition) != set(conditions):
+        raise ValueError(f"Recordings required for every condition: {', '.join(conditions)}")
     if (df["cycles__mean_rate"] <= 0).any():
         raise ValueError("Throttle-per-cycle ratio requires positive cycle rates")
     df[RATIO] = df["core_power.throttle__mean_rate"] / df["cycles__mean_rate"]
