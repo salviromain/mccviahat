@@ -1,0 +1,5 @@
+day,feature,label,n_nodes,estimate,ci_low,ci_high,n_positive
+2026-10-12,core_power.throttle__mean_rate,PTE mean rate,5,2.2184615929555966,-1.3109316089747758,5.874075627415026,4
+2026-10-12,core_power.throttle__per_cycle,PTE / cycles,5,2.1860384936638906,-2.237898466213334,6.810167735805055,4
+2026-10-25,core_power.throttle__mean_rate,PTE mean rate,4,1.9644145127587873,-2.6315560509694422,6.777323383868344,3
+2026-10-25,core_power.throttle__per_cycle,PTE / cycles,4,2.008962175637461,-3.2283099535536923,7.529674837302911,3

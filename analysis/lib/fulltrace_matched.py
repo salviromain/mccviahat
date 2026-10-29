@@ -40,13 +40,20 @@ def run_number(run_label):
     return int(match.group(1))
 
 
-def prepare(root, timezone="America/Chicago", features=None, first="emotional", second="neutral"):
+def prepare(root, timezone="America/Chicago", features=None, first="emotional", second="neutral",
+            exclude=()):
     """Cross pairs of `first` vs `second` runs. Columns named E_*/N_* hold the
-    first/second condition (emotional/neutral by default)."""
+    first/second condition (emotional/neutral by default). `exclude` lists
+    (node, day) cells to drop before matching; they are reported in `excluded`."""
     specs = [s for s in SPECS if features is None or s[0] in features]
     if not specs or (features is not None and set(features) != {s[0] for s in specs}):
         raise ValueError("Select at least one known feature")
     traces, _, sources, excluded = load_recordings(root, timezone, conditions=(first, second))
+    dropped = traces[[(node, day) in set(exclude) for node, day in zip(traces.node, traces.day)]]
+    traces = traces.drop(dropped.index).reset_index(drop=True)
+    excluded = pd.concat([excluded, dropped[["batch", "run_label", "condition"]].assign(
+        reason="excluded node/date")], ignore_index=True)
+    sources = sources.loc[sources.path.isin(set(traces.feature_file) | set(traces.metadata_file))]
     for column in ["n_prompts", "n_predict", "inter_prompt_pause_s", "model_size"]:
         if traces[column].nunique() != 1:
             raise ValueError(f"Mixed collection settings: {column}")

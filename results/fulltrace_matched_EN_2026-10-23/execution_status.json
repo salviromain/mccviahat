@@ -1,8 +1,0 @@
-{
-  "status": "passed",
-  "seconds": 384.73,
-  "code_cells": 9,
-  "figures": 8,
-  "notebook": "analysis/notebooks/fulltrace_matched_EN.ipynb",
-  "preserved_files": 222
-}
