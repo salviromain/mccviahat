@@ -25,6 +25,6 @@
     "tlb:tlb_flush__slope",
     "core_power.throttle__per_cycle"
   ],
-  "n_recordings": 70,
+  "n_recordings": 158,
   "model": "Gaussian crossed random intercepts; ML"
 }

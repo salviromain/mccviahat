@@ -1,0 +1,35 @@
+{
+  "timezone": "America/Chicago",
+  "date_rule": "trace start date",
+  "seed": 42,
+  "test_bootstraps": 19999,
+  "interval_bootstraps": 1999,
+  "workers": 4,
+  "features": [
+    "core_power.throttle__mean_rate",
+    "core_power.throttle__per_cycle"
+  ],
+  "comparisons": [
+    "E vs N (M days)",
+    "M vs N",
+    "E vs M",
+    "E vs N (MP day)",
+    "MP vs N",
+    "E vs MP"
+  ],
+  "families": {
+    "M": "mechanical",
+    "MP": "mechanicalprime"
+  },
+  "primary_outcome": "core_power.throttle__per_cycle",
+  "theta_bootstraps": 20000,
+  "theta_test": "exact stratified permutation; one-sided for E vs N, two-sided otherwise",
+  "run_order": "OLS log(y) ~ node + condition (+ clock hours | late>=18:00 | position) on 2026-10-25 and 2026-11-02",
+  "n_traces": 149,
+  "n_groups": {
+    "M": 10,
+    "MP": 11
+  },
+  "pairing": "every run vs every run within node/date; shared-run covariance",
+  "correction": "Bonferroni over two measures, within each comparison"
+}

@@ -1,0 +1,3 @@
+Feature,Units,Overall E−N,95% CI lower,95% CI upper,New-pair range lower,New-pair range upper,Bonferroni p,E > N sessions,E > N cross pairs,MC-sensitive
+PTE mean rate,% vs neutral,2.3188078496660554,-18.82997936693827,25.125291782411562,-70.77116768282757,256.7734430208907,1.0,5/8,1649/3200,False
+PTE / cycles,% vs neutral,2.3053570340144005,-16.353010396216405,24.96670953971824,-67.01646034925258,207.41947523783918,1.0,5/8,1652/3200,False

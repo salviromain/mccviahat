@@ -1,0 +1,3 @@
+Feature,Units,Overall M−N,95% CI lower,95% CI upper,New-group range lower,New-group range upper,Bonferroni p,M > N node/dates,M > N cross pairs,MC-sensitive
+PTE mean rate,% vs neutral,0.9093425588753885,0.16719880808295048,1.622141037552327,-3.439829863445857,5.482105387505145,0.5903,7/11,74/113,False
+PTE / cycles,% vs neutral,0.33729136215489675,-0.5664572473931767,1.284838688068772,-5.107835134275518,6.1143587158641575,0.923,7/11,63/113,False

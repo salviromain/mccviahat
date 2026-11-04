@@ -1,0 +1,5 @@
+grouping,group,feature,n_sessions,mean_contrast,display_effect,n_positive
+day,2026-03-20,core_power.throttle__mean_rate,3,-0.042856015200830544,-4.1950675323843205,1
+day,2026-03-21,core_power.throttle__mean_rate,5,0.07257392568158823,7.527229338922414,4
+day,2026-03-20,core_power.throttle__per_cycle,3,-0.034485517082594556,-3.3897668434557002,1
+day,2026-03-21,core_power.throttle__per_cycle,5,0.06536388102225152,6.754741396040295,4

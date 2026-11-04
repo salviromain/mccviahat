@@ -1,0 +1,9 @@
+day,node,session,block,batch,n_E,n_N
+2026-03-20,not recorded,run1,2026-03-20 / run1,isolated_70b,20,20
+2026-03-20,not recorded,run2,2026-03-20 / run2,isolated_70b,20,20
+2026-03-20,not recorded,run3,2026-03-20 / run3,isolated_70b,20,20
+2026-03-21,not recorded,run4,2026-03-21 / run4,isolated_70b,20,20
+2026-03-21,not recorded,run5,2026-03-21 / run5,isolated_70b,20,20
+2026-03-21,not recorded,run6,2026-03-21 / run6,isolated_70b,20,20
+2026-03-21,not recorded,run7,2026-03-21 / run7,isolated_70b,20,20
+2026-03-21,not recorded,run_unsuffixed,2026-03-21 / run_unsuffixed,isolated_70b,20,20

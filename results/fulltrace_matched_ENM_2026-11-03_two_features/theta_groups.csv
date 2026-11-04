@@ -1,0 +1,253 @@
+node,day,block,batch,feature,m,k,pairs,wins,theta,set,comparison,label
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE mean rate
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE mean rate
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE mean rate
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE mean rate
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE mean rate
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__mean_rate,2,2,4,0.0,0.0,M (12 & 25 Oct),E vs N,PTE mean rate
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__mean_rate,2,1,2,0.0,0.0,M (12 & 25 Oct),E vs N,PTE mean rate
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__mean_rate,2,2,4,4.0,1.0,M (12 & 25 Oct),E vs N,PTE mean rate
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__mean_rate,2,2,4,1.0,0.25,M (12 & 25 Oct),E vs N,PTE mean rate
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__mean_rate,2,2,4,4.0,1.0,M (12 & 25 Oct),E vs N,PTE mean rate
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE / cycles
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE / cycles
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE / cycles
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE / cycles
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs N,PTE / cycles
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__per_cycle,2,2,4,0.0,0.0,M (12 & 25 Oct),E vs N,PTE / cycles
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__per_cycle,2,1,2,0.0,0.0,M (12 & 25 Oct),E vs N,PTE / cycles
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__per_cycle,2,2,4,4.0,1.0,M (12 & 25 Oct),E vs N,PTE / cycles
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__per_cycle,2,2,4,1.0,0.25,M (12 & 25 Oct),E vs N,PTE / cycles
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__per_cycle,2,2,4,4.0,1.0,M (12 & 25 Oct),E vs N,PTE / cycles
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),M vs N,PTE mean rate
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),M vs N,PTE mean rate
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__mean_rate,1,1,1,0.0,0.0,M (12 & 25 Oct),M vs N,PTE mean rate
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),M vs N,PTE mean rate
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),M vs N,PTE mean rate
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__mean_rate,2,2,4,1.0,0.25,M (12 & 25 Oct),M vs N,PTE mean rate
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__mean_rate,2,1,2,0.0,0.0,M (12 & 25 Oct),M vs N,PTE mean rate
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__mean_rate,2,2,4,4.0,1.0,M (12 & 25 Oct),M vs N,PTE mean rate
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__mean_rate,2,2,4,4.0,1.0,M (12 & 25 Oct),M vs N,PTE mean rate
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__mean_rate,2,2,4,3.0,0.75,M (12 & 25 Oct),M vs N,PTE mean rate
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),M vs N,PTE / cycles
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),M vs N,PTE / cycles
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__per_cycle,1,1,1,0.0,0.0,M (12 & 25 Oct),M vs N,PTE / cycles
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),M vs N,PTE / cycles
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),M vs N,PTE / cycles
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__per_cycle,2,2,4,1.0,0.25,M (12 & 25 Oct),M vs N,PTE / cycles
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__per_cycle,2,1,2,0.0,0.0,M (12 & 25 Oct),M vs N,PTE / cycles
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__per_cycle,2,2,4,4.0,1.0,M (12 & 25 Oct),M vs N,PTE / cycles
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__per_cycle,2,2,4,4.0,1.0,M (12 & 25 Oct),M vs N,PTE / cycles
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__per_cycle,2,2,4,3.0,0.75,M (12 & 25 Oct),M vs N,PTE / cycles
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__mean_rate,1,1,1,0.0,0.0,M (12 & 25 Oct),E vs M,PTE mean rate
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs M,PTE mean rate
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs M,PTE mean rate
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs M,PTE mean rate
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__mean_rate,1,1,1,0.0,0.0,M (12 & 25 Oct),E vs M,PTE mean rate
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__mean_rate,2,2,4,1.0,0.25,M (12 & 25 Oct),E vs M,PTE mean rate
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__mean_rate,2,2,4,3.0,0.75,M (12 & 25 Oct),E vs M,PTE mean rate
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__mean_rate,2,2,4,0.0,0.0,M (12 & 25 Oct),E vs M,PTE mean rate
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__mean_rate,2,2,4,0.0,0.0,M (12 & 25 Oct),E vs M,PTE mean rate
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__mean_rate,2,2,4,2.0,0.5,M (12 & 25 Oct),E vs M,PTE mean rate
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__per_cycle,1,1,1,0.0,0.0,M (12 & 25 Oct),E vs M,PTE / cycles
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs M,PTE / cycles
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs M,PTE / cycles
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__per_cycle,1,1,1,0.0,0.0,M (12 & 25 Oct),E vs M,PTE / cycles
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M (12 & 25 Oct),E vs M,PTE / cycles
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__per_cycle,2,2,4,0.0,0.0,M (12 & 25 Oct),E vs M,PTE / cycles
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__per_cycle,2,2,4,3.0,0.75,M (12 & 25 Oct),E vs M,PTE / cycles
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__per_cycle,2,2,4,0.0,0.0,M (12 & 25 Oct),E vs M,PTE / cycles
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__per_cycle,2,2,4,0.0,0.0,M (12 & 25 Oct),E vs M,PTE / cycles
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__per_cycle,2,2,4,2.0,0.5,M (12 & 25 Oct),E vs M,PTE / cycles
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,3.0,0.3333333333333333,MP (2 Nov),E vs N,PTE mean rate
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,5.0,0.5555555555555556,MP (2 Nov),E vs N,PTE mean rate
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,6.0,0.6666666666666666,MP (2 Nov),E vs N,PTE mean rate
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,9.0,1.0,MP (2 Nov),E vs N,PTE mean rate
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs N,PTE mean rate
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,9.0,0.5625,MP (2 Nov),E vs N,PTE mean rate
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,9.0,1.0,MP (2 Nov),E vs N,PTE mean rate
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,7.0,0.7777777777777778,MP (2 Nov),E vs N,PTE mean rate
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,7.0,0.7777777777777778,MP (2 Nov),E vs N,PTE mean rate
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,10.0,0.625,MP (2 Nov),E vs N,PTE mean rate
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,2.0,0.2222222222222222,MP (2 Nov),E vs N,PTE mean rate
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,1.0,0.1111111111111111,MP (2 Nov),E vs N,PTE / cycles
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs N,PTE / cycles
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,MP (2 Nov),E vs N,PTE / cycles
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,9.0,1.0,MP (2 Nov),E vs N,PTE / cycles
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs N,PTE / cycles
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,8.0,0.5,MP (2 Nov),E vs N,PTE / cycles
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,9.0,1.0,MP (2 Nov),E vs N,PTE / cycles
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,7.0,0.7777777777777778,MP (2 Nov),E vs N,PTE / cycles
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,6.0,0.6666666666666666,MP (2 Nov),E vs N,PTE / cycles
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,8.0,0.5,MP (2 Nov),E vs N,PTE / cycles
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,2.0,0.2222222222222222,MP (2 Nov),E vs N,PTE / cycles
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,9.0,1.0,MP (2 Nov),MP vs N,PTE mean rate
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,3.0,0.3333333333333333,MP (2 Nov),MP vs N,PTE mean rate
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,6.0,0.6666666666666666,MP (2 Nov),MP vs N,PTE mean rate
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,9.0,1.0,MP (2 Nov),MP vs N,PTE mean rate
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,7.0,0.7777777777777778,MP (2 Nov),MP vs N,PTE mean rate
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,7.0,0.4375,MP (2 Nov),MP vs N,PTE mean rate
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,7.0,0.7777777777777778,MP (2 Nov),MP vs N,PTE mean rate
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,8.0,0.8888888888888888,MP (2 Nov),MP vs N,PTE mean rate
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,8.0,0.8888888888888888,MP (2 Nov),MP vs N,PTE mean rate
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,7.0,0.4375,MP (2 Nov),MP vs N,PTE mean rate
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,3.0,0.3333333333333333,MP (2 Nov),MP vs N,PTE mean rate
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,9.0,1.0,MP (2 Nov),MP vs N,PTE / cycles
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,3.0,0.3333333333333333,MP (2 Nov),MP vs N,PTE / cycles
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,MP (2 Nov),MP vs N,PTE / cycles
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,9.0,1.0,MP (2 Nov),MP vs N,PTE / cycles
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,7.0,0.7777777777777778,MP (2 Nov),MP vs N,PTE / cycles
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,6.0,0.375,MP (2 Nov),MP vs N,PTE / cycles
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,MP (2 Nov),MP vs N,PTE / cycles
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,6.0,0.6666666666666666,MP (2 Nov),MP vs N,PTE / cycles
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,MP (2 Nov),MP vs N,PTE / cycles
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,5.0,0.3125,MP (2 Nov),MP vs N,PTE / cycles
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,3.0,0.3333333333333333,MP (2 Nov),MP vs N,PTE / cycles
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,0.0,0.0,MP (2 Nov),E vs MP,PTE mean rate
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,6.0,0.6666666666666666,MP (2 Nov),E vs MP,PTE mean rate
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs MP,PTE mean rate
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,3.0,0.3333333333333333,MP (2 Nov),E vs MP,PTE mean rate
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,0.0,0.0,MP (2 Nov),E vs MP,PTE mean rate
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,7.0,0.4375,MP (2 Nov),E vs MP,PTE mean rate
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,6.0,0.6666666666666666,MP (2 Nov),E vs MP,PTE mean rate
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs MP,PTE mean rate
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs MP,PTE mean rate
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,10.0,0.625,MP (2 Nov),E vs MP,PTE mean rate
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,1.0,0.1111111111111111,MP (2 Nov),E vs MP,PTE mean rate
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,0.0,0.0,MP (2 Nov),E vs MP,PTE / cycles
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,6.0,0.6666666666666666,MP (2 Nov),E vs MP,PTE / cycles
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,MP (2 Nov),E vs MP,PTE / cycles
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs MP,PTE / cycles
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,0.0,0.0,MP (2 Nov),E vs MP,PTE / cycles
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,8.0,0.5,MP (2 Nov),E vs MP,PTE / cycles
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,6.0,0.6666666666666666,MP (2 Nov),E vs MP,PTE / cycles
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs MP,PTE / cycles
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,MP (2 Nov),E vs MP,PTE / cycles
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,11.0,0.6875,MP (2 Nov),E vs MP,PTE / cycles
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,2.0,0.2222222222222222,MP (2 Nov),E vs MP,PTE / cycles
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE mean rate
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE mean rate
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE mean rate
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE mean rate
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE mean rate
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__mean_rate,2,2,4,0.0,0.0,M or MP pooled,E vs N,PTE mean rate
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__mean_rate,2,1,2,0.0,0.0,M or MP pooled,E vs N,PTE mean rate
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__mean_rate,2,2,4,4.0,1.0,M or MP pooled,E vs N,PTE mean rate
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__mean_rate,2,2,4,1.0,0.25,M or MP pooled,E vs N,PTE mean rate
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__mean_rate,2,2,4,4.0,1.0,M or MP pooled,E vs N,PTE mean rate
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,3.0,0.3333333333333333,M or MP pooled,E vs N,PTE mean rate
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,5.0,0.5555555555555556,M or MP pooled,E vs N,PTE mean rate
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,6.0,0.6666666666666666,M or MP pooled,E vs N,PTE mean rate
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,9.0,1.0,M or MP pooled,E vs N,PTE mean rate
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs N,PTE mean rate
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,9.0,0.5625,M or MP pooled,E vs N,PTE mean rate
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,9.0,1.0,M or MP pooled,E vs N,PTE mean rate
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,7.0,0.7777777777777778,M or MP pooled,E vs N,PTE mean rate
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,7.0,0.7777777777777778,M or MP pooled,E vs N,PTE mean rate
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,10.0,0.625,M or MP pooled,E vs N,PTE mean rate
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,2.0,0.2222222222222222,M or MP pooled,E vs N,PTE mean rate
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE / cycles
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE / cycles
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE / cycles
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE / cycles
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,E vs N,PTE / cycles
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__per_cycle,2,2,4,0.0,0.0,M or MP pooled,E vs N,PTE / cycles
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__per_cycle,2,1,2,0.0,0.0,M or MP pooled,E vs N,PTE / cycles
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__per_cycle,2,2,4,4.0,1.0,M or MP pooled,E vs N,PTE / cycles
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__per_cycle,2,2,4,1.0,0.25,M or MP pooled,E vs N,PTE / cycles
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__per_cycle,2,2,4,4.0,1.0,M or MP pooled,E vs N,PTE / cycles
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,1.0,0.1111111111111111,M or MP pooled,E vs N,PTE / cycles
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs N,PTE / cycles
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,M or MP pooled,E vs N,PTE / cycles
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,9.0,1.0,M or MP pooled,E vs N,PTE / cycles
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs N,PTE / cycles
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,8.0,0.5,M or MP pooled,E vs N,PTE / cycles
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,9.0,1.0,M or MP pooled,E vs N,PTE / cycles
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,7.0,0.7777777777777778,M or MP pooled,E vs N,PTE / cycles
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,6.0,0.6666666666666666,M or MP pooled,E vs N,PTE / cycles
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,8.0,0.5,M or MP pooled,E vs N,PTE / cycles
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,2.0,0.2222222222222222,M or MP pooled,E vs N,PTE / cycles
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,M vs N,PTE mean rate
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,M vs N,PTE mean rate
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__mean_rate,1,1,1,0.0,0.0,M or MP pooled,M vs N,PTE mean rate
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,M vs N,PTE mean rate
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,M vs N,PTE mean rate
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__mean_rate,2,2,4,1.0,0.25,M or MP pooled,M vs N,PTE mean rate
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__mean_rate,2,1,2,0.0,0.0,M or MP pooled,M vs N,PTE mean rate
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__mean_rate,2,2,4,4.0,1.0,M or MP pooled,M vs N,PTE mean rate
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__mean_rate,2,2,4,4.0,1.0,M or MP pooled,M vs N,PTE mean rate
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__mean_rate,2,2,4,3.0,0.75,M or MP pooled,M vs N,PTE mean rate
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,9.0,1.0,M or MP pooled,M vs N,PTE mean rate
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,3.0,0.3333333333333333,M or MP pooled,M vs N,PTE mean rate
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,6.0,0.6666666666666666,M or MP pooled,M vs N,PTE mean rate
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,9.0,1.0,M or MP pooled,M vs N,PTE mean rate
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,7.0,0.7777777777777778,M or MP pooled,M vs N,PTE mean rate
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,7.0,0.4375,M or MP pooled,M vs N,PTE mean rate
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,7.0,0.7777777777777778,M or MP pooled,M vs N,PTE mean rate
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,8.0,0.8888888888888888,M or MP pooled,M vs N,PTE mean rate
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,8.0,0.8888888888888888,M or MP pooled,M vs N,PTE mean rate
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,7.0,0.4375,M or MP pooled,M vs N,PTE mean rate
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,3.0,0.3333333333333333,M or MP pooled,M vs N,PTE mean rate
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,M vs N,PTE / cycles
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,M vs N,PTE / cycles
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__per_cycle,1,1,1,0.0,0.0,M or MP pooled,M vs N,PTE / cycles
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,M vs N,PTE / cycles
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,M vs N,PTE / cycles
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__per_cycle,2,2,4,1.0,0.25,M or MP pooled,M vs N,PTE / cycles
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__per_cycle,2,1,2,0.0,0.0,M or MP pooled,M vs N,PTE / cycles
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__per_cycle,2,2,4,4.0,1.0,M or MP pooled,M vs N,PTE / cycles
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__per_cycle,2,2,4,4.0,1.0,M or MP pooled,M vs N,PTE / cycles
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__per_cycle,2,2,4,3.0,0.75,M or MP pooled,M vs N,PTE / cycles
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,9.0,1.0,M or MP pooled,M vs N,PTE / cycles
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,3.0,0.3333333333333333,M or MP pooled,M vs N,PTE / cycles
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,M or MP pooled,M vs N,PTE / cycles
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,9.0,1.0,M or MP pooled,M vs N,PTE / cycles
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,7.0,0.7777777777777778,M or MP pooled,M vs N,PTE / cycles
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,6.0,0.375,M or MP pooled,M vs N,PTE / cycles
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,M or MP pooled,M vs N,PTE / cycles
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,6.0,0.6666666666666666,M or MP pooled,M vs N,PTE / cycles
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,M or MP pooled,M vs N,PTE / cycles
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,5.0,0.3125,M or MP pooled,M vs N,PTE / cycles
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,3.0,0.3333333333333333,M or MP pooled,M vs N,PTE / cycles
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__mean_rate,1,1,1,0.0,0.0,M or MP pooled,E vs M,PTE mean rate
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,E vs M,PTE mean rate
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,E vs M,PTE mean rate
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__mean_rate,1,1,1,1.0,1.0,M or MP pooled,E vs M,PTE mean rate
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__mean_rate,1,1,1,0.0,0.0,M or MP pooled,E vs M,PTE mean rate
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__mean_rate,2,2,4,1.0,0.25,M or MP pooled,E vs M,PTE mean rate
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__mean_rate,2,2,4,3.0,0.75,M or MP pooled,E vs M,PTE mean rate
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__mean_rate,2,2,4,0.0,0.0,M or MP pooled,E vs M,PTE mean rate
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__mean_rate,2,2,4,0.0,0.0,M or MP pooled,E vs M,PTE mean rate
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__mean_rate,2,2,4,2.0,0.5,M or MP pooled,E vs M,PTE mean rate
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,0.0,0.0,M or MP pooled,E vs M,PTE mean rate
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,6.0,0.6666666666666666,M or MP pooled,E vs M,PTE mean rate
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs M,PTE mean rate
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,3.0,0.3333333333333333,M or MP pooled,E vs M,PTE mean rate
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,0.0,0.0,M or MP pooled,E vs M,PTE mean rate
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,7.0,0.4375,M or MP pooled,E vs M,PTE mean rate
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,6.0,0.6666666666666666,M or MP pooled,E vs M,PTE mean rate
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs M,PTE mean rate
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs M,PTE mean rate
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__mean_rate,4,4,16,10.0,0.625,M or MP pooled,E vs M,PTE mean rate
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__mean_rate,3,3,9,1.0,0.1111111111111111,M or MP pooled,E vs M,PTE mean rate
+184,2026-10-12,2026-10-12 / 184,batch_004_enm,core_power.throttle__per_cycle,1,1,1,0.0,0.0,M or MP pooled,E vs M,PTE / cycles
+230,2026-10-12,2026-10-12 / 230,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,E vs M,PTE / cycles
+231,2026-10-12,2026-10-12 / 231,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,E vs M,PTE / cycles
+232,2026-10-12,2026-10-12 / 232,batch_004_enm,core_power.throttle__per_cycle,1,1,1,0.0,0.0,M or MP pooled,E vs M,PTE / cycles
+239,2026-10-12,2026-10-12 / 239,batch_004_enm,core_power.throttle__per_cycle,1,1,1,1.0,1.0,M or MP pooled,E vs M,PTE / cycles
+183,2026-10-25,2026-10-25 / 183,batch_005_nem,core_power.throttle__per_cycle,2,2,4,0.0,0.0,M or MP pooled,E vs M,PTE / cycles
+187,2026-10-25,2026-10-25 / 187,batch_005_nem,core_power.throttle__per_cycle,2,2,4,3.0,0.75,M or MP pooled,E vs M,PTE / cycles
+218,2026-10-25,2026-10-25 / 218,batch_005_nem,core_power.throttle__per_cycle,2,2,4,0.0,0.0,M or MP pooled,E vs M,PTE / cycles
+220,2026-10-25,2026-10-25 / 220,batch_005_nem,core_power.throttle__per_cycle,2,2,4,0.0,0.0,M or MP pooled,E vs M,PTE / cycles
+222,2026-10-25,2026-10-25 / 222,batch_005_nem,core_power.throttle__per_cycle,2,2,4,2.0,0.5,M or MP pooled,E vs M,PTE / cycles
+224,2026-11-02,2026-11-02 / 224,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,0.0,0.0,M or MP pooled,E vs M,PTE / cycles
+230,2026-11-02,2026-11-02 / 230,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,6.0,0.6666666666666666,M or MP pooled,E vs M,PTE / cycles
+233,2026-11-02,2026-11-02 / 233,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,5.0,0.5555555555555556,M or MP pooled,E vs M,PTE / cycles
+234,2026-11-02,2026-11-02 / 234,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs M,PTE / cycles
+237,2026-11-02,2026-11-02 / 237,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,0.0,0.0,M or MP pooled,E vs M,PTE / cycles
+238,2026-11-02,2026-11-02 / 238,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,8.0,0.5,M or MP pooled,E vs M,PTE / cycles
+239,2026-11-02,2026-11-02 / 239,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,6.0,0.6666666666666666,M or MP pooled,E vs M,PTE / cycles
+241,2026-11-02,2026-11-02 / 241,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs M,PTE / cycles
+243,2026-11-02,2026-11-02 / 243,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,4.0,0.4444444444444444,M or MP pooled,E vs M,PTE / cycles
+244,2026-11-02,2026-11-02 / 244,batch_007_nemp,core_power.throttle__per_cycle,4,4,16,11.0,0.6875,M or MP pooled,E vs M,PTE / cycles
+249,2026-11-02,2026-11-02 / 249,batch_007_nemp,core_power.throttle__per_cycle,3,3,9,2.0,0.2222222222222222,M or MP pooled,E vs M,PTE / cycles

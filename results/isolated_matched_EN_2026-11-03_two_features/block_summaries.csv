@@ -1,0 +1,17 @@
+block,node,day,feature,label,scale,unit,n_pairs,contrast,E_mean,N_mean,effect
+2026-03-20 / run1,not recorded,2026-03-20,core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,400,0.04903108069220838,404465073.6263526,376606275.76900595,5.025299282276711
+2026-03-20 / run1,not recorded,2026-03-20,core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,400,0.04638777296093864,0.0050412502109308,0.004730381270900076,4.748051683494765
+2026-03-20 / run2,not recorded,2026-03-20,core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,400,-0.08258159660297446,352646190.47995543,394569116.09184396,-7.9263694163204095
+2026-03-20 / run2,not recorded,2026-03-20,core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,400,-0.06961248513973975,0.004494539073859062,0.004924717550461594,-6.72447936164306
+2026-03-20 / run3,not recorded,2026-03-20,core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,400,-0.09501752969172556,375197838.1231649,403135954.5314927,-9.064300641925355
+2026-03-20 / run3,not recorded,2026-03-20,core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,400,-0.08023183906898256,0.00471567095112677,0.005020847871197012,-7.709764324113655
+2026-03-21 / run4,not recorded,2026-03-21,core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,400,0.12284817511844852,439333347.0209861,389997803.1509398,13.071273758746324
+2026-03-21 / run4,not recorded,2026-03-21,core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,400,0.11120958129292345,0.005416741477310746,0.004850740785943967,11.762911646586218
+2026-03-21 / run5,not recorded,2026-03-21,core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,400,0.060934100678300566,411333669.208531,366403816.0768734,6.2828872177601065
+2026-03-21 / run5,not recorded,2026-03-21,core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,400,0.05220874361592045,0.0051102785820138835,0.0046435612930949745,5.359565092622001
+2026-03-21 / run6,not recorded,2026-03-21,core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,400,-0.06953880425108774,364348922.98774576,388231050.39146936,-6.717606485196234
+2026-03-21 / run6,not recorded,2026-03-21,core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,400,-0.0571311724052434,0.004595736614170133,0.004850712005304932,-5.552982718345223
+2026-03-21 / run7,not recorded,2026-03-21,core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,400,0.10277916535173295,414046818.35194576,351229963.15191066,10.824664279300961
+2026-03-21 / run7,not recorded,2026-03-21,core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,400,0.0882705673849196,0.00511173833198548,0.0044599415831189865,9.22836183727718
+2026-03-21 / run_unsuffixed,not recorded,2026-03-21,core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,400,0.14584699151054686,406249819.24556714,340618489.63491476,15.701914075527668
+2026-03-21 / run_unsuffixed,not recorded,2026-03-21,core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,400,0.1322616852227375,0.00505172176391998,0.004318928105928476,14.14069695264057

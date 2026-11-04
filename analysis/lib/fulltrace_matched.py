@@ -117,7 +117,8 @@ class CrossPairModel:
 
     EFFECTS = ("block", "node", "day")
 
-    def __init__(self, frame):
+    def __init__(self, frame, effects=None):
+        self.effects = tuple(effects or self.EFFECTS)
         self.n = len(frame)
         self.eye = np.eye(self.n)
         self.ones = np.ones(self.n)
@@ -128,11 +129,11 @@ class CrossPairModel:
 
         batch = frame.batch.astype(str) + "/"
         self.base = same(batch + frame.E_run) + same(batch + frame.N_run)
-        self.kernels = {key: same(frame[key].astype(str)) for key in self.EFFECTS}
+        self.kernels = {key: same(frame[key].astype(str)) for key in self.effects}
 
     def fit(self, y, initial=None, zero_mean=False):
         y = np.asarray(y, float)
-        kernels = [self.kernels[key] for key in self.EFFECTS]
+        kernels = [self.kernels[key] for key in self.effects]
         rhs = np.column_stack((y, self.ones))
 
         def objective(ratios, details=False):
@@ -147,15 +148,15 @@ class CrossPairModel:
             nll = (2 * np.log(np.diag(cf[0])).sum() + self.n * np.log(ss / self.n)) / 2
             if details:
                 variances = dict(residual=ss / self.n,
-                                 **{key: r * ss / self.n for key, r in zip(self.EFFECTS, ratios)})
+                                 **{key: r * ss / self.n for key, r in zip(self.effects, ratios)})
                 return dict(nll=float(nll), mean=float(mean), variances=variances,
-                            ratios=dict(zip(self.EFFECTS, ratios)), covariance=shape, alpha=alpha)
+                            ratios=dict(zip(self.effects, ratios)), covariance=shape, alpha=alpha)
             inverse = cho_solve(cf, self.eye, check_finite=False)
             gradient = np.array([.5 * (np.sum(inverse * k) - self.n * (alpha @ k @ alpha) / ss)
                                  for k in kernels])
             return nll, gradient
 
-        size = len(self.EFFECTS)
+        size = len(self.effects)
         starts = [np.zeros(size), np.ones(size), np.full(size, 10.0)]
         if initial is not None:
             starts.append(np.asarray(initial, float))
@@ -187,8 +188,8 @@ class CrossPairModel:
 
 
 def pair_variance(variances):
-    """Variance of one new cross pair: two runs plus block, node and date terms."""
-    return 2 * variances["residual"] + sum(variances[key] for key in CrossPairModel.EFFECTS)
+    """Variance of one new cross pair: two runs plus every random term."""
+    return 2 * variances["residual"] + sum(v for key, v in variances.items() if key != "residual")
 
 
 def mean_se(model, fitted):
@@ -197,7 +198,7 @@ def mean_se(model, fitted):
 
 
 def _analyze_feature(job):
-    frame, seed, test_repeats, interval_repeats = job
+    frame, seed, test_repeats, interval_repeats, effects, omit = job
     feature, label, scale, unit = frame.iloc[0][["feature", "label", "scale", "unit"]]
     block_means = frame.groupby("block").contrast.mean()
     points = frame.loc[frame.model_point].reset_index(drop=True)
@@ -207,7 +208,7 @@ def _analyze_feature(job):
         raise ValueError(f"Constant contrasts require separate treatment: {feature}")
     y = values / normalization
     ratios = lambda fitted: list(fitted["ratios"].values())
-    model = CrossPairModel(points)
+    model = CrossPairModel(points, effects)
     full = model.fit(y)
     null = model.fit_null(y, initial=ratios(full))
     if full["nll"] > null["nll"] + 1e-6:
@@ -256,11 +257,11 @@ def _analyze_feature(job):
                n_pairs_positive=int((frame.contrast > 0).sum()), lrt=observed, p=p,
                p_mc_low=p_low, p_mc_high=p_high, exceedances=exceedances,
                test_repeats=test_repeats, interval_repeats=interval_repeats,
-               boundary=any(full["variances"][k] < 1e-6 * total_variance for k in CrossPairModel.EFFECTS))
+               boundary=any(full["variances"][k] < 1e-6 * total_variance for k in model.effects))
     for key in ("estimate", "ci_low", "ci_high", "prediction_low", "prediction_high"):
         row["display_" + key] = float(display_effect(row[key], scale))
     row["residual_fraction"] = 2 * full["variances"]["residual"] / total_variance
-    for key in CrossPairModel.EFFECTS:
+    for key in model.effects:
         row[key + "_fraction"] = full["variances"][key] / total_variance
     whitening = solve_triangular(np.linalg.cholesky(full["covariance"]),
                                  y - full["mean"], lower=True) / np.sqrt(full["variances"]["residual"])
@@ -269,13 +270,13 @@ def _analyze_feature(job):
     # Run-to-run part of each pair's deviation (BLUP), in units of the run SD.
     residuals["run_residual_sd"] = (model.base @ full["alpha"]) / np.sqrt(full["variances"]["residual"])
     omitted = []
-    for grouping in ("day", "node"):
+    for grouping in omit:
         groups = sorted(points[grouping].unique())
         if len(groups) < 2:  # omitting the only date/node would leave no data
             continue
         for group in groups:
             keep = (points[grouping] != group).to_numpy()
-            fitted = CrossPairModel(points.loc[keep]).fit(y[keep])
+            fitted = CrossPairModel(points.loc[keep], effects).fit(y[keep])
             value = fitted["mean"] * normalization
             omitted.append(dict(feature=feature, label=label, scale=scale, unit=unit,
                                 omitted_type=grouping, omitted=str(group),
@@ -285,11 +286,14 @@ def _analyze_feature(job):
     return row, omitted, residuals, bootstrap_means
 
 
-def analyze(contrasts, test_repeats=19999, interval_repeats=1999, seed=42, workers=4):
+def analyze(contrasts, test_repeats=19999, interval_repeats=1999, seed=42, workers=4,
+            effects=None, omit=("day", "node")):
+    """`effects`: random terms on the gap (columns of `contrasts`), default
+    CrossPairModel.EFFECTS. `omit`: groupings for the leave-one-group-out refits."""
     seeds = np.random.SeedSequence(seed).spawn(len(SPECS))
     # Keep each feature's random stream unchanged when the test family is reduced.
     jobs = [(contrasts.loc[contrasts.feature == feature].reset_index(drop=True),
-             seeds[i], test_repeats, interval_repeats) for i, (feature, *_rest) in enumerate(SPECS)
+             seeds[i], test_repeats, interval_repeats, effects, omit) for i, (feature, *_rest) in enumerate(SPECS)
             if feature in set(contrasts.feature)]
     if not jobs or not set(contrasts.feature).issubset({s[0] for s in SPECS}):
         raise ValueError("Contrasts must contain known features")
@@ -315,3 +319,199 @@ def analyze(contrasts, test_repeats=19999, interval_repeats=1999, seed=42, worke
     estimates["mc_sensitive"] = (estimates.p_bonferroni_mc_low < .05) & (estimates.p_bonferroni_mc_high >= .05)
     estimates["prediction_crosses_zero"] = (estimates.prediction_low <= 0) & (estimates.prediction_high >= 0)
     return estimates, pd.DataFrame(sensitivity), pd.concat(residuals, ignore_index=True), pd.DataFrame(bootstraps)
+
+
+# ---------------------------------------------------------------------------
+# Probability of superiority (theta): non-parametric within-group comparison.
+#
+# theta(g) = share of the m(g) x k(g) first-vs-second run pairs in node/date g
+# where the first-condition run is higher (ties count 1/2): the group's
+# Mann-Whitney U / (m k), i.e. its ROC AUC. theta = mean over groups (each
+# group weighted equally); theta_pair = sum U / sum m k (each pair weighted
+# equally). 0.5 = the measure carries no information about the condition.
+# ---------------------------------------------------------------------------
+from itertools import combinations
+from math import lcm
+
+
+def _wins(first, second):
+    first, second = np.asarray(first, float)[:, None], np.asarray(second, float)[None, :]
+    return float((first > second).sum() + .5 * (first == second).sum())
+
+
+def superiority_groups(traces, feature, first="emotional", second="neutral"):
+    """One row per node/date with both conditions: m, k, wins (U) and theta."""
+    rows = []
+    for (node, day), cell in traces.groupby(["node", "day"], sort=True):
+        a = cell.loc[cell.condition == first, feature].to_numpy(float)
+        b = cell.loc[cell.condition == second, feature].to_numpy(float)
+        if len(a) and len(b):
+            rows.append(dict(node=node, day=day, block=f"{day} / {node}", batch=cell.batch.iloc[0],
+                             feature=feature, m=len(a), k=len(b), pairs=len(a) * len(b),
+                             wins=_wins(a, b), theta=_wins(a, b) / (len(a) * len(b)),
+                             values=np.concatenate([a, b])))
+    return pd.DataFrame(rows).sort_values(["day", "node"], key=lambda s: s.astype(str)).reset_index(drop=True)
+
+
+def theta_estimates(groups):
+    return float(groups.theta.mean()), float(groups.wins.sum() / groups.pairs.sum())
+
+
+def theta_bootstrap(groups, cluster="block", repeats=20000, seed=42):
+    """Percentile 95% intervals resampling whole clusters (block, node or day)
+    with replacement; all groups of a drawn node/date are taken together."""
+    rng = np.random.default_rng(seed)
+    per_cluster = groups.groupby(groups[cluster].astype(str)).agg(
+        theta_sum=("theta", "sum"), n=("theta", "size"), wins=("wins", "sum"), pairs=("pairs", "sum"))
+    c = len(per_cluster)
+    if c < 5:
+        return dict(cluster=cluster, n_clusters=c, group_low=np.nan, group_high=np.nan,
+                    pair_low=np.nan, pair_high=np.nan)
+    draws = rng.integers(0, c, size=(repeats, c))
+    take = lambda column: per_cluster[column].to_numpy(float)[draws].sum(axis=1)
+    by_group = take("theta_sum") / take("n")
+    by_pair = take("wins") / take("pairs")
+    (gl, gh), (pl, ph) = np.quantile(by_group, [.025, .975]), np.quantile(by_pair, [.025, .975])
+    return dict(cluster=cluster, n_clusters=c, group_low=gl, group_high=gh, pair_low=pl, pair_high=ph)
+
+
+def _group_null(values, m):
+    """Wins for every reassignment of m first-condition labels among a group's runs
+    (all reassignments are equally likely under the null)."""
+    idx = range(len(values))
+    out = []
+    for chosen in combinations(idx, m):
+        rest = [i for i in idx if i not in chosen]
+        out.append(_wins(values[list(chosen)], values[rest]))
+    return np.array(out)
+
+
+def theta_permutation(groups, alternative="greater", repeats=200000, seed=42, max_grid=5_000_000):
+    """Stratified permutation test of theta = 0.5: labels are reassigned only
+    within each node/date, keeping m and k fixed. Groups are independent under
+    the null, so the exact null distribution of each statistic is the
+    convolution of the per-group distributions (on an integer grid). Falls
+    back to Monte Carlo when the grid would be too large.
+    Returns p per group and per pair, and whether it is exact."""
+    nulls = [_group_null(v, m) for v, m in zip(groups["values"], groups.m)]
+    pairs = groups.pairs.to_numpy(int)
+    observed = theta_estimates(groups)
+    G, P = len(groups), pairs.sum()
+
+    def tail(support, mass, obs):
+        tol = 1e-9 * max(1.0, abs(obs))
+        if alternative == "greater":
+            hit = support >= obs - tol
+        elif alternative == "less":
+            hit = support <= obs + tol
+        else:
+            hit = np.abs(support - .5) >= abs(obs - .5) - tol
+        return float(mass[hit].sum())
+
+    # Integer scaling: per-group statistic = sum_g wins_g / pairs_g; wins are half-integers.
+    scale_group = 2 * lcm(*map(int, pairs))
+    results, exact = [], True
+    for scale, weights, obs, divisor in [(scale_group, scale_group // pairs, observed[0], G * scale_group),
+                                         (2, np.full(G, 2), observed[1], 2 * P)]:
+        grid = int(sum(w * p for w, p in zip(weights, pairs))) + 1
+        if grid > max_grid:
+            exact = False
+            break
+        dist = np.array([1.0])
+        for null, w in zip(nulls, weights):
+            values = np.rint(null * w).astype(int)
+            local = np.bincount(values, minlength=values.max() + 1) / len(values)
+            dist = np.convolve(dist, local)
+        support = np.arange(len(dist)) / divisor
+        results.append(tail(support, dist, obs))
+    if exact:
+        return dict(p_group=results[0], p_pair=results[1], exact=True,
+                    n_reassignments=float(np.prod([float(len(n)) for n in nulls])))
+    rng = np.random.default_rng(seed)
+    draws = np.column_stack([rng.choice(n, size=repeats) for n in nulls])
+    by_group = (draws / pairs).mean(axis=1)
+    by_pair = draws.sum(axis=1) / P
+    p = [(1 + (tail(s, np.ones(repeats), o) )) / (repeats + 1) for s, o in [(by_group, observed[0]), (by_pair, observed[1])]]
+    return dict(p_group=p[0], p_pair=p[1], exact=False, n_reassignments=float(repeats))
+
+
+def theta_report(traces, feature, subsets, first="emotional", second="neutral",
+                 alternative="greater", repeats=20000, seed=42):
+    """theta, cluster-bootstrap intervals and stratified permutation p for each
+    named subset. `subsets` maps a name to a boolean function of the group table."""
+    groups = superiority_groups(traces, feature, first, second)
+    rows = []
+    for name, keep in subsets.items():
+        sub = groups.loc[keep(groups)].reset_index(drop=True)
+        if sub.empty:
+            continue
+        t_group, t_pair = theta_estimates(sub)
+        boot = theta_bootstrap(sub, "block", repeats, seed)
+        test = theta_permutation(sub, alternative, seed=seed)
+        rows.append(dict(subset=name, feature=feature, n_groups=len(sub), n_pairs=int(sub.pairs.sum()),
+                         n_nodes=sub.node.nunique(), n_dates=sub.day.nunique(),
+                         theta_group=t_group, group_low=boot["group_low"], group_high=boot["group_high"],
+                         theta_pair=t_pair, pair_low=boot["pair_low"], pair_high=boot["pair_high"],
+                         p_group=test["p_group"], p_pair=test["p_pair"], exact=test["exact"],
+                         groups_all_first=int((sub.theta == 1).sum()),
+                         groups_all_second=int((sub.theta == 0).sum())))
+    return groups.drop(columns="values"), pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------------------
+# Run order: does time of day (or position in a node's sequence) explain the
+# condition differences on campaigns whose condition order was rotated?
+# ---------------------------------------------------------------------------
+def run_order_model(traces, feature, day, reference="neutral", late_hour=18.0):
+    """OLS of log(feature) on node + condition (+ a time term) for one date.
+
+    Uses the recorded start times (no slot assumption). Time terms:
+    'none'; 'linear' (clock hours); 'late' (start at/after `late_hour` vs
+    earlier); 'position' (k-th run on the node, as categories).
+    Returns (time_effects, condition_effects): percentages = 100 (e^b - 1)."""
+    import statsmodels.formula.api as smf
+    d = traces.loc[traces.day.astype(str) == str(day)].copy()
+    start = pd.to_datetime(d.started_local.str[:19])
+    d["hours"] = start.dt.hour + start.dt.minute / 60 + start.dt.second / 3600
+    d["late"] = (d.hours >= late_hour).astype(int)
+    d["position"] = d.groupby("node").hours.rank(method="first").astype(int)
+    d["y"] = np.log(d[feature].astype(float))
+    d["node"] = d.node.astype(str)
+    conditions = [reference] + sorted(set(d.condition) - {reference})
+    d["condition"] = pd.Categorical(d.condition, categories=conditions)
+    base = "y ~ C(node) + C(condition, Treatment('%s'))" % reference
+    terms = {"none": "", "linear": " + hours", "late": " + late", "position": " + C(position)"}
+    pct = lambda b: 100 * np.expm1(b)
+    time_rows, cond_rows = [], []
+    for name, extra in terms.items():
+        fit = smf.ols(base + extra, data=d).fit()
+        if name == "linear":
+            b, (lo, hi) = fit.params["hours"], fit.conf_int().loc["hours"]
+            time_rows.append(dict(day=day, feature=feature, term="per hour (linear)", effect=pct(b),
+                                  ci_low=pct(lo), ci_high=pct(hi), p=fit.pvalues["hours"]))
+        elif name == "late":
+            b, (lo, hi) = fit.params["late"], fit.conf_int().loc["late"]
+            time_rows.append(dict(day=day, feature=feature, term=f"late (≥{late_hour:g}:00) vs early",
+                                  effect=pct(b), ci_low=pct(lo), ci_high=pct(hi), p=fit.pvalues["late"],
+                                  n_late=int(d.late.sum())))
+        elif name == "position":
+            reduced = smf.ols(base, data=d).fit()
+            f, p, df = fit.compare_f_test(reduced)
+            time_rows.append(dict(day=day, feature=feature, term="position in sequence (F test)", df=int(df),
+                                  effect=np.nan, ci_low=np.nan, ci_high=np.nan, p=p))
+        names = {c: f"C(condition, Treatment('{reference}'))[T.{c}]" for c in conditions[1:]}
+        contrasts = [(f"{c} vs {reference}", {names[c]: 1}) for c in conditions[1:]]
+        others = conditions[1:]
+        for i in range(len(others)):
+            for j in range(i + 1, len(others)):
+                contrasts.append((f"{others[i]} vs {others[j]}", {names[others[i]]: 1, names[others[j]]: -1}))
+        for label, weights in contrasts:
+            vector = np.zeros(len(fit.params))
+            for key, w in weights.items():
+                vector[list(fit.params.index).index(key)] = w
+            test = fit.t_test(vector)
+            b = float(np.squeeze(test.effect)); lo, hi = np.squeeze(test.conf_int())
+            cond_rows.append(dict(day=day, feature=feature, time_term=name, contrast=label,
+                                  effect=pct(b), ci_low=pct(lo), ci_high=pct(hi),
+                                  p=float(np.squeeze(test.pvalue)), n_runs=len(d), df_resid=fit.df_resid))
+    return pd.DataFrame(time_rows), pd.DataFrame(cond_rows)

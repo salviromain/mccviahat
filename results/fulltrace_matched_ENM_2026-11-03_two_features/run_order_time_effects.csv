@@ -1,0 +1,19 @@
+day,feature,term,effect,ci_low,ci_high,p,n_late,df,data,label
+2026-10-25,core_power.throttle__mean_rate,per hour (linear),-0.31347373279655677,-0.6208245996903338,-0.0051723191207216175,0.04660728888500348,,,2026-10-25 (all nodes),PTE mean rate
+2026-10-25,core_power.throttle__mean_rate,late (≥18:00) vs early,-1.6545176662737464,-3.52636225077074,0.2536456704778106,0.08535888832426204,10.0,,2026-10-25 (all nodes),PTE mean rate
+2026-10-25,core_power.throttle__mean_rate,position in sequence (F test),,,,0.207736245121255,,5.0,2026-10-25 (all nodes),PTE mean rate
+2026-10-25,core_power.throttle__per_cycle,per hour (linear),-0.356561447232928,-0.72813319548157,0.016401083404932345,0.05996629372964555,,,2026-10-25 (all nodes),PTE / cycles
+2026-10-25,core_power.throttle__per_cycle,late (≥18:00) vs early,-1.8487520161505153,-4.103405725123411,0.45891153520337324,0.10978202147490956,10.0,,2026-10-25 (all nodes),PTE / cycles
+2026-10-25,core_power.throttle__per_cycle,position in sequence (F test),,,,0.27303568484477014,,5.0,2026-10-25 (all nodes),PTE / cycles
+2026-10-25,core_power.throttle__mean_rate,per hour (linear),-0.29577392178840695,-0.6369551657408419,0.046578830559519536,0.08590884909221146,,,2026-10-25 (without 187),PTE mean rate
+2026-10-25,core_power.throttle__mean_rate,late (≥18:00) vs early,-1.7037914471520266,-3.788175649210871,0.4257499643362104,0.10896815187732613,8.0,,2026-10-25 (without 187),PTE mean rate
+2026-10-25,core_power.throttle__mean_rate,position in sequence (F test),,,,0.15624845063879464,,5.0,2026-10-25 (without 187),PTE mean rate
+2026-10-25,core_power.throttle__per_cycle,per hour (linear),-0.35928279298907967,-0.7769234430949121,0.0601157517383814,0.08834125622315646,,,2026-10-25 (without 187),PTE / cycles
+2026-10-25,core_power.throttle__per_cycle,late (≥18:00) vs early,-2.0223696482485245,-4.570447350797563,0.5937446299522374,0.12025294800857916,8.0,,2026-10-25 (without 187),PTE / cycles
+2026-10-25,core_power.throttle__per_cycle,position in sequence (F test),,,,0.16262168538876173,,5.0,2026-10-25 (without 187),PTE / cycles
+2026-11-02,core_power.throttle__mean_rate,per hour (linear),0.05916638293627447,-0.06185361830659455,0.18033293323204355,0.334204072893101,,,2026-11-02,PTE mean rate
+2026-11-02,core_power.throttle__mean_rate,late (≥18:00) vs early,0.3049470960670526,-0.4996739163261125,1.116074770288041,0.45462331055396965,23.0,,2026-11-02,PTE mean rate
+2026-11-02,core_power.throttle__mean_rate,position in sequence (F test),,,,0.29090535967742254,,11.0,2026-11-02,PTE mean rate
+2026-11-02,core_power.throttle__per_cycle,per hour (linear),0.08051082739511863,-0.07535735592333043,0.23662214283721736,0.3077800704651838,,,2026-11-02,PTE / cycles
+2026-11-02,core_power.throttle__per_cycle,late (≥18:00) vs early,0.47160861648991087,-0.5643990338973112,1.5184103068510728,0.3696066276289331,23.0,,2026-11-02,PTE / cycles
+2026-11-02,core_power.throttle__per_cycle,position in sequence (F test),,,,0.3334497926909211,,11.0,2026-11-02,PTE / cycles

@@ -1,0 +1,34 @@
+{
+  "timezone": "America/Chicago",
+  "date_rule": "trace start date",
+  "seed": 42,
+  "test_bootstraps": 19999,
+  "interval_bootstraps": 1999,
+  "workers": 4,
+  "features": [
+    "core_power.throttle__mean_rate",
+    "core_power.throttle__per_cycle"
+  ],
+  "n_traces": 158,
+  "n_groups": 38,
+  "correction": "Bonferroni over two overall E-N tests",
+  "estimation": "Gaussian ML",
+  "pairing": "every E run vs every N run within node/date; shared-run covariance",
+  "n_cross_pairs": 189,
+  "interval": "studentized parametric bootstrap; pointwise 95%",
+  "prediction": "approximate bootstrap mixture for new node and new date",
+  "primary_outcome": "core_power.throttle__per_cycle",
+  "theta_bootstraps": 20000,
+  "theta_interval": "percentile cluster bootstrap over node/dates (node, date variants)",
+  "theta_test": "exact stratified permutation (within node/date), one-sided E > N",
+  "theta_subsets": [
+    "All groups (main)",
+    "Without node 183",
+    "Without node 187",
+    "Before 2 Nov",
+    "Before 2 Nov, without 187",
+    "2 Nov alone",
+    "25 Oct alone",
+    "25 Oct without 183 and 187"
+  ]
+}

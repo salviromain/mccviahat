@@ -1,0 +1,23 @@
+feature,label,scale,unit,omitted_type,omitted,n_remaining,estimate,display_estimate,same_sign
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,224,10,0.008380529984216267,0.841574493018792,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,230,10,0.010257825941855854,1.031061779385019,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,233,10,0.008667458068088378,0.870512924188487,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,234,10,0.006726356729357707,0.6749029473263551,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,237,10,0.008350675343926273,0.8385639490256037,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,238,10,0.010880463450196557,1.093987095754555,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,239,10,0.00850207772548351,0.8538323035637517,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,241,10,0.008634594231740466,0.8671979866304977,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,243,10,0.008831209937069881,0.8870320116837586,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,244,10,0.010498715093423075,1.0554019976685558,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,node,249,10,0.009950702401237308,1.0000375263619632,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,224,10,0.0025547506737575005,0.2558016830072798,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,230,10,0.004668107207370722,0.46790197935870254,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,233,10,0.0029836903189691738,0.2988145953237824,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,234,10,0.00031099456391437986,0.03110429277372707,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,237,10,0.002548361143880209,0.2551610976135763,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,238,10,0.005473001925835104,0.5488006161122603,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,239,10,0.0028373385381164316,0.28413675928025833,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,241,10,0.002679663321666437,0.26832568285044434,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,243,10,0.002960030331281361,0.29644155467852173,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,244,10,0.005303531799625896,0.5317620419870962,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,node,249,10,0.004896552638005682,0.49085603426602137,True

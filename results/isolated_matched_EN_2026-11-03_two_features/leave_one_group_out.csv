@@ -1,0 +1,21 @@
+feature,label,scale,unit,omitted_type,omitted,n_remaining,estimate,display_estimate,same_sign
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,day,2026-03-20,5,0.07257392568158905,7.527229338922502,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,day,2026-03-21,3,-0.04285601520083111,-4.195067532384375,False
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,block,2026-03-20 / run1,7,0.006011357024652091,0.6029461490580139,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,block,2026-03-20 / run2,7,0.045269025629774494,4.630930606890833,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,block,2026-03-20 / run3,7,0.04704558749959519,4.816979143045094,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,block,2026-03-21 / run4,7,0.014095324384888905,1.4195131857877528,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,block,2026-03-21 / run5,7,0.021323721161879774,2.155269634207846,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,block,2026-03-21 / run6,7,0.03692403639467345,3.761419692898407,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,block,2026-03-21 / run7,7,0.016421670678821398,1.6557247428309236,True
+core_power.throttle__mean_rate,PTE mean rate,log_ratio,% vs neutral,block,2026-03-21 / run_unsuffixed,7,0.011301508445492676,1.1365611752483458,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-03-20,5,0.06536388102225114,6.754741396040255,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,day,2026-03-21,3,-0.034485517082594556,-3.3897668434557002,False
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,block,2026-03-20 / run1,7,0.008060537061162864,0.8093110651410629,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,block,2026-03-20 / run2,7,0.041853619857600305,4.274183088103687,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,block,2026-03-20 / run3,7,0.043370670418922876,4.432492347302577,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,block,2026-03-21 / run4,7,0.014767842432320929,1.487742578944528,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,block,2026-03-21 / run5,7,0.021619916823155127,2.1855320634287816,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,block,2026-03-21 / run6,7,0.0346758560154449,3.5284073300781884,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,block,2026-03-21 / run7,7,0.017424271441804553,1.7576959596877435,True
+core_power.throttle__per_cycle,PTE / cycles,log_ratio,% vs neutral,block,2026-03-21 / run_unsuffixed,7,0.012216283734402127,1.2291207313594905,True

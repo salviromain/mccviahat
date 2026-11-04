@@ -8,6 +8,7 @@ venv/
 
 # outputs / data
 /data/raw/*
+/data
 !/data/raw/fulltrace/
 /data/raw/fulltrace/*
 !/data/raw/fulltrace/batch_002_joy/

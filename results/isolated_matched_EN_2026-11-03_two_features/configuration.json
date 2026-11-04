@@ -1,0 +1,30 @@
+{
+  "timezone": "America/Chicago",
+  "date_rule": "trial start date",
+  "seed": 42,
+  "test_bootstraps": 4999,
+  "interval_bootstraps": 999,
+  "workers": 4,
+  "features": [
+    "core_power.throttle__mean_rate",
+    "core_power.throttle__per_cycle"
+  ],
+  "n_trials": 320,
+  "n_sessions": 8,
+  "random_terms": [
+    "block",
+    "day",
+    "E_item",
+    "N_item"
+  ],
+  "conditions": [
+    "emotional",
+    "neutral"
+  ],
+  "correction": "Bonferroni over two overall E-N tests",
+  "estimation": "Gaussian ML",
+  "pairing": "every E trial vs every N trial within session; shared-trial and shared-prompt covariance",
+  "n_cross_pairs": 3200,
+  "interval": "studentized parametric bootstrap; pointwise 95%",
+  "prediction": "approximate bootstrap mixture for one new trial pair"
+}
