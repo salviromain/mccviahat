@@ -21,6 +21,12 @@ model_cache/
 .cache/
 hf_cache/
 
+# local thesis sources and exports
+/thesis/
+/thesis_*/
+/thesis.*
+/thesis_*.*
+
 # logs
 *.log
 
